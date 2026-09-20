@@ -1,0 +1,72 @@
+{
+  "slug": "tuong-ngan",
+  "title": "Tường Ngân",
+  "client": "Công ty TNHH XD và TM Tường Ngân",
+  "real": true,
+  "featured": true,
+  "order": 1,
+  "cover": "../../assets/projects/tuong-ngan/01.jpg",
+  "summary": "Hệ thống quản lý bán hàng, tồn kho và công nợ trên một nền tảng duy nhất - từ sản phẩm, nhập hàng, bán hàng, tồn kho đến công nợ và báo cáo. Mục tiêu: chuẩn hoá quy trình vận hành, giảm thao tác thủ công, hạn chế sai sót và cung cấp dữ liệu chính xác để ra quyết định nhanh.",
+  "tags": [
+    "Hệ thống doanh nghiệp",
+    "Web app",
+    "Design system"
+  ],
+  "role": "Thiết kế UI/UX & tổ chức Design System",
+  "tools": [
+    "Figma",
+    "HTML/CSS",
+    "AI hỗ trợ phân tích & prototype"
+  ],
+  "flows": [
+    "Bán hàng",
+    "Tồn kho",
+    "Công nợ"
+  ],
+  "flowHub": "Một nền tảng · số liệu đối chiếu đúng theo từng vai trò",
+  "context": "Ba luồng nghiệp vụ - bán hàng, tồn kho, công nợ - vốn được đối chiếu thủ công qua nhiều vai trò khác nhau, dễ lệch số liệu khi thao tác chéo phòng ban. Bài toán đặt ra là gộp các luồng này vào một hệ thống duy nhất: từ sản phẩm, nhập hàng, bán hàng, tồn kho đến công nợ và báo cáo, mà mỗi vai trò vẫn thấy đúng phần việc của mình và không bị ngợp bởi dữ liệu của luồng khác.",
+  "process": [
+    {
+      "title": "Phân tích & khám phá phương án",
+      "body": "Dùng AI hỗ trợ làm rõ yêu cầu và luồng đối chiếu số liệu giữa bán hàng, tồn kho, công nợ - phân biệt phần chung và phần riêng của từng vai trò trước khi phác thảo wireframe."
+    },
+    {
+      "title": "Thiết kế theo thứ tự thao tác thực tế",
+      "body": "Phiếu nhập, phiếu bán được xếp đúng trình tự người dùng làm việc: chọn đối tác, thêm sản phẩm, xác nhận giá, thanh toán, in. Thao tác nhanh đặt ngay trên danh sách để không phải mở từng bản ghi."
+    },
+    {
+      "title": "Prototype HTML/CSS & chuẩn hoá hệ thống",
+      "body": "Chuyển thiết kế thành prototype HTML/CSS (có AI hỗ trợ) để bấm thử luồng và trạng thái trước khi vào thiết kế chi tiết; đồng thời chuẩn hoá token, component và trạng thái dùng chung cho mọi màn hình."
+    }
+  ],
+  "gallery": [
+    {
+      "src": "../../assets/projects/tuong-ngan/02.jpg",
+      "caption": "Tổng quan hoạt động kinh doanh: doanh thu, giá vốn, lợi nhuận, công nợ và tồn kho theo kỳ trên một màn hình."
+    },
+    {
+      "src": "../../assets/projects/tuong-ngan/03.jpg",
+      "caption": "Quản lý sản phẩm và biến thể: mã hàng, đơn vị tính, thuộc tính; mỗi biến thể có giá, tồn kho và ngưỡng cảnh báo riêng."
+    },
+    {
+      "src": "../../assets/projects/tuong-ngan/04.jpg",
+      "caption": "So sánh giá nhập theo nhà cung cấp và theo thời điểm để chọn nguồn hàng phù hợp; hệ thống báo khi một mặt hàng có nhiều nhà cung cấp."
+    },
+    {
+      "src": "../../assets/projects/tuong-ngan/05.jpg",
+      "caption": "Tạo phiếu nhập, phiếu bán và in ngay - các bước xếp theo thứ tự thao tác thực tế: chọn đối tác, thêm sản phẩm, xác nhận giá, thanh toán, in."
+    },
+    {
+      "src": "../../assets/projects/tuong-ngan/06.jpg",
+      "caption": "Thao tác nhanh ngay trên danh sách, không phải mở từng bản ghi."
+    },
+    {
+      "src": "../../assets/projects/tuong-ngan/07.jpg",
+      "caption": "Theo dõi công nợ theo từng đối tác: khách hàng, nhà cung cấp, chứng từ liên quan, điều chỉnh và thu tiền."
+    },
+    {
+      "src": "../../assets/projects/tuong-ngan/08.jpg",
+      "caption": "Nhập, xuất dữ liệu và tạo chứng từ từ Excel: import hàng loạt có kiểm lỗi, xuất theo mẫu, in chứng từ."
+    }
+  ]
+}

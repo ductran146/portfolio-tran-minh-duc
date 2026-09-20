@@ -1,0 +1,39 @@
+# build output
+dist/
+# generated types
+.astro/
+
+# dependencies
+node_modules/
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+
+# environment variables
+.env
+.env.production
+
+# macOS-specific files
+.DS_Store
+
+# jetbrains setting folder
+.idea/
+
+# ---- riêng cho dự án này (2026-09-20) ----
+# Tư liệu gốc do người dùng cung cấp — site chỉ dùng bản copy trong src/assets
+# và public/, nên không cần đưa lên repo (tổng ~62MB).
+images/
+project/
+logo/
+# Script chụp màn hình thử nghiệm cũ
+.render*.mjs
+# Cấu hình công cụ cá nhân trên máy
+.impeccable/
+.claude/settings.local.json
+.vscode/
+# Binary của công cụ kiểm tra thiết kế (tự tải lại khi chạy lần đầu, 12MB)
+.claude/skills/impeccable/scripts/bin/

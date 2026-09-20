@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nền dải công cụ — bản 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cal+Sans&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#121815; --ink2:#4b544e; --ink3:#838d86; --border:#e6e9e6; --soft:#f6f7f6;
+    --accent:#0b7a5b; --accent-strong:#075f46; --tint:#e6f3ee;
+    --on-ink:#fff; --on-ink2:rgba(255,255,255,.68); --surf2:rgba(255,255,255,.1);
+    --solid:#1b221e; --line:rgba(255,255,255,.08);
+    --display:"Cal Sans",ui-sans-serif,system-ui,sans-serif;
+    --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --ease:cubic-bezier(.16,1,.3,1); --ease-page:cubic-bezier(.4,0,.2,1);
+    --pk:1;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:#fff;color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.55}
+  .wrap{max-width:1240px;margin:0 auto;padding:32px 28px 72px}
+  .top{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:flex-start;justify-content:space-between}
+  .top h1{font-family:var(--display);font-weight:400;font-size:1.5rem;margin:0}
+  .top p{margin:6px 0 0;color:var(--ink3);font-size:.9rem;max-width:76ch}
+  button{font:inherit;font-weight:600;border:1px solid var(--border);background:#fff;color:var(--ink);padding:8px 14px;border-radius:10px;cursor:pointer}
+  button.on{background:var(--tint);border-color:var(--accent);color:var(--accent-strong)}
+  .grid{display:grid;gap:36px;margin-top:28px}
+  .fx header{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:12px}
+  .fx h2{margin:0;font-size:.95rem;font-weight:600}
+  .fx h2 b{display:inline-block;min-width:1.9em;color:var(--accent-strong)}
+  .fx .cost{font-size:.78rem;color:var(--ink3)}
+  .note{margin:12px 0 0;color:var(--ink2);font-size:.88rem;max-width:96ch}
+  .note em{color:var(--ink);font-style:normal;font-weight:600}
+  .rec{display:inline-block;font-size:.72rem;font-weight:600;color:var(--accent-strong);background:var(--tint);padding:2px 8px;border-radius:999px;margin-left:6px;vertical-align:middle}
+
+  /* ---- dải + ô (ô đặc theo phương án A, để đánh giá riêng phần nền) ---- */
+  .band{position:relative;isolation:isolate;overflow:hidden;background:var(--ink);color:var(--on-ink);padding:64px 40px;border-radius:16px}
+  .tools{position:relative;z-index:1;list-style:none;margin:0 auto;padding:0;max-width:1100px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}
+  .tool{position:relative;display:flex;flex-direction:column;gap:16px;padding:24px;border-radius:22px;background:var(--solid);border:1px solid var(--line);transition:background .3s var(--ease),transform .3s var(--ease),border-color .3s var(--ease)}
+  .tool:hover{transform:translateY(-3px);background:#202823;border-color:rgba(255,255,255,.14)}
+  .mark{display:inline-flex;align-items:center;justify-content:center;width:64px;height:64px;border-radius:14px;background:var(--surf2);color:var(--on-ink);transition:color .3s var(--ease),transform .45s var(--ease-page)}
+  .tool:hover .mark{color:var(--brand);transform:translateY(-4px)}
+  .tool h3{font-family:var(--display);font-weight:400;font-size:1.2rem;margin:0 0 4px;color:var(--on-ink)}
+  .tool p{margin:0;font-size:.9rem;color:var(--on-ink2)}
+  .mark svg{width:32px;height:32px;fill:currentColor}
+  .mark .b,.mark .ps-bg,.mark .ps-fg{transition:fill .3s var(--ease)}
+  .tool:hover [data-icon=figma] .b1{fill:#f24e1e}.tool:hover [data-icon=figma] .b2{fill:#ff7262}.tool:hover [data-icon=figma] .b3{fill:#a259ff}.tool:hover [data-icon=figma] .b4{fill:#1abcfe}.tool:hover [data-icon=figma] .b5{fill:#0acf83}
+  .tool:hover [data-icon=photoshop] .ps-bg{fill:#31a8ff}.tool:hover [data-icon=photoshop] .ps-fg{fill:#001e36}
+  @media (max-width:900px){.tools{grid-template-columns:repeat(2,1fr)}}
+  @media (max-width:460px){.tools{grid-template-columns:1fr}}
+  .bg{position:absolute;inset:0;z-index:0;pointer-events:none;opacity:var(--pk)}
+  svg.bg{width:100%;height:100%}
+
+  /* ---- T1: canvas thiết kế — khung artboard, một khung đang được chọn ---- */
+  .t1 .frame{position:absolute;border:1px solid rgba(255,255,255,.09);border-radius:6px}
+  .t1 .frame::before{content:attr(data-name);position:absolute;left:0;top:-18px;font-size:10px;letter-spacing:.04em;color:rgba(255,255,255,.35);font-family:var(--sans)}
+  .t1 .frame.sel{border-color:rgba(11,122,91,.9)}
+  .t1 .frame.sel::before{color:#5fc2a2}
+  .t1 .frame.sel i{position:absolute;width:7px;height:7px;background:#fff;border:1.5px solid var(--accent);border-radius:1px}
+  .t1 .frame.sel i:nth-child(1){left:-4px;top:-4px}.t1 .frame.sel i:nth-child(2){right:-4px;top:-4px}.t1 .frame.sel i:nth-child(3){left:-4px;bottom:-4px}.t1 .frame.sel i:nth-child(4){right:-4px;bottom:-4px}
+  .t1 .frame.sel::after{content:"1160 × 320";position:absolute;left:50%;bottom:-22px;transform:translateX(-50%);font-size:10px;color:#fff;background:var(--accent);padding:2px 6px;border-radius:3px;font-family:var(--sans)}
+  .t1 .cursor{position:absolute;width:14px;height:20px;background:#fff;clip-path:polygon(0 0,100% 62%,58% 66%,78% 100%,64% 100%,45% 72%,0 90%);filter:drop-shadow(0 1px 2px rgba(0,0,0,.6))}
+
+  /* ---- T2: bên trong khối lập phương của logo (hai vách + sàn isometric) ---- */
+  .t2 svg polygon{stroke:rgba(255,255,255,.12);stroke-width:.25;vector-effect:non-scaling-stroke}
+  .t2 .wl{fill:rgba(255,255,255,.035)}
+  .t2 .wr{fill:rgba(11,122,91,.13)}
+  .t2 .fl{fill:rgba(255,255,255,.018)}
+  .t2 .edge{stroke:rgba(11,122,91,.7)!important;stroke-width:1.2!important}
+
+  /* ---- T3: đường đồng mức (contour) ---- */
+  .t3 svg ellipse{fill:none;stroke:rgba(11,122,91,.22);stroke-width:1;vector-effect:non-scaling-stroke}
+  .t3 svg ellipse:nth-child(odd){stroke:rgba(255,255,255,.07)}
+
+  /* ---- T5: vệt sáng chéo + hạt phim ---- */
+  .t5 .sweep{position:absolute;inset:-20%;background:linear-gradient(112deg,transparent 34%,rgba(255,255,255,.06) 50%,transparent 66%);animation:sweep 16s ease-in-out infinite alternate}
+  @keyframes sweep{to{transform:translateX(12%)}}
+  .grain{position:absolute;inset:0;opacity:.13;mix-blend-mode:overlay;pointer-events:none;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .6 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
+
+  /* ---- T6: dấu spec — thước tick hai mép, crosshair góc ô, đường gióng ---- */
+  .t6 .ticks{position:absolute;left:0;right:0;height:10px;background:repeating-linear-gradient(90deg,rgba(255,255,255,.22) 0 1px,transparent 1px 20px);-webkit-mask-image:linear-gradient(90deg,transparent,#000 15%,#000 85%,transparent);mask-image:linear-gradient(90deg,transparent,#000 15%,#000 85%,transparent)}
+  .t6 .ticks.top{top:18px}.t6 .ticks.bot{bottom:18px;transform:scaleY(-1)}
+  .t6 .ticks::after{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:rgba(255,255,255,.14)}
+  .t6 .guide{position:absolute;top:0;bottom:0;width:0;border-left:1px dashed rgba(11,122,91,.45)}
+  .t6 .tool::before,.t6 .tool::after{content:"+";position:absolute;font-family:var(--sans);font-size:14px;line-height:1;color:rgba(11,122,91,.9);font-weight:300}
+  .t6 .tool::before{left:-9px;top:-9px}.t6 .tool::after{right:-9px;bottom:-9px}
+  .t6 .dim{position:absolute;left:50%;transform:translateX(-50%);top:36px;font-size:10px;letter-spacing:.06em;color:rgba(255,255,255,.45);font-family:var(--sans)}
+
+  /* ---- T7: trường màu (color field) — xanh sâu tan vào ink, không pattern ---- */
+  .t7{background:radial-gradient(60% 80% at 12% 0%,#163127 0,transparent 60%),radial-gradient(50% 70% at 92% 100%,#0f2b22 0,transparent 60%),radial-gradient(40% 40% at 60% 50%,#151d19 0,transparent 70%),var(--ink)}
+
+  /* ---- T8: kính chạm — chỉ đường viền sáng của cube logo, cỡ lớn, edge-lit ---- */
+  .t8 .wm{position:absolute;right:-4%;top:50%;height:170%;transform:translateY(-50%);width:auto;fill:none;stroke:url(#edge);stroke-width:1.6;opacity:.9}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="mark" viewBox="0 0 377 434">
+      <path d="M74 283.97C73.84 283.88 73.75 283.71 73.75 283.53V154.9L0 112.32V326.41L185.41 433.45V348.29L74.01 283.97H74Z"/>
+      <path d="M376.9 112.32L303.15 154.9V283.54C303.15 283.72 303.05 283.89 302.9 283.98L191.5 348.3V433.46L376.91 326.41V112.32H376.9Z"/>
+      <path d="M185.41 299.22L157.9 283.34V235.36C157.9 235.29 157.86 235.23 157.81 235.2L116.26 211.21V179.45L185.41 219.38V299.23V299.22Z"/>
+      <path d="M191.5 299.22L219.01 283.34V235.36C219.01 235.29 219.05 235.23 219.1 235.2L260.65 211.21V179.45L191.5 219.38V299.23V299.22Z"/>
+      <path d="M257.58 174.12L230.06 158.25L188.52 182.26C188.46 182.29 188.39 182.29 188.33 182.26L146.76 158.29L119.26 174.19L188.44 214.07L257.57 174.1L257.58 174.12Z"/>
+      <path d="M3.04004 107.05L76.8 149.63L114.6 127.8L40.85 85.22L3.04004 107.05Z"/>
+      <path d="M188.45 0L114.6 42.64L188.43 85.27H188.47V85.31C188.55 85.31 188.63 85.27 188.7 85.31L300.1 149.63L373.85 107.05L188.45 0Z"/>
+    </symbol>
+    <linearGradient id="edge" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="rgba(255,255,255,.02)"/><stop offset=".45" stop-color="rgba(255,255,255,.35)"/><stop offset=".55" stop-color="#5fc2a2"/><stop offset="1" stop-color="rgba(255,255,255,.02)"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<div class="wrap">
+  <div class="top">
+    <div>
+      <h1>Nền dải công cụ — bản 2</h1>
+      <p>Bỏ hẳn họ chấm/lục giác. Bảy hướng khác nhau về <em>ý tưởng</em>, không phải biến thể của nhau. Ô công cụ để đặc (phương án A) ở mọi dải để chỉ so phần nền. Rê chuột thử hover.</p>
+    </div>
+    <button id="k">Xem ở độ mờ dùng thật</button>
+  </div>
+
+  <div class="grid">
+
+    <section class="fx">
+      <header><h2><b>T1</b>Canvas thiết kế — khung artboard, một khung đang được chọn <span class="rec">đúng nghề nhất</span></h2><span class="cost">CSS thuần, tĩnh</span></header>
+      <div class="band t1">
+        <div class="bg">
+          <span class="frame" data-name="Dashboard / Desktop" style="left:-6%;top:-10%;width:34%;height:70%"></span>
+          <span class="frame" data-name="Mobile / Home" style="left:31%;top:62%;width:9%;height:60%"></span>
+          <span class="frame sel" data-name="Tools / Section" style="left:calc(50% - 552px);top:44px;width:1104px;height:calc(100% - 88px)"><i></i><i></i><i></i><i></i></span>
+          <span class="frame" data-name="Components" style="right:-8%;top:-18%;width:30%;height:52%"></span>
+          <span class="frame" data-name="Tokens" style="right:-4%;bottom:-24%;width:22%;height:56%"></span>
+          <span class="cursor" style="right:14%;top:22%"></span>
+        </div>
+        <ul class="tools"></ul>
+      </div>
+      <p class="note"><em>Nền chính là canvas nơi các công cụ được dùng.</em> Bốn ô nằm trong một frame đang được chọn (viền accent, 4 tay nắm, nhãn kích thước), xung quanh là các artboard khác mờ hơn. Cùng ngôn ngữ với hero mockup (inspect cursor). Không lặp, không rối chữ vì frame chỉ là viền.</p>
+    </section>
+
+    <section class="fx">
+      <header><h2><b>T2</b>Bên trong khối lập phương của logo — hai vách + sàn isometric</h2><span class="cost">1 SVG, tĩnh</span></header>
+      <div class="band t2">
+        <svg class="bg" viewBox="0 0 100 40" preserveAspectRatio="none">
+          <polygon class="wl" points="0,0 50,7 50,30 0,37"/>
+          <polygon class="wr" points="50,7 100,0 100,37 50,30"/>
+          <polygon class="fl" points="0,37 50,30 100,37 50,44"/>
+          <line class="edge" x1="50" y1="7" x2="50" y2="30" stroke="rgba(11,122,91,.7)" vector-effect="non-scaling-stroke"/>
+        </svg>
+        <ul class="tools"></ul>
+      </div>
+      <p class="note"><em>Người xem đứng trong cube DT.</em> Vách trái sáng nhẹ, vách phải nhuốm accent, cạnh chung là một đường accent dọc giữa dải — nhận diện bằng cấu trúc, không cần vẽ logo. Ô công cụ như đồ vật đặt trong không gian đó.</p>
+    </section>
+
+    <section class="fx">
+      <header><h2><b>T3</b>Đường đồng mức (contour) accent</h2><span class="cost">1 SVG, tĩnh</span></header>
+      <div class="band t3">
+        <svg class="bg" viewBox="0 0 100 40" preserveAspectRatio="none">
+          <g transform="translate(78 26) rotate(-8)">
+            <ellipse rx="10" ry="4"/><ellipse rx="18" ry="7.5" cx="1"/><ellipse rx="26" ry="11" cx="2" cy="1"/><ellipse rx="34" ry="14.5" cx="3" cy="1"/><ellipse rx="42" ry="18" cx="4" cy="2"/><ellipse rx="50" ry="21.5" cx="5" cy="2"/><ellipse rx="58" ry="25" cx="6" cy="3"/><ellipse rx="66" ry="28.5" cx="7" cy="3"/>
+          </g>
+        </svg>
+        <ul class="tools"></ul>
+      </div>
+      <p class="note"><em>Bản đồ địa hình.</em> Có chất kỹ thuật (đo lường, đường mức) nhưng mềm, hữu cơ — khác hẳn lưới. Tâm đặt lệch phải-dưới để đường thưa dần về phía ô đầu.</p>
+    </section>
+
+    <section class="fx">
+      <header><h2><b>T5</b>Vệt sáng chéo trôi chậm + hạt phim</h2><span class="cost">rẻ, 1 animation transform</span></header>
+      <div class="band t5">
+        <div class="bg"><span class="sweep"></span></div>
+        <span class="grain"></span>
+        <ul class="tools"></ul>
+      </div>
+      <p class="note"><em>Điện ảnh, yên.</em> Không có hình nào, chỉ ánh sáng đi qua mặt tối có vân. Hoàn toàn không cạnh tranh với chữ; đổi lại ít "nhận diện" — dựa vào ô và mark để nói.</p>
+    </section>
+
+    <section class="fx">
+      <header><h2><b>T6</b>Dấu spec — thước tick, crosshair góc ô, đường gióng</h2><span class="cost">CSS thuần, tĩnh</span></header>
+      <div class="band t6">
+        <div class="bg">
+          <span class="ticks top"></span><span class="ticks bot"></span>
+          <span class="guide" style="left:calc(50% - 552px)"></span><span class="guide" style="left:calc(50% + 552px)"></span>
+          <span class="dim">1160 · 4 × 261 · gap 20</span>
+        </div>
+        <ul class="tools"></ul>
+      </div>
+      <p class="note"><em>Bản spec của chính dải này.</em> Thước tick hai mép, hai đường gióng nét đứt ở biên cột 1160, dấu + ở góc ô như đang đo layout. Rất "design system", rất tiết chế — pattern nằm ở mép, giữa trơn.</p>
+    </section>
+
+    <section class="fx">
+      <header><h2><b>T7</b>Trường màu — xanh sâu tan vào ink, không pattern</h2><span class="cost">rẻ nhất</span></header>
+      <div class="band t7">
+        <span class="grain"></span>
+        <ul class="tools"></ul>
+      </div>
+      <p class="note"><em>Nền có màu, không có hình.</em> Hai vùng xanh sâu ở hai góc đối nhau cho dải chiều sâu và mang màu thương hiệu mà không cần pattern. Hợp nếu bạn thấy mọi pattern đều "thừa".</p>
+    </section>
+
+    <section class="fx">
+      <header><h2><b>T8</b>Logo cỡ lớn chỉ có cạnh sáng (edge-lit)</h2><span class="cost">1 SVG</span></header>
+      <div class="band t8">
+        <svg class="wm" viewBox="0 0 377 434"><use href="#mark"/></svg>
+        <ul class="tools"></ul>
+      </div>
+      <p class="note"><em>P4b nhưng cho nền tối:</em> nét logo không đều màu — tối ở góc, sáng dần rồi lóe accent ở giữa như cạnh kính bắt sáng. Một hình, sang, đọc ngay là DT; đặt lệch phải nên ô 1–2 nằm trên nền trơn.</p>
+    </section>
+
+  </div>
+</div>
+
+<script>
+  const marks = {
+    figma: `<svg viewBox="0 0 24 24" data-icon="figma" aria-hidden="true"><path class="b b1" d="M12 0H8a4 4 0 0 0 0 8h4V0z"/><path class="b b2" d="M12 0h4a4 4 0 0 1 0 8h-4V0z"/><path class="b b3" d="M12 8H8a4 4 0 0 0 0 8h4V8z"/><circle class="b b4" cx="16" cy="12" r="4"/><path class="b b5" d="M12 16H8a4 4 0 1 0 4 4v-4z"/></svg>`,
+    photoshop: `<svg viewBox="0 0 24 24" data-icon="photoshop" aria-hidden="true"><rect class="ps-bg" x="1.6" y="1.9" width="20.8" height="20.2" rx="3.6" fill="none"/><path class="ps-fg" d="M9.85 8.42c-.37-.15-.77-.21-1.18-.2-.26 0-.49 0-.68.01-.2-.01-.34 0-.41.01v3.36c.14.01.27.02.39.02h.53c.39 0 .78-.06 1.15-.18.32-.09.6-.28.82-.53.21-.25.31-.59.31-1.03.01-.31-.07-.62-.23-.89-.17-.26-.41-.46-.7-.57zM19.75.3H4.25C1.9.3 0 2.2 0 4.55v14.899c0 2.35 1.9 4.25 4.25 4.25h15.5c2.35 0 4.25-1.9 4.25-4.25V4.55C24 2.2 22.1.3 19.75.3zm-7.391 11.65c-.399.56-.959.98-1.609 1.22-.68.25-1.43.34-2.25.34-.24 0-.4 0-.5-.01s-.24-.01-.43-.01v3.209c.01.07-.04.131-.11.141H5.52c-.08 0-.12-.041-.12-.131V6.42c0-.07.03-.11.1-.11.17 0 .33 0 .56-.01.24-.01.49-.01.76-.02s.56-.01.87-.02c.31-.01.61-.01.91-.01.82 0 1.5.1 2.06.31.5.17.96.45 1.34.82.32.32.57.71.73 1.14.149.42.229.85.229 1.3.001.86-.199 1.57-.6 2.13zm7.091 3.89c-.28.4-.671.709-1.12.891-.49.209-1.09.318-1.811.318-.459 0-.91-.039-1.359-.129-.35-.061-.7-.17-1.02-.32-.07-.039-.121-.109-.111-.189v-1.74c0-.029.011-.07.041-.09.029-.02.06-.01.09.01.39.23.8.391 1.24.49.379.1.779.15 1.18.15.38 0 .65-.051.83-.141.16-.07.27-.24.27-.42 0-.141-.08-.27-.24-.4-.16-.129-.489-.279-.979-.471-.51-.18-.979-.42-1.42-.719-.31-.221-.569-.51-.761-.85-.159-.32-.239-.67-.229-1.021 0-.43.12-.84.341-1.21.25-.4.619-.72 1.049-.92.469-.239 1.059-.349 1.769-.349.41 0 .83.03 1.24.09.3.04.59.12.86.23.039.01.08.05.1.09.01.04.02.08.02.12v1.63c0 .04-.02.08-.05.1-.09.02-.14.02-.18 0-.3-.16-.62-.27-.96-.34-.37-.08-.74-.13-1.12-.13-.2-.01-.41.02-.601.07-.129.03-.24.1-.31.2-.05.08-.08.18-.08.27s.04.18.101.26c.09.11.209.2.34.27.229.12.47.23.709.33.541.18 1.061.43 1.541.73.33.209.6.49.789.83.16.318.24.67.23 1.029.011.471-.129.94-.389 1.331z"/></svg>`,
+    chatgpt: `<svg viewBox="0 0 24 24" data-icon="chatgpt" aria-hidden="true"><path d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729zm-9.022 12.6081a4.4755 4.4755 0 0 1-2.8764-1.0408l.1419-.0804 4.7783-2.7582a.7948.7948 0 0 0 .3927-.6813v-6.7369l2.02 1.1686a.071.071 0 0 1 .038.052v5.5826a4.504 4.504 0 0 1-4.4945 4.4944zm-9.6607-4.1254a4.4708 4.4708 0 0 1-.5346-3.0137l.142.0852 4.783 2.7582a.7712.7712 0 0 0 .7806 0l5.8428-3.3685v2.3324a.0804.0804 0 0 1-.0332.0615L9.74 19.9502a4.4992 4.4992 0 0 1-6.1408-1.6464zM2.3408 7.8956a4.485 4.485 0 0 1 2.3655-1.9728V11.6a.7664.7664 0 0 0 .3879.6765l5.8144 3.3543-2.0201 1.1685a.0757.0757 0 0 1-.071 0l-4.8303-2.7865A4.504 4.504 0 0 1 2.3408 7.872zm16.5963 3.8558L13.1038 8.364 15.1192 7.2a.0757.0757 0 0 1 .071 0l4.8303 2.7913a4.4944 4.4944 0 0 1-.6765 8.1042v-5.6772a.79.79 0 0 0-.407-.667zm2.0107-3.0231l-.142-.0852-4.7735-2.7818a.7759.7759 0 0 0-.7854 0L9.409 9.2297V6.8974a.0662.0662 0 0 1 .0284-.0615l4.8303-2.7866a4.4992 4.4992 0 0 1 6.6802 4.66zM8.3065 12.863l-2.02-1.1638a.0804.0804 0 0 1-.038-.0567V6.0742a4.4992 4.4992 0 0 1 7.3757-3.4537l-.142.0805L8.704 5.459a.7948.7948 0 0 0-.3927.6813zm1.0976-2.3654l2.602-1.4998 2.6069 1.4998v2.9994l-2.5974 1.4997-2.6067-1.4997Z"/></svg>`,
+    claude: `<svg viewBox="0 0 24 24" data-icon="claude" aria-hidden="true"><path d="m4.7144 15.9555 4.7174-2.6471.079-.2307-.079-.1275h-.2307l-.7893-.0486-2.6956-.0729-2.3375-.0971-2.2646-.1214-.5707-.1215-.5343-.7042.0546-.3522.4797-.3218.686.0608 1.5179.1032 2.2767.1578 1.6514.0972 2.4468.255h.3886l.0546-.1579-.1336-.0971-.1032-.0972L6.973 9.8356l-2.55-1.6879-1.3356-.9714-.7225-.4918-.3643-.4614-.1578-1.0078.6557-.7225.8803.0607.2246.0607.8925.686 1.9064 1.4754 2.4893 1.8336.3643.3035.1457-.1032.0182-.0728-.164-.2733-1.3539-2.4467-1.445-2.4893-.6435-1.032-.17-.6194c-.0607-.255-.1032-.4674-.1032-.7285L6.287.1335 6.6997 0l.9957.1336.419.3642.6192 1.4147 1.0018 2.2282 1.5543 3.0296.4553.8985.2429.8318.091.255h.1579v-.1457l.1275-1.706.2368-2.0947.2307-2.6957.0789-.7589.3764-.9107.7468-.4918.5828.2793.4797.686-.0668.4433-.2853 1.8517-.5586 2.9021-.3643 1.9429h.2125l.2429-.2429.9835-1.3053 1.6514-2.0643.7286-.8196.85-.9046.5464-.4311h1.0321l.759 1.1293-.34 1.1657-1.0625 1.3478-.8804 1.1414-1.2628 1.7-.7893 1.36.0729.1093.1882-.0183 2.8535-.607 1.5421-.2794 1.8396-.3157.8318.3886.091.3946-.3278.8075-1.967.4857-2.3072.4614-3.4364.8136-.0425.0304.0486.0607 1.5482.1457.6618.0364h1.621l3.0175.2247.7892.522.4736.6376-.079.4857-1.2142.6193-1.6393-.3886-3.825-.9107-1.3113-.3279h-.1822v.1093l1.0929 1.0686 2.0035 1.8092 2.5075 2.3314.1275.5768-.3218.4554-.34-.0486-2.2039-1.6575-.85-.7468-1.9246-1.621h-.1275v.17l.4432.6496 2.3436 3.5214.1214 1.0807-.17.3521-.6071.2125-.6679-.1214-1.3721-1.9246L14.38 17.959l-1.1414-1.9428-.1397.079-.674 7.2552-.3156.3703-.7286.2793-.6071-.4614-.3218-.7468.3218-1.4753.3886-1.9246.3157-1.53.2853-1.9004.17-.6314-.0121-.0425-.1397.0182-1.4328 1.9672-2.1796 2.9446-1.7243 1.8456-.4128.164-.7164-.3704.0667-.6618.4008-.5889 2.386-3.0357 1.4389-1.882.929-1.0868-.0062-.1579h-.0546l-6.3385 4.1164-1.1293.1457-.4857-.4554.0608-.7467.2307-.2429 1.9064-1.3114Z"/></svg>`,
+  };
+  const tools = [
+    ["figma", "Figma", "#F24E1E", "Thiết kế UI, component và prototype"],
+    ["photoshop", "Photoshop", "#31A8FF", "Xử lý hình ảnh, banner marketing"],
+    ["chatgpt", "ChatGPT", "#10A37F", "Phân tích nghiệp vụ, khám phá phương án"],
+    ["claude", "Claude", "#D97757", "Kiểm tra luồng tương tác, prototype HTML/CSS"],
+  ];
+  document.querySelectorAll(".tools").forEach(ul => {
+    ul.innerHTML = tools.map(([k, name, brand, note]) =>
+      `<li class="tool" style="--brand:${brand}"><span class="mark">${marks[k]}</span><div><h3>${name}</h3><p>${note}</p></div></li>`).join("");
+  });
+  const b = document.getElementById("k"); let real = false;
+  b.addEventListener("click", () => {
+    real = !real;
+    document.documentElement.style.setProperty("--pk", real ? ".6" : "1");
+    b.textContent = real ? "Xem rõ (bản demo)" : "Xem ở độ mờ dùng thật";
+    b.classList.toggle("on", real);
+  });
+</script>
+</body>
+</html>

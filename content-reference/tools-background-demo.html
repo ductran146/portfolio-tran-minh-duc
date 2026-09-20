@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Thử nền dải công cụ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cal+Sans&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#121815; --ink2:#4b544e; --ink3:#838d86; --border:#e6e9e6; --soft:#f6f7f6;
+    --accent:#0b7a5b; --accent-strong:#075f46; --tint:#e6f3ee;
+    --on-ink:#fff; --on-ink2:rgba(255,255,255,.68);
+    --surf:rgba(255,255,255,.06); --surf2:rgba(255,255,255,.1);
+    --solid:#1b221e;                    /* ô đặc: ink sáng hơn ~5% */
+    --line:rgba(255,255,255,.08);
+    --display:"Cal Sans",ui-sans-serif,system-ui,sans-serif;
+    --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --ease:cubic-bezier(.16,1,.3,1); --ease-page:cubic-bezier(.4,0,.2,1);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:#fff;color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.55}
+  .wrap{max-width:1240px;margin:0 auto;padding:32px 28px 72px}
+  .top h1{font-family:var(--display);font-weight:400;font-size:1.5rem;margin:0}
+  .top p{margin:6px 0 0;color:var(--ink3);font-size:.9rem;max-width:70ch}
+  .grid{display:grid;gap:36px;margin-top:28px}
+  .fx header{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:12px}
+  .fx h2{margin:0;font-size:.95rem;font-weight:600}
+  .fx h2 b{display:inline-block;min-width:1.7em;color:var(--accent-strong)}
+  .fx .cost{font-size:.78rem;color:var(--ink3)}
+  .note{margin:12px 0 0;color:var(--ink2);font-size:.88rem;max-width:90ch}
+  .note em{color:var(--ink);font-style:normal;font-weight:600}
+  .rec{display:inline-block;font-size:.72rem;font-weight:600;color:var(--accent-strong);background:var(--tint);padding:2px 8px;border-radius:999px;margin-left:6px;vertical-align:middle}
+
+  /* ---- dải tối dùng chung ---- */
+  .band{position:relative;isolation:isolate;overflow:hidden;background:var(--ink);color:var(--on-ink);padding:56px 40px;border-radius:16px}
+  .tools{list-style:none;margin:0 auto;padding:0;max-width:1100px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}
+  .tool{position:relative;display:flex;flex-direction:column;gap:16px;padding:24px;border-radius:22px;background:var(--surf);transition:background .3s var(--ease),transform .3s var(--ease),border-color .3s var(--ease)}
+  .tool:hover{transform:translateY(-3px)}
+  .mark{display:inline-flex;align-items:center;justify-content:center;width:64px;height:64px;border-radius:14px;background:var(--surf2);color:var(--on-ink);transition:color .3s var(--ease),transform .45s var(--ease-page)}
+  .tool:hover .mark{color:var(--brand);transform:translateY(-4px)}
+  .tool h3{font-family:var(--display);font-weight:400;font-size:1.2rem;margin:0 0 4px;color:var(--on-ink)}
+  .tool p{margin:0;font-size:.9rem;color:var(--on-ink2)}
+  .mark svg{width:32px;height:32px;fill:currentColor}
+  .mark .b,.mark .ps-bg,.mark .ps-fg{transition:fill .3s var(--ease)}
+  .tool:hover [data-icon=figma] .b1{fill:#f24e1e}.tool:hover [data-icon=figma] .b2{fill:#ff7262}.tool:hover [data-icon=figma] .b3{fill:#a259ff}.tool:hover [data-icon=figma] .b4{fill:#1abcfe}.tool:hover [data-icon=figma] .b5{fill:#0acf83}
+  .tool:hover [data-icon=photoshop] .ps-bg{fill:#31a8ff}.tool:hover [data-icon=photoshop] .ps-fg{fill:#001e36}
+  @media (max-width:900px){.tools{grid-template-columns:repeat(2,1fr)}}
+  @media (max-width:460px){.tools{grid-template-columns:1fr}}
+
+  /* lớp nền tái dùng */
+  .dots::before{content:"";position:absolute;inset:0;z-index:-1;background-image:radial-gradient(var(--surf2) 1px,transparent 1.3px);background-size:22px 22px;-webkit-mask-image:radial-gradient(75% 95% at 50% 50%,#000 35%,transparent 100%);mask-image:radial-gradient(75% 95% at 50% 50%,#000 35%,transparent 100%)}
+  .glow::after,.glow .g2{content:"";position:absolute;z-index:-1;width:clamp(360px,46vw,720px);aspect-ratio:1;border-radius:50%;background:radial-gradient(closest-side,var(--accent) 0%,transparent 72%);opacity:.32;filter:blur(48px);pointer-events:none}
+  .glow::after{left:-12%;top:-70%;animation:drift 18s ease-in-out infinite alternate}
+  .glow .g2{right:-14%;bottom:-80%;opacity:.22;animation:drift 24s ease-in-out infinite alternate-reverse}
+  @keyframes drift{to{transform:translate3d(6%,10%,0)}}
+
+  /* ---- hiện trạng (để đối chiếu) ---- */
+  .v-now .tool{background:var(--surf)}
+
+  /* ---- A: ô đặc + viền ---- */
+  .v-a .tool{background:var(--solid);border:1px solid var(--line)}
+  .v-a .tool:hover{background:#202823;border-color:rgba(255,255,255,.14)}
+
+  /* ---- C: glass blur ---- */
+  .v-c .tool{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);-webkit-backdrop-filter:blur(14px) saturate(1.2);backdrop-filter:blur(14px) saturate(1.2)}
+  .v-c .tool:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.2)}
+  /* chấm đậm hơn một chút để thấy blur đang làm việc */
+  .v-c.dots::before{background-image:radial-gradient(rgba(255,255,255,.16) 1px,transparent 1.3px)}
+
+  /* ---- D: bỏ chấm, chỉ quầng sáng ---- */
+  .v-d .tool{background:var(--surf)}
+  .v-d .tool:hover{background:var(--surf2)}
+
+  /* ---- H: gạch chéo thay chấm + ô đặc ---- */
+  .v-h::before{content:"";position:absolute;inset:0;z-index:-1;background-image:repeating-linear-gradient(135deg,rgba(255,255,255,.07) 0 1px,transparent 1px 16px);-webkit-mask-image:radial-gradient(80% 100% at 50% 50%,#000 30%,transparent 100%);mask-image:radial-gradient(80% 100% at 50% 50%,#000 30%,transparent 100%)}
+  .v-h .tool{background:var(--solid);border:1px solid var(--line)}
+
+  /* ---- I: spotlight theo chuột + viền sáng lên gần chuột ---- */
+  .v-i .tool{background:var(--solid);border:1px solid var(--line);overflow:hidden}
+  .v-i .tool::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;opacity:0;transition:opacity .35s var(--ease);
+    background:radial-gradient(260px circle at var(--tx,50%) var(--ty,50%),rgba(11,122,91,.35),transparent 70%)}
+  .v-i:hover .tool::before{opacity:1}
+  .v-i .tool>*{position:relative;z-index:1}
+  .v-i .spot{position:absolute;z-index:-1;inset:0;pointer-events:none;background:radial-gradient(520px circle at var(--mx,50%) var(--my,50%),rgba(11,122,91,.22),transparent 70%);opacity:0;transition:opacity .35s var(--ease)}
+  .v-i:hover .spot{opacity:1}
+
+  /* ---- J: hạt phim (grain) + ô đặc ---- */
+  .v-j::before{content:"";position:absolute;inset:0;z-index:-1;opacity:.14;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .6 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
+  .v-j .tool{background:var(--solid);border:1px solid var(--line)}
+
+  /* ---- K: vòng cung hình học lớn + ô đặc ---- */
+  .v-k .ring{position:absolute;z-index:-1;border-radius:50%;border:1px solid rgba(255,255,255,.07);pointer-events:none}
+  .v-k .ring.r1{width:820px;height:820px;left:-260px;top:-420px}
+  .v-k .ring.r2{width:1180px;height:1180px;left:-440px;top:-600px;border-color:rgba(255,255,255,.045)}
+  .v-k .ring.r3{width:620px;height:620px;right:-220px;bottom:-380px;border-color:rgba(11,122,91,.35)}
+  .v-k .tool{background:var(--solid);border:1px solid var(--line)}
+
+  /* ---- L: ô đặc + chấm bị đục dưới vùng ô (mask theo khối) ---- */
+  .v-l::before{content:"";position:absolute;inset:0;z-index:-1;background-image:radial-gradient(var(--surf2) 1px,transparent 1.3px);background-size:22px 22px;
+    -webkit-mask:linear-gradient(#000,#000) content-box exclude,linear-gradient(#000,#000);mask:linear-gradient(#000,#000) content-box exclude,linear-gradient(#000,#000);
+    padding:40px max(40px,calc((100% - 1100px)/2))}
+  .v-l .tool{background:var(--solid);border:1px solid var(--line)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <h1>Thử nền dải công cụ</h1>
+    <p>Cùng 4 ô, cùng mark và hover màu hãng. Khác nhau ở <em>nền dải</em> và <em>bề mặt ô</em>. Rê chuột vào ô (và vào cả dải ở phương án I). Chọn mã rồi báo tôi.</p>
+  </div>
+
+  <div class="grid">
+    <section class="fx">
+      <header><h2><b>00</b>Hiện trạng (để đối chiếu)</h2><span class="cost">chấm xuyên qua ô</span></header>
+      <div class="band v-now dots glow"><span class="g2"></span><ul class="tools"></ul></div>
+      <p class="note"><em>Vấn đề:</em> ô trắng 6% trong suốt nên chấm nằm luôn trong ô, mép ô mờ, chữ phụ 68% phải cạnh tranh với chấm.</p>
+    </section>
+
+    <section class="fx">
+      <header><h2><b>A</b>Ô đặc + viền mảnh, chấm chỉ ở nền <span class="rec">khuyên dùng</span></h2><span class="cost">rẻ nhất</span></header>
+      <div class="band v-a dots glow"><span class="g2"></span><ul class="tools"></ul></div>
+      <p class="note"><em>Ô thành khối rõ.</em> Chấm không xuyên qua, viền 8% cho mép sắc. Giữ nguyên pattern và quầng sáng đã làm. Đổi 3 dòng CSS.</p>
+    </section>
+
+    <section class="fx">
+      <header><h2><b>C</b>Glass blur</h2><span class="cost">tốn GPU: 4 lớp blur</span></header>
+      <div class="band v-c dots glow"><span class="g2"></span><ul class="tools"></ul></div>
+      <p class="note"><em>Chấm nhoè thành mặt mờ sau ô.</em> Vẫn "thấy" nền, ô đọc được. Rủi ro: blur chồng lên quầng sáng đã blur → nặng trên máy yếu; Safari đôi khi lệch màu viền. Chấm ở bản này đậm hơn 6% để thấy blur đang làm việc.</p>
+    </section>
+
+    <section class="fx">
+      <header><h2><b>D</b>Bỏ chấm, chỉ quầng sáng</h2><span class="cost">rẻ</span></header>
+      <div class="band v-d glow"><span class="g2"></span><ul class="tools"></ul></div>
+      <p class="note"><em>Sạch, tối giản.</em> Ô 6% đủ rõ vì không còn gì cạnh tranh. Đổi lại là mất pattern — dải chỉ còn "tối + hai quầng sáng trôi".</p>
+    </section>
+
+    <section class="fx">
+      <header><h2><b>H</b>Gạch chéo thay chấm + ô đặc</h2><span class="cost">rẻ</span></header>
+      <div class="band v-h glow"><span class="g2"></span><ul class="tools"></ul></div>
+      <p class="note"><em>Chất "bản vẽ kỹ thuật".</em> Đường chéo 1px cách 16px ít rối mắt hơn chấm khi nằm gần chữ, hợp với hình học của logo Figma/DT. Ô đặc như A.</p>
+    </section>
+
+    <section class="fx">
+      <header><h2><b>I</b>Spotlight theo chuột + ô đặc</h2><span class="cost">cần ~15 dòng JS</span></header>
+      <div class="band v-i dots glow"><span class="spot"></span><span class="g2"></span><ul class="tools"></ul></div>
+      <p class="note"><em>Tương tác.</em> Rê chuột: một quầng accent đi theo trên nền, và trong từng ô một vệt sáng nhỏ bám theo con trỏ. Nền tĩnh khi không hover → không kéo mắt lúc đọc. Trên cảm ứng không có gì xảy ra (đúng ý: chỉ là thưởng thêm).</p>
+    </section>
+
+    <section class="fx">
+      <header><h2><b>J</b>Hạt phim (grain) + ô đặc</h2><span class="cost">rẻ, SVG inline</span></header>
+      <div class="band v-j glow"><span class="g2"></span><ul class="tools"></ul></div>
+      <p class="note"><em>Ấm, có vật chất.</em> Grain 14% blend overlay làm nền tối bớt "số hoá", quầng sáng có vân. Không có pattern hình học nên không bao giờ rối với chữ; đổi lại kém "tech" hơn chấm/gạch.</p>
+    </section>
+
+    <section class="fx">
+      <header><h2><b>K</b>Vòng cung hình học lớn + ô đặc</h2><span class="cost">rẻ</span></header>
+      <div class="band v-k glow"><span class="ring r1"></span><span class="ring r2"></span><span class="ring r3"></span><span class="g2"></span><ul class="tools"></ul></div>
+      <p class="note"><em>Biên tập, có bố cục.</em> Ba vòng tròn mảnh cắt qua dải tạo nhịp lớn thay pattern lặp; vòng thứ ba viền accent nhạt. Nền có "hình" mà không có "hạt" quanh chữ.</p>
+    </section>
+
+    <section class="fx">
+      <header><h2><b>L</b>Ô đặc, chấm bị đục dưới vùng ô</h2><span class="cost">rẻ, mask</span></header>
+      <div class="band v-l glow"><span class="g2"></span><ul class="tools"></ul></div>
+      <p class="note"><em>Chấm thành khung cho cả nhóm.</em> Vùng chứa 4 ô hoàn toàn trơn (mask đục theo khối), chấm chỉ còn ở lề. Là bản "B" tôi nói lần trước; sạch hơn A một bậc.</p>
+    </section>
+  </div>
+</div>
+
+<script>
+  const marks = {
+    figma: `<svg viewBox="0 0 24 24" data-icon="figma" aria-hidden="true"><path class="b b1" d="M12 0H8a4 4 0 0 0 0 8h4V0z"/><path class="b b2" d="M12 0h4a4 4 0 0 1 0 8h-4V0z"/><path class="b b3" d="M12 8H8a4 4 0 0 0 0 8h4V8z"/><circle class="b b4" cx="16" cy="12" r="4"/><path class="b b5" d="M12 16H8a4 4 0 1 0 4 4v-4z"/></svg>`,
+    photoshop: `<svg viewBox="0 0 24 24" data-icon="photoshop" aria-hidden="true"><rect class="ps-bg" x="1.6" y="1.9" width="20.8" height="20.2" rx="3.6" fill="none"/><path class="ps-fg" d="M9.85 8.42c-.37-.15-.77-.21-1.18-.2-.26 0-.49 0-.68.01-.2-.01-.34 0-.41.01v3.36c.14.01.27.02.39.02h.53c.39 0 .78-.06 1.15-.18.32-.09.6-.28.82-.53.21-.25.31-.59.31-1.03.01-.31-.07-.62-.23-.89-.17-.26-.41-.46-.7-.57zM19.75.3H4.25C1.9.3 0 2.2 0 4.55v14.899c0 2.35 1.9 4.25 4.25 4.25h15.5c2.35 0 4.25-1.9 4.25-4.25V4.55C24 2.2 22.1.3 19.75.3zm-7.391 11.65c-.399.56-.959.98-1.609 1.22-.68.25-1.43.34-2.25.34-.24 0-.4 0-.5-.01s-.24-.01-.43-.01v3.209c.01.07-.04.131-.11.141H5.52c-.08 0-.12-.041-.12-.131V6.42c0-.07.03-.11.1-.11.17 0 .33 0 .56-.01.24-.01.49-.01.76-.02s.56-.01.87-.02c.31-.01.61-.01.91-.01.82 0 1.5.1 2.06.31.5.17.96.45 1.34.82.32.32.57.71.73 1.14.149.42.229.85.229 1.3.001.86-.199 1.57-.6 2.13zm7.091 3.89c-.28.4-.671.709-1.12.891-.49.209-1.09.318-1.811.318-.459 0-.91-.039-1.359-.129-.35-.061-.7-.17-1.02-.32-.07-.039-.121-.109-.111-.189v-1.74c0-.029.011-.07.041-.09.029-.02.06-.01.09.01.39.23.8.391 1.24.49.379.1.779.15 1.18.15.38 0 .65-.051.83-.141.16-.07.27-.24.27-.42 0-.141-.08-.27-.24-.4-.16-.129-.489-.279-.979-.471-.51-.18-.979-.42-1.42-.719-.31-.221-.569-.51-.761-.85-.159-.32-.239-.67-.229-1.021 0-.43.12-.84.341-1.21.25-.4.619-.72 1.049-.92.469-.239 1.059-.349 1.769-.349.41 0 .83.03 1.24.09.3.04.59.12.86.23.039.01.08.05.1.09.01.04.02.08.02.12v1.63c0 .04-.02.08-.05.1-.09.02-.14.02-.18 0-.3-.16-.62-.27-.96-.34-.37-.08-.74-.13-1.12-.13-.2-.01-.41.02-.601.07-.129.03-.24.1-.31.2-.05.08-.08.18-.08.27s.04.18.101.26c.09.11.209.2.34.27.229.12.47.23.709.33.541.18 1.061.43 1.541.73.33.209.6.49.789.83.16.318.24.67.23 1.029.011.471-.129.94-.389 1.331z"/></svg>`,
+    chatgpt: `<svg viewBox="0 0 24 24" data-icon="chatgpt" aria-hidden="true"><path d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729zm-9.022 12.6081a4.4755 4.4755 0 0 1-2.8764-1.0408l.1419-.0804 4.7783-2.7582a.7948.7948 0 0 0 .3927-.6813v-6.7369l2.02 1.1686a.071.071 0 0 1 .038.052v5.5826a4.504 4.504 0 0 1-4.4945 4.4944zm-9.6607-4.1254a4.4708 4.4708 0 0 1-.5346-3.0137l.142.0852 4.783 2.7582a.7712.7712 0 0 0 .7806 0l5.8428-3.3685v2.3324a.0804.0804 0 0 1-.0332.0615L9.74 19.9502a4.4992 4.4992 0 0 1-6.1408-1.6464zM2.3408 7.8956a4.485 4.485 0 0 1 2.3655-1.9728V11.6a.7664.7664 0 0 0 .3879.6765l5.8144 3.3543-2.0201 1.1685a.0757.0757 0 0 1-.071 0l-4.8303-2.7865A4.504 4.504 0 0 1 2.3408 7.872zm16.5963 3.8558L13.1038 8.364 15.1192 7.2a.0757.0757 0 0 1 .071 0l4.8303 2.7913a4.4944 4.4944 0 0 1-.6765 8.1042v-5.6772a.79.79 0 0 0-.407-.667zm2.0107-3.0231l-.142-.0852-4.7735-2.7818a.7759.7759 0 0 0-.7854 0L9.409 9.2297V6.8974a.0662.0662 0 0 1 .0284-.0615l4.8303-2.7866a4.4992 4.4992 0 0 1 6.6802 4.66zM8.3065 12.863l-2.02-1.1638a.0804.0804 0 0 1-.038-.0567V6.0742a4.4992 4.4992 0 0 1 7.3757-3.4537l-.142.0805L8.704 5.459a.7948.7948 0 0 0-.3927.6813zm1.0976-2.3654l2.602-1.4998 2.6069 1.4998v2.9994l-2.5974 1.4997-2.6067-1.4997Z"/></svg>`,
+    claude: `<svg viewBox="0 0 24 24" data-icon="claude" aria-hidden="true"><path d="m4.7144 15.9555 4.7174-2.6471.079-.2307-.079-.1275h-.2307l-.7893-.0486-2.6956-.0729-2.3375-.0971-2.2646-.1214-.5707-.1215-.5343-.7042.0546-.3522.4797-.3218.686.0608 1.5179.1032 2.2767.1578 1.6514.0972 2.4468.255h.3886l.0546-.1579-.1336-.0971-.1032-.0972L6.973 9.8356l-2.55-1.6879-1.3356-.9714-.7225-.4918-.3643-.4614-.1578-1.0078.6557-.7225.8803.0607.2246.0607.8925.686 1.9064 1.4754 2.4893 1.8336.3643.3035.1457-.1032.0182-.0728-.164-.2733-1.3539-2.4467-1.445-2.4893-.6435-1.032-.17-.6194c-.0607-.255-.1032-.4674-.1032-.7285L6.287.1335 6.6997 0l.9957.1336.419.3642.6192 1.4147 1.0018 2.2282 1.5543 3.0296.4553.8985.2429.8318.091.255h.1579v-.1457l.1275-1.706.2368-2.0947.2307-2.6957.0789-.7589.3764-.9107.7468-.4918.5828.2793.4797.686-.0668.4433-.2853 1.8517-.5586 2.9021-.3643 1.9429h.2125l.2429-.2429.9835-1.3053 1.6514-2.0643.7286-.8196.85-.9046.5464-.4311h1.0321l.759 1.1293-.34 1.1657-1.0625 1.3478-.8804 1.1414-1.2628 1.7-.7893 1.36.0729.1093.1882-.0183 2.8535-.607 1.5421-.2794 1.8396-.3157.8318.3886.091.3946-.3278.8075-1.967.4857-2.3072.4614-3.4364.8136-.0425.0304.0486.0607 1.5482.1457.6618.0364h1.621l3.0175.2247.7892.522.4736.6376-.079.4857-1.2142.6193-1.6393-.3886-3.825-.9107-1.3113-.3279h-.1822v.1093l1.0929 1.0686 2.0035 1.8092 2.5075 2.3314.1275.5768-.3218.4554-.34-.0486-2.2039-1.6575-.85-.7468-1.9246-1.621h-.1275v.17l.4432.6496 2.3436 3.5214.1214 1.0807-.17.3521-.6071.2125-.6679-.1214-1.3721-1.9246L14.38 17.959l-1.1414-1.9428-.1397.079-.674 7.2552-.3156.3703-.7286.2793-.6071-.4614-.3218-.7468.3218-1.4753.3886-1.9246.3157-1.53.2853-1.9004.17-.6314-.0121-.0425-.1397.0182-1.4328 1.9672-2.1796 2.9446-1.7243 1.8456-.4128.164-.7164-.3704.0667-.6618.4008-.5889 2.386-3.0357 1.4389-1.882.929-1.0868-.0062-.1579h-.0546l-6.3385 4.1164-1.1293.1457-.4857-.4554.0608-.7467.2307-.2429 1.9064-1.3114Z"/></svg>`,
+  };
+  const tools = [
+    ["figma", "Figma", "#F24E1E", "Thiết kế UI, component và prototype"],
+    ["photoshop", "Photoshop", "#31A8FF", "Xử lý hình ảnh, banner marketing"],
+    ["chatgpt", "ChatGPT", "#10A37F", "Phân tích nghiệp vụ, khám phá phương án"],
+    ["claude", "Claude", "#D97757", "Kiểm tra luồng tương tác, prototype HTML/CSS"],
+  ];
+  document.querySelectorAll(".tools").forEach(ul => {
+    ul.innerHTML = tools.map(([k, name, brand, note]) =>
+      `<li class="tool" style="--brand:${brand}"><span class="mark">${marks[k]}</span><div><h3>${name}</h3><p>${note}</p></div></li>`).join("");
+  });
+  // I: spotlight theo chuột
+  const vi = document.querySelector(".v-i");
+  vi.addEventListener("mousemove", e => {
+    const r = vi.getBoundingClientRect();
+    vi.style.setProperty("--mx", (e.clientX - r.left) + "px");
+    vi.style.setProperty("--my", (e.clientY - r.top) + "px");
+    vi.querySelectorAll(".tool").forEach(t => {
+      const b = t.getBoundingClientRect();
+      t.style.setProperty("--tx", (e.clientX - b.left) + "px");
+      t.style.setProperty("--ty", (e.clientY - b.top) + "px");
+    });
+  });
+</script>
+</body>
+</html>

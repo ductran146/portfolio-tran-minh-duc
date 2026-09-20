@@ -1,0 +1,990 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import HeroMockBrowser from "../components/HeroMockBrowser.astro";
+import HeroMockResponsive from "../components/HeroMockResponsive.astro";
+import Icon from "../components/Icon.astro";
+import { getEntry } from "astro:content";
+import { localePath, resolveLocale } from "../i18n/ui";
+import { Image } from "astro:assets";
+import { dtOutlinePaths, glintLayers } from "../data/dt-glint";
+
+// Dự án tiêu biểu trên trang chủ: BSC (đổi từ Tường Ngân theo yêu cầu
+// 2026-09-18 - fintech là câu chuyện chính cho khách doanh nghiệp tài chính).
+// Ảnh cover lấy từ content collection để trang chủ và /du-an/<slug> luôn dùng
+// cùng một ảnh. Đổi dự án = đổi slug ở đây + viết lại 3 dòng case-facts bên
+// dưới (case-facts là bản kể ngắn, không tự sinh từ dữ liệu).
+const FEATURED_SLUG = "bsc-smartbanking";
+const featuredProject = await getEntry("projects", FEATURED_SLUG);
+// Link nội bộ đi qua l() để trang /en/* trỏ sang /en/... (hạ tầng i18n).
+const l = (p: string) => localePath(resolveLocale(Astro.currentLocale), p);
+const featuredHref = l(`/du-an/${FEATURED_SLUG}`);
+
+// Hai phương án hero visual, đổi bằng đúng dòng này:
+//   "browser"    — phương án A: khung Safari 16:10, con trỏ inspect từng component
+//   "responsive" — phương án B: một khung morph qua lại mobile 375:812 ↔ desktop
+const heroVariant: "browser" | "responsive" = "responsive";
+
+// Tiêu đề hero được tách sẵn thành từng ký tự lúc build cho hiệu ứng "gõ ra":
+// tách theo grapheme để dấu tiếng Việt xếp tầng (ẩ, ệ) không bị vỡ thành hai
+// ký tự; mỗi từ bọc trong .wd để chỉ ngắt dòng ở khoảng trắng. `--i` là số thứ
+// tự ký tự trên toàn tiêu đề (quyết định độ trễ), `--n` là tổng số ký tự (mốc
+// cho lede/nút vào sau khi gõ xong).
+// Bốn dòng cố định (display: block) để điểm ngắt dòng ở desktop luôn như nhau —
+// không để "dễ" rơi lẻ xuống dòng cuối; màn hẹp vẫn tự ngắt thêm ở khoảng trắng.
+const titleLines = [
+  { text: "Thiết kế sản phẩm", accent: false },
+  { text: "doanh nghiệp", accent: false },
+  { text: "rõ ràng, đáng tin,", accent: true },
+  { text: "dễ mở rộng.", accent: true },
+];
+const segmenter = new Intl.Segmenter("vi", { granularity: "grapheme" });
+let charIndex = 0;
+const typedLines = titleLines.map((line) => ({
+  accent: line.accent,
+  words: line.text
+    .split(" ")
+    .map((word) => [...segmenter.segment(word)].map((s) => ({ ch: s.segment, i: charIndex++ }))),
+}));
+const titleCharCount = charIndex;
+
+// ---- Nội dung trang chủ theo đề xuất đã duyệt 2026-09-18 (nhịp Persuade:
+// hứa → chứng minh → cách làm → ai đã tin → hành động). Mọi câu khen là trích
+// NGUYÊN VĂN từ content-reference/raw-content.md, có tên người nói. ----
+
+// "Vì sao chọn tôi" (2026-09-18, nội dung do người dùng cung cấp) — đổi từ 3
+// luận điểm có trích dẫn nguyên văn sang 4 luận điểm tự mô tả, 2×2. Đây là NGOẠI
+// LỆ có chủ đích của nguyên tắc "bằng chứng đi trước tuyên bố" (PRODUCT.md):
+// không còn quote/cite theo từng thẻ, và link "Đọc 4 đánh giá đầy đủ →" cũng đã
+// bỏ (2026-09-18, theo yêu cầu) — bằng chứng đầy đủ vẫn có ở mục Đánh giá của
+// trang Kinh nghiệm, chỉ không còn lối tắt riêng từ khối này.
+const reasons = [
+  {
+    title: "Hiểu thiết kế lẫn nghiệp vụ",
+    body: "Hơn 15 năm làm việc với sản phẩm fintech và hệ thống doanh nghiệp giúp tôi kết nối yêu cầu kinh doanh với nhu cầu người dùng và quyết định thiết kế.",
+  },
+  {
+    title: "Tư duy ở cấp độ hệ thống",
+    body: "Tôi không chỉ thiết kế từng màn hình riêng lẻ mà tổ chức sản phẩm thành một hệ thống nhất quán, có thể sử dụng trên web, mobile và tiếp tục mở rộng.",
+  },
+  {
+    title: "Thiết kế gần với triển khai",
+    body: "Khả năng tạo prototype bằng Figma và HTML/CSS giúp tôi kiểm tra giải pháp kỹ hơn, trình bày rõ cách sản phẩm vận hành và giảm khoảng cách giữa thiết kế với phát triển.",
+  },
+  {
+    title: "Chủ động và có trách nhiệm",
+    body: "Tôi chủ động làm rõ yêu cầu, đề xuất phương án và phối hợp cùng các bên trong suốt quá trình, đồng thời giữ cam kết về chất lượng và tiến độ.",
+  },
+];
+
+// "Tôi có thể giúp doanh nghiệp" — thay cho "Cách tôi làm việc" (2026-09-18,
+// nội dung do người dùng cung cấp). Đổi khung từ "quy trình tôi theo" sang "3
+// việc tôi giúp được", số thứ tự 01/02/03 đã hiện qua .step-num nên KHÔNG lặp
+// lại "01 — " trong title. Không còn dòng "Bạn nhận:" vì nội dung mới không
+// có phần deliverable riêng — body đã tự nói kết quả.
+// Lưu ý trùng lặp: 3 mục này rất gần với "Chuyên môn" ở trang Kinh nghiệm
+// (Dashboard & Fintech / Design System & Design Tokens / AI-Assisted Design &
+// Prototyping) — chấp nhận trùng có chủ đích vì trang chủ cần một lời hứa
+// ngắn ngay từ đầu, còn Kinh nghiệm mới là bản đầy đủ có thêm chi tiết AI.
+// Nội dung 3 mục đổi 2026-09-20 (người dùng cung cấp): website & mobile app /
+// sản phẩm nghiệp vụ phức tạp / design system & prototype. Icon: responsive ·
+// layers · tokens (họ icon khái niệm trong Icon.astro).
+const steps = [
+  {
+    icon: "responsive",
+    title: "Thiết kế website & mobile app",
+    body: "Thiết kế mới hoặc cải tiến sản phẩm số, từ cấu trúc thông tin và luồng sử dụng đến giao diện hoàn chỉnh trên nhiều kích thước màn hình.",
+  },
+  {
+    icon: "layers",
+    title: "Sản phẩm nghiệp vụ phức tạp",
+    body: "Chuyển dữ liệu, quy trình và nhiều vai trò sử dụng thành trải nghiệm rõ ràng cho fintech, dashboard và hệ thống vận hành doanh nghiệp.",
+  },
+  {
+    icon: "tokens",
+    title: "Design system & prototype",
+    body: "Chuẩn hóa token, component và trạng thái dùng chung; tạo prototype để kiểm tra giải pháp trước khi chuyển sang phát triển.",
+  },
+] as const;
+
+// Khách hàng theo lĩnh vực. Chỉ gán lĩnh vực khi là thông tin công khai hoặc có
+// trong testimonial; BIACA chưa có evidence lĩnh vực → để nhóm "Đối tác khác".
+// Logo (2026-09-18, người dùng cung cấp) — file gốc ở thư mục "logo/khach hang/",
+// copy vào public/clients/ (không qua astro:assets vì là SVG tĩnh, giống cách
+// public/logo-dt-green.svg đang phục vụ). Logo thiếu ở đâu (BIACA) thì chỉ hiện
+// tên chữ, không bịa mark.
+// LƯU Ý: "Shinhan" chỉ có bằng chứng là file logo người dùng vừa thêm, chưa có
+// trong raw-content.md hay dự án nào — tên/nhóm dưới đây là suy đoán hợp lý
+// nhất (chưa xác nhận), cần Đức kiểm tra lại tên đầy đủ và lĩnh vực chính xác.
+// Cấu trúc vẫn giữ theo lĩnh vực để lưu evidence (không hiển thị nữa, xem
+// `clientLogos` bên dưới - đã rút thành một hàng logo duy nhất theo yêu cầu
+// 2026-09-18: "chỉ để logo, không để nhiều text như hiện tại").
+const clientGroups = [
+  { sector: "Chứng khoán", clients: [{ name: "BSC (BIDV Securities)", logo: "/clients/bsc.svg" }] },
+  { sector: "Bảo hiểm", clients: [{ name: "Fubon Life", logo: "/clients/fubon.svg" }] },
+  {
+    sector: "Cấp nước & vận hành",
+    clients: [
+      { name: "Phú Mỹ Water", logo: "/clients/pmw.svg" },
+      { name: "Cấp nước Bà Rịa – Vũng Tàu (BWACO)", logo: "/clients/bwaco.svg" },
+    ],
+  },
+  { sector: "Giáo dục", clients: [{ name: "Trường ĐH Khoa học và Công nghệ Hà Nội (USTH)", logo: "/clients/usth.svg" }] },
+  {
+    sector: "Đối tác khác",
+    clients: [
+      { name: "BIACA", logo: null },
+      { name: "FIT", logo: "/clients/fit.svg" },
+      { name: "Shinhan", logo: "/clients/shinhan.svg" },
+    ],
+  },
+];
+
+// Một hàng ngang, chỉ logo — bỏ nhãn lĩnh vực và tên chữ. BIACA không có file
+// logo nên KHÔNG xuất hiện ở đây (không dựng mark thay thế); vẫn còn trong
+// `clientGroups` phía trên để không mất evidence, chỉ chưa hiển thị được.
+const clientLogos = clientGroups.flatMap((g) => g.clients).filter((c): c is { name: string; logo: string } => !!c.logo);
+---
+
+<BaseLayout title="Trần Minh Đức - Senior UX/UI Designer">
+	<main>
+		<section class="hero">
+			<div class="hero-copy" style={`--n: ${titleCharCount}`}>
+				<!-- Tên + việc làm cho ai (thay chức danh: chức danh phục vụ nhà tuyển
+				     dụng — đối tượng phụ; khách doanh nghiệp cần biết "làm gì cho tôi").
+				     2026-09-20: đổi khung từ NGÀNH ("tài chính & vận hành") sang NỀN
+				     TẢNG ("mobile app và web responsive") — 7 case study đã trải rộng
+				     hơn một ngành (fintech, vận hành, EdTech, giáo dục), nên câu mở đầu
+				     không nên neo riêng vào tài chính/vận hành nữa. Người dùng dự định
+				     bổ sung 2-3 dự án ở lĩnh vực khác vào đây trong tương lai. -->
+				<p class="eyebrow" data-reveal>Trần Minh Đức - thiết kế mobile app và web responsive cho doanh nghiệp</p>
+				<h1 class="hero-title" data-reveal>
+					{
+						typedLines.map((line) => (
+							<span class:list={["line", { "accent-text": line.accent }]}>
+								{line.words.map((word, wi) => (
+									<>
+										<span class="wd">
+											{word.map((c) => (
+												<span class="c" style={`--i: ${c.i}`}>
+													{c.ch}
+												</span>
+											))}
+										</span>
+										{wi < line.words.length - 1 ? " " : null}
+									</>
+								))}
+							</span>
+						))
+					}
+				</h1>
+				<!-- Lede "15 năm..." chuyển sang trang Kinh nghiệm (dưới h1, 2026-09-18) -
+				     tránh trùng nội dung, hero trang chủ giữ ngắn gọn hơn. -->
+				<div class="hero-actions" data-reveal>
+					<a class="btn btn-primary" href={l("/lien-he")}>Trao đổi dự án</a>
+					<a class="btn btn-ghost" href={l("/du-an")}>Xem dự án →</a>
+				</div>
+			</div>
+
+			<div class="hero-visual" aria-hidden="true">
+				<div class="hero-visual-inner" data-reveal>
+					{heroVariant === "browser" ? <HeroMockBrowser /> : <HeroMockResponsive />}
+				</div>
+			</div>
+		</section>
+
+
+		<!-- 2. Vì sao chọn tôi: 4 luận điểm, 2 dòng × 2 thẻ -->
+		<section class="reasons">
+			<div class="reasons-head" data-reveal>
+				<h2>Vì sao chọn tôi</h2>
+				<p>Tôi kết hợp kinh nghiệm lâu năm, khả năng hiểu nghiệp vụ, tư duy hệ thống và cách làm việc chủ động để đưa thiết kế đến gần hơn với sản phẩm thực tế.</p>
+			</div>
+			<div class="reason-grid">
+				{
+					reasons.map((r, i) => (
+						<article class="reason" data-reveal style={`--i: ${i}`}>
+							<h3>{r.title}</h3>
+							<p>{r.body}</p>
+						</article>
+					))
+				}
+			</div>
+		</section>
+
+		<!-- 3. Tôi có thể giúp doanh nghiệp: 3 việc, không phải quy trình tuần tự.
+		     Đưa lên TRƯỚC Dự án tiêu biểu + mảng tối tràn hai mép (2026-09-20, theo
+		     yêu cầu) — cùng ngôn ngữ với "Cách tôi làm việc" ở trang Kinh nghiệm
+		     (nền --band-bg, chữ --on-ink*, accent trên nền tối --band-accent). -->
+		<section class="process" aria-labelledby="process-title">
+			<!-- Logo DT dạng nét + vệt sáng chạy theo nét — cùng hiệu ứng với mảng tối
+			     "Cách tôi làm việc" ở Kinh nghiệm (2026-09-20, theo yêu cầu). Dữ liệu
+			     path + lớp vệt sáng ở src/data/dt-glint.ts. Trang trí → aria-hidden. -->
+			<svg class="band-logo" viewBox="0 0 377 434" aria-hidden="true" focusable="false">
+				<defs>
+					<linearGradient id="dt-edge" x1="0" y1="0" x2="1" y2="1">
+						<stop offset="0" stop-color="#ffffff" stop-opacity="0.03" />
+						<stop offset="0.45" stop-color="#ffffff" stop-opacity="0.32" />
+						<stop offset="0.55" stop-color="#5fc2a2" stop-opacity="0.9" />
+						<stop offset="1" stop-color="#ffffff" stop-opacity="0.03" />
+					</linearGradient>
+					<g id="dt-outline">
+						{dtOutlinePaths.map((d) => <path pathLength="1000" d={d} />)}
+					</g>
+				</defs>
+				<use href="#dt-outline" class="base" />
+				{
+					glintLayers.map((l) => (
+						<use
+							href="#dt-outline"
+							class="g"
+							style={`--s0: ${l.s0}px; --w: ${l.w}; --o: ${l.o}; --blur: ${l.blur}px; --c: ${l.accent ? "var(--accent)" : "var(--on-ink)"}; stroke-dasharray: ${l.len} ${1000 - l.len}`}
+						/>
+					))
+				}
+			</svg>
+			<div class="process-inner">
+			<div class="process-head" data-reveal>
+				<h2 id="process-title">Tôi có thể giúp doanh nghiệp</h2>
+				<p>Từ một bài toán chưa rõ ràng đến sản phẩm hoàn chỉnh trên web và mobile, tôi tham gia ở những phần thiết kế tạo ảnh hưởng trực tiếp đến trải nghiệm và khả năng phát triển.</p>
+			</div>
+			<ol class="steps">
+				{
+					steps.map((s, i) => (
+						<li class="step icon-hover-host" data-reveal style={`--i: ${i}`}>
+							<div class="step-top">
+								<span class="icon-tile" aria-hidden="true">
+									<Icon name={s.icon} size={24} class="icon-anim" />
+								</span>
+								<span class="step-num tabular" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
+							</div>
+							<h3>{s.title}</h3>
+							<p>{s.body}</p>
+						</li>
+					))
+				}
+			</ol>
+			</div>
+		</section>
+
+		<!-- 4. Dự án tiêu biểu: kể theo bài toán → cách giải → giao lại gì (đứng sau
+		     mảng tối → khác nền → không kẻ trên). -->
+		<section class="featured">
+			<div class="featured-copy" data-reveal>
+				<p class="section-label">Dự án tiêu biểu</p>
+				<!-- Tên dự án + mô tả một dòng (đổi 2026-09-20 theo yêu cầu): tiêu đề
+				     "BSC - BIDV Securities JSC", dòng nhỏ SÁT dưới nói sản phẩm là gì. -->
+				<h2>BSC - BIDV Securities JSC</h2>
+				<p class="featured-sub">Ứng dụng GDCK tích hợp trong app BIDV SmartBanking</p>
+				<dl class="case-facts">
+					<dt>Bài toán</dt>
+					<dd>Ứng dụng giao dịch chứng khoán của BSC nhúng trong app BIDV SmartBanking - phải đúng nhận diện BSC mà vẫn đồng nhất với hệ sinh thái BIDV người dùng đã quen.</dd>
+					<dt>Cách giải</dt>
+					<dd>Xây hệ thống thiết kế trước: bảng màu scale 100-900 từ tone BIDV và BSC, bộ icon chuẩn 3 trạng thái, grid 16/20px áp dụng cho mọi màn hình.</dd>
+					<dt>Giao lại</dt>
+					<dd>Màn hình đặt lệnh, sổ lệnh và chỉ số thị trường trên cùng một hệ màu, icon, grid - mở rộng thêm màn hình mà không lệch chuẩn.</dd>
+				</dl>
+				<a class="text-link" href={featuredHref}>Xem chi tiết dự án →</a>
+			</div>
+			<a class="featured-plate" href={featuredHref} data-reveal aria-label="Xem chi tiết dự án BSC - BIDV Securities JSC">
+				{featuredProject?.data.cover ? (
+					<Image
+						src={featuredProject.data.cover}
+						alt="Ảnh tổng quan ứng dụng giao dịch chứng khoán BSC tích hợp trong BIDV SmartBanking"
+						widths={[640, 960, 1280]}
+						sizes="(max-width: 780px) 100vw, 560px"
+						format="webp"
+						quality={80}
+						loading="lazy"
+					/>
+				) : (
+					<span>Ảnh sẽ cập nhật</span>
+				)}
+			</a>
+		</section>
+
+		<!-- 5. Đã đồng hành cùng: một hàng logo, không nhãn lĩnh vực/tên chữ -->
+		<section class="clients" data-reveal>
+			<p class="section-label">Đã đồng hành cùng</p>
+			<ul class="client-row">
+				{
+					clientLogos.map((c) => (
+						<li class="client-item">
+							<span class="client-logo-chip">
+								<img class="client-logo" src={c.logo} alt={c.name} loading="lazy" />
+							</span>
+						</li>
+					))
+				}
+			</ul>
+		</section>
+
+		<!-- 6. Kết: CTA cụ thể. "24 giờ" đã có ở trang Liên hệ, không phải cam kết mới. -->
+		<!-- Nội dung khối liên hệ đổi 2026-09-20 (người dùng cung cấp): tiêu đề hỏi
+		     thẳng bài toán, mô tả hạ rào cản "chưa cần brief", CTA chính, dòng phụ
+		     giữ nhóm tuyển dụng nhưng không lấn trọng tâm khách doanh nghiệp. -->
+		<section class="cta-band" data-reveal>
+			<div class="cta-copy">
+				<h2>Bạn đang có một sản phẩm cần làm rõ hoặc cải tiến?</h2>
+				<p class="cta-desc">
+					Hãy gửi cho tôi bài toán hiện tại, loại sản phẩm và phạm vi bạn cần hỗ trợ. Chưa cần một brief hoàn
+					chỉnh — chúng ta có thể bắt đầu từ những thông tin bạn đang có.
+				</p>
+				<p class="cta-sub">Tôi nhận dự án thiết kế thuê ngoài và sẵn sàng trao đổi về những vị trí Senior phù hợp.</p>
+			</div>
+			<a class="btn btn-primary btn-lg" href={l("/lien-he")}>Trao đổi dự án →</a>
+		</section>
+	</main>
+
+	<style>
+		main {
+			max-width: 1160px;
+			margin-inline: auto;
+			padding: clamp(1.5rem, 4vw, 2.5rem) clamp(1.25rem, 5vw, 3rem) clamp(2rem, 6vw, 4.5rem);
+		}
+
+		.hero {
+			position: relative;
+			display: grid;
+			grid-template-columns: 1.3fr 1fr;
+			gap: clamp(2rem, 5vw, 3.5rem);
+			align-items: center;
+			padding-block: clamp(1rem, 3vw, 2.25rem) clamp(2rem, 6vw, 4rem);
+		}
+
+		/* Từ khi bỏ dải KPI, cột trái chỉ còn eyebrow → tiêu đề → lede → nút, nên
+		   `align-items: center` mặc định của grid đã canh đúng tâm khung ảnh với
+		   khối chữ — không cần dịch tay như lúc còn KPI nữa. */
+		.hero-visual {
+			position: relative;
+		}
+
+		@media (max-width: 900px) {
+			.hero {
+				grid-template-columns: 1fr;
+			}
+			.hero-visual {
+				order: -1;
+			}
+		}
+
+		.eyebrow {
+			font-size: 0.9rem;
+			font-weight: 600;
+			color: var(--accent-strong);
+			margin: 0 0 1rem;
+		}
+
+		h1 {
+			font-size: clamp(2.25rem, 4.6vw, 3.7rem);
+			line-height: 1.08;
+			max-width: min(24ch, 100%);
+		}
+
+		/* ---- Tiêu đề: "gõ ra" + mờ → nét ----
+		   Từng ký tự hiện theo nhịp gõ (một ký tự mỗi --type-step); mỗi ký tự vào
+		   mờ 8px rồi nét dần trong --type-blur, nên mép trước của dòng luôn hơi mờ
+		   và sắc lại phía sau. Con trỏ (box-shadow bên phải ký tự, không đổi layout)
+		   bám theo ký tự vừa gõ: chạy ở slot của ký tự KẾ TIẾP, vì ở slot của chính
+		   nó ký tự còn gần như trong suốt nên con trỏ sẽ không thấy được.
+		   Tốc độ cố ý chậm (≈3× bản thử): người dùng chọn nhịp này (2026-09-17).
+		   Tiêu đề vẫn mang `data-reveal` để nhận `.is-visible`, nhưng tự nó không
+		   fade — chỉ các ký tự chạy. An toàn khi JS lỗi: không có `.js-reveal` thì
+		   mọi ký tự đứng nguyên, đọc được đầy đủ. */
+		.hero-copy {
+			--type-base: 140ms;
+			--type-step: 102ms;
+			--type-blur: 1.35s;
+			/* Mốc gõ xong ký tự cuối; lede/nút/KPI nối tiếp sau mốc này. */
+			--type-end: calc(var(--type-base) + var(--n) * var(--type-step));
+		}
+
+		.line {
+			display: block;
+		}
+
+		.wd {
+			white-space: nowrap;
+		}
+
+		.c {
+			display: inline-block;
+		}
+
+		:global(.js-reveal) .hero .hero-title[data-reveal] {
+			opacity: 1;
+			transform: none;
+			transition: none;
+		}
+
+		:global(.js-reveal) .hero .hero-title .c {
+			opacity: 0;
+			filter: blur(8px);
+			transform: translateY(0.12em);
+		}
+
+		/* Con trỏ dùng fill-mode `none`: chỉ tồn tại trong đúng slot của nó rồi
+		   trả về box-shadow mặc định (không có) — không phụ thuộc frame cuối, nên
+		   main thread có nghẽn cũng không để lại con trỏ kẹt. */
+		:global(.js-reveal) .hero .hero-title.is-visible .c {
+			animation:
+				type-in var(--type-blur) var(--ease-smooth) both,
+				type-caret var(--type-step) linear none;
+			animation-delay:
+				calc(var(--type-base) + var(--i) * var(--type-step)),
+				calc(var(--type-base) + (var(--i) + 1) * var(--type-step));
+		}
+
+		/* Opacity lên nhanh (đủ đục ở ~12% thời gian) để con trỏ thấy được; blur và
+		   độ dịch mới là phần tan chậm suốt --type-blur. */
+		@keyframes type-in {
+			0% {
+				opacity: 0;
+				filter: blur(8px);
+				transform: translateY(0.12em);
+			}
+			12% {
+				opacity: 1;
+			}
+			100% {
+				opacity: 1;
+				filter: blur(0);
+				transform: none;
+			}
+		}
+
+		@keyframes type-caret {
+			from,
+			to {
+				box-shadow: 0.08em 0 0 var(--accent);
+			}
+		}
+
+		/* ---- Dàn nhịp xuất hiện: eyebrow → tiêu đề gõ xong → lede → nút ----
+		   Mặc định mọi [data-reveal] trong viewport đầu nổ cùng lúc; ở đây lede và nút
+		   chờ tiêu đề gõ hết rồi mới nối tiếp nhau. Khung thiết bị vào sớm
+		   để cột phải không trống trong lúc gõ. */
+		:global(.js-reveal) .hero .hero-actions[data-reveal] {
+			transition-delay: calc(var(--type-end) + 150ms);
+		}
+
+		:global(.js-reveal) .hero .hero-visual-inner[data-reveal] {
+			transition-delay: 320ms;
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+			:global(.js-reveal) .hero .hero-title .c {
+				opacity: 1;
+				filter: none;
+				transform: none;
+				animation: none;
+			}
+			:global(.js-reveal) .hero .hero-actions[data-reveal] {
+				transition-delay: 0ms;
+			}
+		}
+
+		.accent-text {
+			color: var(--accent-strong);
+		}
+
+		/* Lede "15 năm..." đã chuyển sang trang Kinh nghiệm - hero ở đây giờ đi
+		   thẳng từ tiêu đề gõ chữ sang hai nút, không còn đoạn mô tả giữa. */
+		.hero-actions {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 1rem;
+			margin-top: 2.5rem;
+		}
+
+		.btn {
+			display: inline-flex;
+			align-items: center;
+			text-decoration: none;
+			font-weight: 600;
+			font-size: 1rem;
+			padding: 0.85rem 1.6rem;
+			border-radius: var(--radius-md);
+			/* Chỉ đổi màu khi hover (2026-09-20): không dịch chuyển, không đổi bóng. */
+			transition: background 0.25s var(--ease-smooth), color 0.25s var(--ease-smooth);
+		}
+
+		.btn-primary {
+			background: var(--inverse-bg);
+			color: var(--inverse-ink);
+			box-shadow: var(--shadow-sm);
+		}
+
+		.btn-primary:hover {
+			background: var(--accent-strong);
+		}
+
+		.btn-lg {
+			padding: 1rem 2rem;
+			font-size: 1.05rem;
+		}
+
+		.btn-ghost {
+			color: var(--ink);
+			background: var(--bg-soft);
+		}
+
+		.btn-ghost:hover {
+			background: var(--accent-tint);
+		}
+
+		.featured {
+			display: grid;
+			grid-template-columns: 1fr 1.15fr;
+			gap: clamp(2rem, 5vw, 3.5rem);
+			align-items: center;
+			padding-block: clamp(3rem, 7vw, 5rem);
+			/* Không kẻ trên: đứng ngay sau mảng tối (khác nền = đã là ranh giới). */
+		}
+
+		.section-label {
+			font-size: 0.85rem;
+			font-weight: 600;
+			color: var(--ink-faint);
+			text-transform: uppercase;
+			letter-spacing: 0.08em;
+			margin: 0 0 0.75rem;
+		}
+
+		.featured-copy h2 {
+			font-size: clamp(1.8rem, 3.5vw, 2.4rem);
+			line-height: 1.15;
+			margin-bottom: 0.15rem;
+		}
+
+		/* Dòng mô tả sát dưới tên dự án (yêu cầu 2026-09-20 "để sát head title"):
+		   nhỏ, màu phụ, không cạnh tranh với h2. */
+		.featured-sub {
+			margin: 0 0 1rem;
+			font-size: 0.95rem;
+			font-weight: 500;
+			line-height: 1.4;
+			color: var(--ink-faint);
+		}
+
+		.featured-copy p {
+			color: var(--ink-secondary);
+			max-width: 46ch;
+		}
+
+		.text-link {
+			display: inline-block;
+			margin-top: 1.25rem;
+			font-weight: 600;
+			color: var(--accent-strong);
+			text-decoration: none;
+		}
+
+		.text-link:hover {
+			text-decoration: underline;
+		}
+
+		.featured-plate {
+			aspect-ratio: 16/10;
+			border-radius: var(--radius-lg);
+			background: var(--bg-soft);
+			box-shadow: var(--shadow-md);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			overflow: hidden;
+			text-decoration: none;
+			transition: box-shadow 0.3s var(--ease-smooth), transform 0.3s var(--ease-smooth);
+		}
+
+		.featured-plate:hover {
+			box-shadow: var(--shadow-lg);
+			transform: translateY(-2px);
+		}
+
+		.featured-plate img {
+			display: block;
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+
+		.featured-plate span {
+			font-size: 0.85rem;
+			font-weight: 600;
+			color: var(--ink-faint);
+			background: var(--surface);
+			padding: 0.4rem 0.8rem;
+			border-radius: 999px;
+			box-shadow: var(--shadow-sm);
+		}
+
+		.clients {
+			padding-block: clamp(2rem, 5vw, 3rem);
+			border-top: 1px solid var(--border);
+		}
+
+		.cta-band {
+			margin-top: clamp(2rem, 5vw, 3rem);
+			padding: clamp(2.5rem, 7vw, 4rem) clamp(1.5rem, 5vw, 3rem);
+			border-radius: var(--radius-lg);
+			background: var(--bg-soft);
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			justify-content: space-between;
+			gap: 1.5rem;
+		}
+
+		.cta-copy {
+			max-width: 58ch;
+		}
+
+		.cta-band h2 {
+			font-size: clamp(1.5rem, 3vw, 2rem);
+			line-height: 1.2;
+			max-width: 24ch;
+			margin: 0;
+		}
+
+		/* Mô tả chính: cỡ thân, màu phụ; dòng phụ (tuyển dụng) nhỏ và nhạt hơn một
+		   bậc để không lấn trọng tâm khách doanh nghiệp. */
+		.cta-desc {
+			margin: 0.9rem 0 0;
+			color: var(--ink-secondary);
+			font-size: 1rem;
+			line-height: 1.6;
+		}
+
+		@media (max-width: 780px) {
+			.featured {
+				grid-template-columns: 1fr;
+			}
+			.featured-plate {
+				order: -1;
+			}
+		}
+		/* ---- 2. Vì sao chọn tôi: 4 luận điểm tự mô tả, lưới 2×2 ----
+		   Không còn trích dẫn nguyên văn theo từng thẻ (ngoại lệ có chủ đích, xem
+		   ghi chú tại `const reasons` trong frontmatter) — link "Đọc 4 đánh giá đầy
+		   đủ" ngay dưới lưới là nơi bằng chứng thật xuất hiện. */
+		.reasons {
+			padding-block: clamp(3rem, 7vw, 4.5rem);
+			border-top: 1px solid var(--border);
+		}
+
+		/* Tiêu đề lớn ở trên, mô tả nhỏ ngay dưới (2026-09-18: đổi từ hàng ngang
+		   title/mô tả song song sang xếp dọc, theo yêu cầu). */
+		.reasons-head {
+			margin-bottom: 2rem;
+		}
+
+		.reasons-head h2 {
+			font-size: clamp(1.8rem, 3.2vw, 2.25rem);
+			margin: 0;
+		}
+
+		.reasons-head p {
+			margin: 0.6rem 0 0;
+			color: var(--ink-secondary);
+			max-width: 60ch;
+			font-size: 13px;
+		}
+
+		/* 2 cột × 2 hàng ở desktop (yêu cầu người dùng); ≤900px rơi về 1 cột qua
+		   media query dùng chung với .steps ở cuối file. */
+		.reason-grid {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 1.25rem;
+		}
+
+		.reason {
+			padding: 1.75rem 1.5rem;
+			border-radius: var(--radius-lg);
+			background: var(--bg-soft);
+		}
+
+		.reason h3 {
+			font-size: 1.25rem;
+			line-height: 1.25;
+			margin-bottom: 0.75rem;
+		}
+
+		.reason p {
+			margin: 0;
+			color: var(--ink-secondary);
+			font-size: 0.95rem;
+			line-height: 1.6;
+		}
+
+		:global(.js-reveal) .reason[data-reveal] {
+			transition-delay: calc(var(--i) * 90ms);
+		}
+
+		/* ---- 3. Dự án tiêu biểu: bài toán / cách giải / giao lại ---- */
+		.case-facts {
+			display: grid;
+			grid-template-columns: auto minmax(0, 1fr);
+			gap: 0.5rem 1rem;
+			margin: 1rem 0 1.25rem;
+		}
+
+		.case-facts dt {
+			font-size: 0.78rem;
+			font-weight: 600;
+			text-transform: uppercase;
+			letter-spacing: 0.08em;
+			color: var(--ink-faint);
+			padding-top: 0.25rem;
+		}
+
+		.case-facts dd {
+			margin: 0;
+			color: var(--ink-secondary);
+		}
+
+		/* ---- 3. Tôi có thể giúp doanh nghiệp: mảng tối tràn hai mép (2026-09-20) ----
+		   Cùng token với "Cách tôi làm việc" ở Kinh nghiệm: nền --band-bg (luôn tối
+		   ở cả hai theme), chữ --on-ink*, accent trên nền tối --band-accent. Thẻ
+		   bước = ô kính (ngoại lệ Cards "không viền", như dải công cụ cũ): nền
+		   ink-surface-faint + viền ink-surface. Tràn mép bằng margin âm theo 50vw. */
+		.process {
+			position: relative;
+			isolation: isolate;
+			overflow: hidden;
+			width: 100vw;
+			margin-left: calc(50% - 50vw);
+			margin-top: clamp(1.5rem, 4vw, 2.5rem);
+			padding: clamp(3rem, 6vw, 4.5rem) clamp(1.25rem, 5vw, 3rem);
+			background: var(--band-bg);
+			color: var(--on-ink);
+		}
+
+		.process-inner {
+			max-width: calc(1160px - 2 * clamp(1.25rem, 5vw, 3rem));
+			margin-inline: auto;
+		}
+
+		/* Logo DT nét: canh giữa dọc, sát mép phải, nét nền 0.07 + vệt sáng ×0.7 —
+		   cùng thông số với mảng tối ở Kinh nghiệm (xem DESIGN.md › Cách tôi làm
+		   việc). Chỉ animate stroke-dashoffset; tắt khi giảm chuyển động. */
+		.band-logo {
+			position: absolute;
+			z-index: -1;
+			right: -5%;
+			top: 50%;
+			transform: translateY(-50%);
+			height: 92%;
+			max-height: 560px;
+			width: auto;
+			pointer-events: none;
+		}
+
+		.band-logo .base {
+			fill: none;
+			stroke: url(#dt-edge);
+			stroke-width: 1;
+			opacity: 0.07;
+		}
+
+		.band-logo .g {
+			fill: none;
+			stroke: var(--c);
+			stroke-width: var(--w);
+			opacity: calc(var(--o) * 0.7);
+			filter: blur(var(--blur));
+			stroke-linecap: butt;
+			animation: dt-glint 8s linear infinite;
+		}
+
+		@keyframes dt-glint {
+			from {
+				stroke-dashoffset: var(--s0);
+			}
+			to {
+				stroke-dashoffset: calc(var(--s0) - 1000px);
+			}
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+			.band-logo .g {
+				animation: none;
+			}
+		}
+
+		@media (max-width: 900px) {
+			.band-logo {
+				right: -18%;
+				height: 46%;
+				max-height: 380px;
+			}
+		}
+
+		@media (max-width: 600px) {
+			.band-logo {
+				right: -30%;
+				height: 30%;
+				max-height: 260px;
+				opacity: 0.6;
+			}
+		}
+
+		/* Tiêu đề lớn ở trên, mô tả nhỏ ngay dưới — cùng cách trình bày với
+		   .reasons-head (2026-09-18). */
+		.process-head {
+			margin-bottom: 2rem;
+		}
+
+		.process-head h2 {
+			font-size: clamp(1.8rem, 3.2vw, 2.25rem);
+			margin: 0;
+			color: var(--on-ink);
+		}
+
+		.process-head p {
+			margin: 0.6rem 0 0;
+			color: var(--on-ink-secondary);
+			max-width: 60ch;
+			font-size: 13px;
+		}
+
+		.steps {
+			list-style: none;
+			margin: 0;
+			padding: 0;
+			display: grid;
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+			gap: 1.25rem;
+		}
+
+		.step {
+			padding: 1.75rem 1.5rem 1.6rem;
+			border-radius: var(--radius-lg);
+			background: var(--ink-surface-faint);
+			border: 1px solid var(--ink-surface);
+			/* Ô kính: blur nền 12px (yêu cầu 2026-09-20, như ô công cụ cũ ở Kinh
+			   nghiệm) — vệt sáng logo đi sau ô thành quầng mờ thay vì nét sắc. */
+			-webkit-backdrop-filter: blur(12px);
+			backdrop-filter: blur(12px);
+			transition: background 0.3s var(--ease-smooth), border-color 0.3s var(--ease-smooth);
+		}
+
+		.step:hover {
+			background: var(--ink-surface);
+			border-color: var(--ink-surface-hover);
+		}
+
+		.step-top {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin-bottom: 1.1rem;
+		}
+
+		/* Icon tile 48px chuẩn (DESIGN.md › Iconography), biến thể trên nền tối:
+		   nền ink-surface, icon band-accent. */
+		.icon-tile {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			width: 48px;
+			height: 48px;
+			border-radius: var(--radius-md);
+			background: var(--ink-surface);
+			color: var(--band-accent);
+		}
+
+		/* Số bước mờ, cùng họ với số bước ở "Cách tôi làm việc". */
+		.step-num {
+			font-family: var(--display);
+			font-size: 2rem;
+			line-height: 1;
+			color: var(--on-ink);
+			opacity: 0.18;
+		}
+
+		.step h3 {
+			font-size: 1.25rem;
+			line-height: 1.25;
+			margin-bottom: 0.5rem;
+			color: var(--on-ink);
+		}
+
+		.step p {
+			margin: 0;
+			color: var(--on-ink-secondary);
+			font-size: 0.95rem;
+		}
+
+		:global(.js-reveal) .step[data-reveal] {
+			transition-delay: calc(var(--i) * 110ms);
+		}
+
+		/* ---- 5. Khách hàng: lưới khung logo trải kín chiều ngang (chỉ ở trang
+		   chủ; trang Kinh nghiệm không lặp). Đổi từ hàng flex (mỗi khung rộng
+		   theo tỉ lệ logo, dồn về bên trái) sang CSS grid `1fr` đều cột
+		   (2026-09-18, theo yêu cầu "trải đều vừa width, khung bằng nhau") —
+		   `auto-fit`/`minmax` tự giảm số cột trên màn hẹp mà cột vẫn luôn lấp
+		   đầy hết chiều ngang, không cần đặt số cột cứng cho từng breakpoint. */
+		.client-row {
+			list-style: none;
+			margin: 0;
+			padding: 0;
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+			gap: 1rem;
+		}
+
+		/* Khung cố định 64px cao, logo canh giữa — mọi khung bằng nhau bất kể tỉ
+		   lệ gốc của từng logo (40:25 tới 397:182). Nền trắng cố định (không đổi
+		   theo theme) vì nhiều logo màu đậm (vd. Fubon Life navy) mất tương phản
+		   trên nền tối; `shadow-sm` thay viền cứng, đúng "Soft Depth Rule". */
+		.client-logo-chip {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 100%;
+			height: 64px;
+			background: #fff;
+			border-radius: var(--radius-sm);
+			box-shadow: var(--shadow-sm);
+			padding: 0.5rem 1rem;
+		}
+
+		/* Logo mặc định xám (đơn sắc hoá bằng grayscale) để giữ đúng "Single Accent
+		   Rule" — màu thương hiệu của khách hàng chỉ hiện khi tương tác, cùng tinh
+		   thần với brand mark công cụ ở trang Kinh nghiệm (mono lúc nghỉ → màu thật
+		   khi hover), áp dụng cho logo nhiều màu bằng CSS filter thay vì đổi layer.
+		   `max-height`/`max-width` (không phải height cố định) để logo dẹt ngang
+		   (vd. FIT 397:182) không tràn khung, còn logo vuông (Shinhan) không bị
+		   ép méo — luôn giữ đúng tỉ lệ gốc, chỉ thu nhỏ vừa khung. */
+		.client-logo {
+			max-height: 26px;
+			max-width: 100%;
+			width: auto;
+			height: auto;
+			display: block;
+			object-fit: contain;
+			filter: grayscale(1) opacity(0.75);
+			transition: filter 0.25s var(--ease-smooth);
+		}
+
+		.client-item:hover .client-logo {
+			filter: none;
+		}
+
+		/* ---- 6. CTA ---- */
+		.cta-sub {
+			margin: 0.9rem 0 0;
+			color: var(--ink-faint);
+			font-size: 0.88rem;
+		}
+
+		@media (max-width: 900px) {
+			.reason-grid,
+			.steps {
+				grid-template-columns: 1fr;
+			}
+		}
+	</style>
+</BaseLayout>

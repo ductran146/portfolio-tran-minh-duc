@@ -1,0 +1,464 @@
+---
+// Phương án A: khung Safari 16:10, con trỏ inspect chạy qua từng component.
+---
+
+<div class="mock-frame">
+	<div class="mock-toolbar">
+		<span class="mock-traffic">
+			<span class="mock-dot mock-dot-red"></span>
+			<span class="mock-dot mock-dot-yellow"></span>
+			<span class="mock-dot mock-dot-green"></span>
+		</span>
+		<div class="mock-address-bar">
+			<svg class="mock-lock" viewBox="0 0 12 12" width="10" height="10" fill="none"><rect x="2.5" y="5.5" width="7" height="5" rx="1" stroke="currentColor" stroke-width="1"/><path d="M4 5.5V4a2 2 0 0 1 4 0v1.5" stroke="currentColor" stroke-width="1"/></svg>
+			<span class="mock-url">tranducdesign.com</span>
+			<svg class="mock-reload" viewBox="0 0 12 12" width="10" height="10" fill="none"><path d="M9.5 6a3.5 3.5 0 1 1-1-2.45M9.5 2.5v2.2h-2.2" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/></svg>
+		</div>
+		<span class="mock-share">
+			<svg viewBox="0 0 14 16" width="12" height="14" fill="none"><path d="M7 1v9M4 4L7 1l3 3M2 8v5.5a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+		</span>
+	</div>
+
+	<div class="mock-canvas">
+		<aside class="mock-sidebar" data-inspect="Sidebar nav">
+			<span class="mock-side-icon mock-side-icon-active"></span>
+			<span class="mock-side-icon"></span>
+			<span class="mock-side-icon"></span>
+			<span class="mock-side-icon"></span>
+		</aside>
+
+		<div class="mock-main">
+			<header class="mock-header" data-inspect="Header · avatar 32px">
+				<span class="mock-title-bar"></span>
+				<span class="mock-avatar"></span>
+			</header>
+
+			<div class="mock-stats">
+				<div class="mock-stat-card" data-inspect="Card · radius 12px">
+					<span class="mock-stat-bar" style="height: 42%"></span>
+				</div>
+				<div class="mock-stat-card" data-inspect="Card · radius 12px">
+					<span class="mock-stat-bar mock-stat-bar-accent" style="height: 78%"></span>
+				</div>
+				<div class="mock-stat-card" data-inspect="Card · radius 12px">
+					<span class="mock-stat-bar" style="height: 58%"></span>
+				</div>
+			</div>
+
+			<div class="mock-chart-card" data-inspect="Chart · data viz">
+				<div class="mock-chart-bars">
+					<span style="height: 30%"></span>
+					<span style="height: 55%"></span>
+					<span style="height: 42%"></span>
+					<span class="mock-chart-bar-accent" style="height: 80%"></span>
+					<span style="height: 50%"></span>
+					<span style="height: 64%"></span>
+				</div>
+			</div>
+
+			<button class="mock-btn" data-inspect="Button/Primary · radius 8px" type="button">Primary</button>
+		</div>
+
+		<div class="mock-outline" id="mock-outline"></div>
+		<div class="mock-label" id="mock-label"></div>
+		<div class="mock-cursor" id="mock-cursor">
+			<svg viewBox="0 0 16 16" width="16" height="16" fill="none"><path d="M2 1.5l11 5-4.6 1.4L7 12.5 2 1.5z" fill="var(--ink)" stroke="#fff" stroke-width="0.8" stroke-linejoin="round"/></svg>
+		</div>
+	</div>
+</div>
+
+<script>
+	function prefersReducedMotion() {
+		return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+	}
+
+	function initHeroMock() {
+		const canvas = document.querySelector<HTMLElement>(".mock-canvas");
+		const cursor = document.getElementById("mock-cursor");
+		const outline = document.getElementById("mock-outline");
+		const label = document.getElementById("mock-label");
+		if (!canvas || !cursor || !outline || !label) return;
+
+		const targets = Array.from(canvas.querySelectorAll<HTMLElement>("[data-inspect]"));
+		if (!targets.length) return;
+
+		function moveTo(el: HTMLElement) {
+			const frameRect = canvas!.getBoundingClientRect();
+			const r = el.getBoundingClientRect();
+			const x = r.left - frameRect.left;
+			const y = r.top - frameRect.top;
+
+			outline.style.transform = `translate(${x}px, ${y}px)`;
+			outline.style.width = r.width + "px";
+			outline.style.height = r.height + "px";
+			outline.style.opacity = "1";
+
+			cursor.style.transform = `translate(${x + r.width - 6}px, ${y + r.height - 6}px)`;
+
+			label.textContent = el.dataset.inspect || "";
+			const labelY = y + r.height + 8;
+			label.style.transform = `translate(${x}px, ${labelY}px)`;
+			label.style.opacity = "1";
+		}
+
+		let i = 0;
+		function loop() {
+			moveTo(targets[i]);
+			i = (i + 1) % targets.length;
+		}
+
+		const prevId = (window as any).__heroMockInterval;
+		if (prevId) clearInterval(prevId);
+
+		loop();
+		if (!prefersReducedMotion()) {
+			(window as any).__heroMockInterval = setInterval(loop, 2400);
+		} else {
+			outline.style.opacity = "0";
+			label.style.opacity = "0";
+		}
+	}
+
+	document.addEventListener("astro:page-load", initHeroMock);
+	initHeroMock();
+</script>
+
+<style>
+	.mock-frame {
+		aspect-ratio: 16 / 10;
+		display: flex;
+		flex-direction: column;
+		border-radius: var(--radius-lg);
+		background: var(--surface);
+		box-shadow: var(--shadow-lg);
+		overflow: hidden;
+		border: 1px solid var(--border);
+	}
+
+	.mock-toolbar {
+		display: grid;
+		grid-template-columns: auto 1fr auto;
+		align-items: center;
+		gap: 0.75rem;
+		padding: 0.6rem 0.75rem;
+		border-bottom: 1px solid var(--border);
+		background: var(--bg-soft);
+	}
+
+	.mock-traffic {
+		display: inline-flex;
+		gap: 0.4rem;
+		padding-right: 0.5rem;
+	}
+
+	.mock-dot {
+		width: 11px;
+		height: 11px;
+		border-radius: 50%;
+	}
+
+	.mock-dot-red {
+		background: #ff5f57;
+	}
+
+	.mock-dot-yellow {
+		background: #febc2e;
+	}
+
+	.mock-dot-green {
+		background: #28c840;
+	}
+
+	.mock-address-bar {
+		flex: 1;
+		max-width: 260px;
+		margin-inline: auto;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.4rem;
+		padding: 0.3rem 0.75rem;
+		border-radius: 999px;
+		background: var(--surface);
+		border: 1px solid var(--border);
+		color: var(--ink-faint);
+	}
+
+	.mock-url {
+		font-size: 0.75rem;
+		font-weight: 500;
+		color: var(--ink-secondary);
+	}
+
+	.mock-share {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 26px;
+		height: 26px;
+		color: var(--ink-faint);
+	}
+
+	.mock-canvas {
+		position: relative;
+		flex: 1;
+		min-height: 0;
+		display: grid;
+		grid-template-columns: 48px 1fr;
+		background: var(--bg-soft);
+	}
+
+	.mock-sidebar {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 0.7rem;
+		padding-top: 0.9rem;
+		background: var(--surface);
+		border-right: 1px solid var(--border);
+	}
+
+	.mock-side-icon {
+		width: 22px;
+		height: 22px;
+		border-radius: var(--radius-sm);
+		background: var(--border);
+	}
+
+	.mock-side-icon-active {
+		background: var(--accent);
+	}
+
+	.mock-main {
+		padding: 0.85rem 1rem 1rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.6rem;
+		min-height: 0;
+	}
+
+	.mock-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
+
+	.mock-title-bar {
+		width: 40%;
+		height: 12px;
+		border-radius: 4px;
+		background: var(--ink);
+		opacity: 0.85;
+	}
+
+	.mock-avatar {
+		width: 26px;
+		height: 26px;
+		border-radius: 50%;
+		background: var(--accent-tint);
+		border: 1.5px solid var(--accent);
+	}
+
+	.mock-stats {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 0.6rem;
+	}
+
+	.mock-stat-card {
+		height: 46px;
+		border-radius: var(--radius-md);
+		background: var(--surface);
+		box-shadow: var(--shadow-sm);
+		display: flex;
+		align-items: flex-end;
+		padding: 0.35rem;
+	}
+
+	.mock-stat-bar {
+		display: block;
+		width: 100%;
+		border-radius: 4px;
+		background: var(--border);
+	}
+
+	.mock-stat-bar-accent {
+		background: var(--accent);
+	}
+
+	.mock-chart-card {
+		border-radius: var(--radius-md);
+		background: var(--surface);
+		box-shadow: var(--shadow-sm);
+		padding: 0.6rem 0.8rem 0.45rem;
+		flex: 1 1 auto;
+		min-height: 56px;
+		display: flex;
+		align-items: flex-end;
+	}
+
+	.mock-chart-bars {
+		display: flex;
+		align-items: flex-end;
+		gap: 0.4rem;
+		width: 100%;
+		height: 100%;
+	}
+
+	.mock-chart-bars span {
+		flex: 1;
+		border-radius: 4px 4px 0 0;
+		background: var(--border);
+		transform-origin: bottom;
+		will-change: transform;
+		/* Negative delays desync the bars so they never pulse in unison. */
+		animation: mock-bar-live 3.2s ease-in-out infinite alternate;
+	}
+
+	.mock-chart-bars span:nth-child(1) {
+		animation-duration: 3s;
+		animation-delay: -0.2s;
+	}
+	.mock-chart-bars span:nth-child(2) {
+		animation-duration: 3.7s;
+		animation-delay: -1.4s;
+	}
+	.mock-chart-bars span:nth-child(3) {
+		animation-duration: 3.2s;
+		animation-delay: -2.3s;
+	}
+	.mock-chart-bars span:nth-child(4) {
+		animation-duration: 4s;
+		animation-delay: -0.7s;
+	}
+	.mock-chart-bars span:nth-child(5) {
+		animation-duration: 3.4s;
+		animation-delay: -1.9s;
+	}
+	.mock-chart-bars span:nth-child(6) {
+		animation-duration: 2.8s;
+		animation-delay: -1.1s;
+	}
+
+	@keyframes mock-bar-live {
+		from {
+			transform: scaleY(0.58);
+		}
+		to {
+			transform: scaleY(1);
+		}
+	}
+
+	.mock-chart-bar-accent {
+		background: var(--accent) !important;
+	}
+
+	.mock-btn {
+		align-self: flex-start;
+		font-family: var(--sans);
+		font-size: 0.85rem;
+		font-weight: 600;
+		padding: 0.5rem 1.1rem;
+		border-radius: var(--radius-sm);
+		background: var(--inverse-bg);
+		color: var(--inverse-ink);
+		border: none;
+		cursor: default;
+	}
+
+	.mock-outline {
+		position: absolute;
+		top: 0;
+		left: 0;
+		border: 1.5px dashed var(--accent);
+		border-radius: 4px;
+		opacity: 0;
+		transition: transform 0.6s var(--ease-smooth), opacity 0.3s var(--ease-smooth);
+		pointer-events: none;
+	}
+
+	.mock-label {
+		position: absolute;
+		top: 0;
+		left: 0;
+		font-size: 0.7rem;
+		font-weight: 600;
+		color: var(--accent-strong);
+		background: var(--accent-tint);
+		padding: 0.2rem 0.5rem;
+		border-radius: 999px;
+		white-space: nowrap;
+		opacity: 0;
+		transition: transform 0.6s var(--ease-smooth), opacity 0.3s var(--ease-smooth);
+		pointer-events: none;
+	}
+
+	.mock-cursor {
+		position: absolute;
+		top: 0;
+		left: 0;
+		transition: transform 0.6s var(--ease-smooth);
+		pointer-events: none;
+		filter: drop-shadow(0 2px 3px rgba(18, 24, 21, 0.25));
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.mock-outline,
+		.mock-label,
+		.mock-cursor {
+			transition: none;
+		}
+	}
+
+	/* The frame keeps its 16:10 ratio, so below ~480px its height shrinks
+	   faster than the mock UI inside it. Trim the internals here or the
+	   Primary button gets clipped off the bottom. */
+	@media (max-width: 480px) {
+		.mock-canvas {
+			grid-template-columns: 40px 1fr;
+		}
+		.mock-sidebar {
+			gap: 0.5rem;
+			padding-top: 0.6rem;
+		}
+		.mock-side-icon {
+			width: 16px;
+			height: 16px;
+		}
+		.mock-main {
+			padding: 0.6rem 0.7rem 0.7rem;
+			gap: 0.4rem;
+		}
+		.mock-title-bar {
+			height: 9px;
+		}
+		.mock-avatar {
+			width: 20px;
+			height: 20px;
+		}
+		.mock-stat-card {
+			height: 32px;
+			border-radius: var(--radius-sm);
+			padding: 0.25rem;
+		}
+		.mock-chart-card {
+			min-height: 40px;
+			padding: 0.4rem 0.5rem 0.35rem;
+			border-radius: var(--radius-sm);
+		}
+		.mock-chart-bars {
+			gap: 0.25rem;
+		}
+		.mock-btn {
+			font-size: 0.72rem;
+			padding: 0.3rem 0.7rem;
+		}
+		.mock-label {
+			font-size: 0.62rem;
+			padding: 0.15rem 0.4rem;
+		}
+		.mock-stats {
+			grid-template-columns: repeat(3, 1fr);
+		}
+	}
+</style>

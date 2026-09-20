@@ -1,0 +1,315 @@
+/* Cal Sans chỉ có một weight (400) và đã gồm subset tiếng Việt. */
+@import "@fontsource/cal-sans/400.css";
+
+:root {
+  --bg: #ffffff;
+  --bg-soft: #f6f7f6;
+  --surface: #ffffff;
+  --ink: #121815;
+  --ink-secondary: #4b544e;
+  --ink-faint: #838d86;
+  --border: #e6e9e6;
+  --accent: #0b7a5b;
+  --accent-strong: #075f46;
+  --accent-tint: #e6f3ee;
+  --accent-ink: #ffffff;
+
+  /* Khối "đảo màu" (nút chính, thẻ liên hệ chính, nút trong mockup): nền mực,
+     chữ trắng ở light; dark đảo lại (nền sáng, chữ tối). Không dùng
+     `background: var(--ink); color: #fff` trần — #fff không đổi theo theme. */
+  --inverse-bg: #121815;
+  --inverse-ink: #ffffff;
+  --inverse-ink-secondary: rgba(255, 255, 255, 0.65);
+
+  /* Header trong suốt-mờ và dải công cụ nền tối: dải LUÔN tối ở cả hai theme
+     (đó là bản sắc của nó), nên tách token riêng thay vì dùng --ink. */
+  --header-bg: rgba(255, 255, 255, 0.86);
+  --band-bg: #121815;
+  /* Accent TRÊN nền tối của dải (2026-09-20): --accent theme sáng (#0b7a5b) chìm
+     trên --band-bg, nên dải dùng mint của theme tối ở cả hai theme — node, đường
+     nối, icon của section "Cách tôi làm việc". */
+  --band-accent: #3fc296;
+
+  /* Bề mặt trên nền tối (--band-bg) — dùng cho dải công cụ ở trang Kinh nghiệm.
+     Chữ chính trắng, chữ phụ trắng 68%, lớp nổi trắng 6%/10%. */
+  --on-ink: #ffffff;
+  --on-ink-secondary: rgba(255, 255, 255, 0.68);
+  --ink-surface-faint: rgba(255, 255, 255, 0.035);
+  --ink-surface: rgba(255, 255, 255, 0.06);
+  --ink-surface-hover: rgba(255, 255, 255, 0.1);
+
+  --sans:
+    ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+    "Segoe UI Symbol", "Noto Color Emoji";
+  --display: "Cal Sans", var(--sans);
+
+  --measure: 66ch;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+
+  --shadow-sm: 0 1px 2px rgba(18, 24, 21, 0.04);
+  --shadow-md: 0 8px 24px rgba(18, 24, 21, 0.06), 0 2px 6px rgba(18, 24, 21, 0.04);
+  --shadow-lg: 0 24px 48px rgba(18, 24, 21, 0.08), 0 4px 12px rgba(18, 24, 21, 0.04);
+
+  /* Chiều cao header thật (logo 52px + padding 0.6rem×2 + viền) — dùng cho các
+     phần tử sticky cần đứng ngay dưới header. Mobile (≤560px) logo 40px → 61px. */
+  --header-h: 72px;
+
+  --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+  /* Riêng cho chuyển trang: ease-in-out đối xứng. --ease-smooth hợp với hover
+     và reveal nhỏ, nhưng ở tầm cả trang nó dồn ~70% quãng đường vào 60ms đầu
+     → mắt đọc thành một cú giật rồi lê đuôi (đo bằng screencast 2026-09-18). */
+  --ease-page: cubic-bezier(0.4, 0, 0.2, 1);
+  --dur-page: 0.5s;
+
+  color-scheme: light;
+}
+
+/* ---- Dark mode (2026-09-18) ----
+   Bật bằng thuộc tính `data-theme="dark"` trên <html> do nút trong header đặt,
+   lưu ở localStorage("theme"). MẶC ĐỊNH LUÔN LÀ LIGHT — cố ý không theo
+   prefers-color-scheme (yêu cầu người dùng), nên không có @media ở đây.
+   Nền xanh-đen ấm cùng họ với --ink; accent sáng hơn một bậc để giữ ≥ 4.5:1
+   trên nền tối; shadow chuyển sang đen mờ vì bóng xám trên nền tối vô hình. */
+html[data-theme="dark"] {
+  --bg: #0f1412;
+  --bg-soft: #161c19;
+  --surface: #1a211d;
+  --ink: #eef2ef;
+  --ink-secondary: #b4bdb7;
+  --ink-faint: #7f8a83;
+  --border: #283129;
+  --accent: #3fc296;
+  --accent-strong: #6ad4ad;
+  --accent-tint: rgba(63, 194, 150, 0.14);
+  --accent-ink: #0f1412;
+
+  --inverse-bg: #eef2ef;
+  --inverse-ink: #0f1412;
+  --inverse-ink-secondary: rgba(15, 20, 18, 0.65);
+
+  --header-bg: rgba(15, 20, 18, 0.86);
+  --band-bg: #090c0b;
+  --band-accent: #3fc296;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.45), 0 2px 6px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 24px 48px rgba(0, 0, 0, 0.55), 0 4px 12px rgba(0, 0, 0, 0.35);
+
+  color-scheme: dark;
+}
+
+/* Ảnh slide dự án đều nền sáng: hạ sáng nhẹ trên nền tối để không chói, vẫn
+   đọc được chữ trong ảnh. */
+html[data-theme="dark"] img {
+  filter: brightness(0.9);
+}
+
+/* Đổi theme: chỉ transition màu, ngắn, để cảm giác "đổi lớp" chứ không nhấp nháy. */
+html.theme-switching,
+html.theme-switching * {
+  transition: background-color 0.3s var(--ease-page), color 0.3s var(--ease-page), border-color 0.3s var(--ease-page) !important;
+}
+
+@media (max-width: 560px) {
+  :root {
+    --header-h: 61px;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--bg);
+  scroll-behavior: smooth;
+  /* `clip` chứ không phải `hidden`: `hidden` biến html/body thành scroll
+     container và làm `position: sticky` của header mất tác dụng. */
+  overflow-x: clip;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 17px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
+}
+
+h1, h2, h3 {
+  font-family: var(--display);
+  /* Cal Sans ships a single weight, so heading elements must drop the browser's
+     default bold or the browser fakes it and the letterforms smear. */
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+a {
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 999px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* ---- Chuyển trang (Astro View Transitions) — theo tinh thần Smart Animate ----
+   Header là group riêng, đứng yên tuyệt đối (transition:name + animate="none"
+   trong BaseLayout) — lớp "matched". Phần còn lại là "root" — lớp "unmatched":
+   dissolve kèm drift nhẹ CÙNG MỘT HƯỚNG (trang cũ trượt lên rồi tan, trang mới
+   trượt lên từ dưới) để đọc như một dòng chuyển động liên tục, không phải hai
+   lớp tách rời nhau.
+
+   Ba bài học đo được bằng screencast từng khung hình (2026-09-18):
+   1. Easing phải đối xứng (--ease-page). Bản cũ dùng --ease-smooth: 70% quãng
+      đường xảy ra trong ~60ms đầu → "nhảy nhanh một lần rồi mới chuyển".
+   2. Ghi đè `animation` của ::view-transition-old/new làm rơi animation
+      `-ua-mix-blend-mode-plus-lighter` mà Chrome dùng để giữ blend plus-lighter
+      → giữa crossfade hai lớp 50%/50% chồng lên nền tối thành XÁM. Phải đặt lại
+      mix-blend-mode: plus-lighter và isolation: isolate cho image-pair.
+   3. Header không tự tách khỏi root chỉ vì transition:persist — nó bị chụp
+      chung và dịch theo keyframe của root → hiện hai bản lệch nhau. */
+::view-transition-image-pair(root) {
+  isolation: isolate;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  mix-blend-mode: plus-lighter;
+  animation-duration: var(--dur-page);
+  animation-timing-function: var(--ease-page);
+  animation-fill-mode: both;
+}
+
+::view-transition-old(root) {
+  animation-name: page-out;
+}
+
+::view-transition-new(root) {
+  animation-name: page-in;
+}
+
+@keyframes page-out {
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+/* Mọi group khác (shared-element morph ảnh thẻ dự án → hero trang chi tiết qua
+   transition:name) dùng chung nhịp và easing với root, để cả màn hình chuyển
+   như một khối. */
+::view-transition-group(*) {
+  animation-duration: var(--dur-page);
+  animation-timing-function: var(--ease-page);
+}
+
+/* Header: group riêng, đứng yên tuyệt đối — lớp "matched". Tên do
+   `.site-header { view-transition-name }` trong BaseLayout đặt theo class, KHÔNG
+   dùng transition:name, vì header transition:persist là DOM cũ được mang sang
+   trang mới trong khi rule của Astro bám theo data-astro-transition-scope sinh
+   riêng cho từng trang (astro-…-1 / -4 / -2) → sang trang mới header mất tên,
+   rơi lại vào root và hiện hai bản lệch nhau (đo 2026-09-18). Chỉ hiện ảnh
+   MỚI, không animation: header vốn persist nên ảnh mới chính là trạng thái
+   cuối; ẩn ảnh cũ để nền trắng 86% của header không bị chồng hai lớp thành
+   đặc hơn trong 0.5s. Vạch active (.nav-indicator) là group riêng nằm ngoài
+   ảnh này, tự morph theo nhịp ::view-transition-group(*). */
+::view-transition-group(site-header),
+::view-transition-old(site-header),
+::view-transition-new(site-header) {
+  animation: none;
+}
+
+::view-transition-old(site-header) {
+  display: none;
+}
+
+::view-transition-new(site-header) {
+  mix-blend-mode: normal;
+}
+
+::view-transition-image-pair(site-header) {
+  isolation: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root),
+  ::view-transition-group(*) {
+    animation: none;
+  }
+}
+
+/* Safe by default: content is fully visible with no JS. Only a page that
+   confirmed its reveal script is running (html.js-reveal, set synchronously
+   before paint) hides content first, so a failed/blocked script can never
+   leave real content invisible. */
+.js-reveal [data-reveal] {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 0.7s var(--ease-smooth),
+    transform 0.7s var(--ease-smooth);
+}
+
+.js-reveal [data-reveal].is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js-reveal [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums lining-nums;
+}

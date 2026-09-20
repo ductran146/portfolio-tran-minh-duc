@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Thử hiệu ứng chữ — hero</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cal+Sans&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --k: 1;                       /* hệ số tốc độ: 1 = thật, 2 = chậm gấp đôi */
+    --ease: cubic-bezier(.16,1,.3,1);
+    --ink:#121815; --ink2:#4b544e; --ink3:#838d86;
+    --accent:#0b7a5b; --accent-strong:#075f46; --tint:#e6f3ee;
+    --border:#e6e9e6; --soft:#f6f7f6;
+    --sans:"Plus Jakarta Sans",system-ui,sans-serif;
+    --display:"Cal Sans","Plus Jakarta Sans",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:#fff;color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.55}
+  .wrap{max-width:1240px;margin:0 auto;padding:32px 28px 64px}
+  .top{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;justify-content:space-between;margin-bottom:20px}
+  .top h1{font-family:var(--display);font-weight:400;font-size:1.5rem;margin:0}
+  .top p{margin:4px 0 0;color:var(--ink3);font-size:.9rem}
+  .controls{display:flex;gap:8px;align-items:center}
+  button{font:inherit;font-weight:600;border:1px solid var(--border);background:#fff;color:var(--ink);padding:8px 14px;border-radius:10px;cursor:pointer}
+  button.primary{background:var(--ink);color:#fff;border-color:var(--ink)}
+  button.on{background:var(--tint);border-color:var(--accent);color:var(--accent-strong)}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(520px,1fr));gap:20px}
+  @media (max-width:600px){.grid{grid-template-columns:1fr}}
+  .fx{border:1px solid var(--border);border-radius:16px;background:#fff;padding:22px 24px 20px;display:flex;flex-direction:column;gap:14px}
+  .fx header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .fx h2{margin:0;font-size:.92rem;font-weight:600}
+  .fx h2 b{display:inline-block;min-width:1.7em;color:var(--accent-strong)}
+  .fx header button{padding:6px 12px;font-size:.85rem}
+  .stage{background:var(--soft);border-radius:12px;padding:26px 26px 24px;min-height:290px;position:relative;overflow:hidden}
+  .note{margin:0;color:var(--ink2);font-size:.88rem}
+  .note em{color:var(--ink);font-style:normal;font-weight:600}
+  .rec{display:inline-block;font-size:.72rem;font-weight:600;color:var(--accent-strong);background:var(--tint);padding:2px 8px;border-radius:999px;margin-left:6px;vertical-align:middle}
+
+  /* ---- nội dung hero mô phỏng ---- */
+  .eyebrow{margin:0 0 10px;font-size:.8rem;font-weight:600;color:var(--accent-strong)}
+  .t{font-family:var(--display);font-weight:400;font-size:clamp(1.9rem,2.6vw,2.35rem);line-height:1.08;letter-spacing:-.01em;margin:0;max-width:24ch}
+  .acc{color:var(--accent-strong)}
+  .lede{margin:16px 0 0;color:var(--ink2);font-size:.98rem;max-width:44ch}
+  .fx.play .lede{animation:fadeUp calc(.7s*var(--k)) var(--ease) both;animation-delay:calc(.62s*var(--k))}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+  /* A — mask-wipe theo cụm (đang dùng trên site) */
+  .fx-wipe .line{display:inline-block;clip-path:inset(-.3em 0 0 0)}
+  .fx-wipe .line-inner{display:inline-block}
+  .fx-wipe.play .line-inner{animation:wipeUp calc(.9s*var(--k)) var(--ease) both;animation-delay:calc((140ms + var(--i)*90ms)*var(--k))}
+  @keyframes wipeUp{from{transform:translateY(118%)}to{transform:none}}
+
+  /* B — từng từ nổi lên */
+  .fx-words .w{display:inline-block}
+  .fx-words.play .w{animation:wordRise calc(.7s*var(--k)) var(--ease) both;animation-delay:calc((100ms + var(--i)*45ms)*var(--k))}
+  @keyframes wordRise{from{opacity:0;transform:translateY(.45em)}to{opacity:1;transform:none}}
+
+  /* C — tracking khớp lại */
+  .fx-track .line{display:block}
+  .fx-track.play .line{animation:trackIn calc(1s*var(--k)) var(--ease) both;animation-delay:calc((120ms + var(--i)*110ms)*var(--k))}
+  @keyframes trackIn{from{opacity:0;letter-spacing:.09em}to{opacity:1;letter-spacing:-.01em}}
+
+  /* D — mờ → nét */
+  .fx-blur .line{display:block;will-change:filter,transform}
+  .fx-blur.play .line{animation:focusIn calc(1s*var(--k)) var(--ease) both;animation-delay:calc((120ms + var(--i)*100ms)*var(--k))}
+  @keyframes focusIn{from{opacity:0;filter:blur(10px);transform:scale(1.02)}to{opacity:1;filter:blur(0);transform:none}}
+
+  /* E — fade dòng + gạch chân vẽ dưới lời hứa */
+  .fx-ul .line{display:block}
+  .fx-ul.play .line{animation:fadeUp calc(.7s*var(--k)) var(--ease) both;animation-delay:calc((120ms + var(--i)*120ms)*var(--k))}
+  .fx-ul .u{display:inline-block;padding-bottom:.05em;background:linear-gradient(var(--accent),var(--accent)) no-repeat 0 100%/0% 3px}
+  .fx-ul.play .u{animation:drawUl calc(.65s*var(--k)) var(--ease) both;animation-delay:calc((760ms + var(--j)*160ms)*var(--k))}
+  @keyframes drawUl{from{background-size:0% 3px}to{background-size:100% 3px}}
+
+  /* G — wipe ngang từ trái (như được vẽ ra) */
+  .fx-hwipe .line{display:inline-block}
+  .fx-hwipe.play .line{animation:wipeX calc(.9s*var(--k)) var(--ease) both;animation-delay:calc((140ms + var(--i)*110ms)*var(--k))}
+  @keyframes wipeX{from{clip-path:inset(-.3em 100% -.12em 0)}to{clip-path:inset(-.3em 0 -.12em 0)}}
+
+  /* H — typing + mờ → nét: từng ký tự hiện theo nhịp gõ, mỗi ký tự vào mờ rồi nét;
+     con trỏ chạy theo ký tự đang gõ. Markup ký tự được JS tách ra từ text. */
+  .fx-type{--step:34ms}
+  .fx-type .line{display:block}
+  .fx-type .wd{white-space:nowrap}
+  .fx-type .c{display:inline-block;will-change:filter,transform}
+  .fx-type.play .c{
+    animation:typeIn calc(.45s*var(--k)) var(--ease) both, caret calc(var(--step)*var(--k)) linear forwards;
+    animation-delay:calc((120ms + var(--i)*var(--step))*var(--k));
+  }
+  .fx-type.play .lede{animation-delay:calc((120ms + var(--n)*var(--step) + 150ms)*var(--k))}
+  @keyframes typeIn{from{opacity:0;filter:blur(8px);transform:translateY(.12em)}to{opacity:1;filter:blur(0);transform:none}}
+  @keyframes caret{0%,99%{box-shadow:.08em 0 0 var(--accent)}100%{box-shadow:.08em 0 0 transparent}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div>
+      <h1>Thử hiệu ứng chữ cho hero</h1>
+      <p>Bản thử riêng, chưa đụng vào site. Cùng tiêu đề, cùng font Cal Sans, cùng nhịp lede vào sau. Chọn mã A–G rồi báo tôi.</p>
+    </div>
+    <div class="controls">
+      <button id="speed">Chậm 2×</button>
+      <button class="primary" id="all">Chạy lại tất cả</button>
+    </div>
+  </div>
+
+  <div class="grid">
+
+    <!-- A -->
+    <article class="fx fx-wipe">
+      <header><h2><b>A</b>Mask-wipe theo cụm <span class="rec">đang dùng</span></h2><button>Chạy lại</button></header>
+      <div class="stage">
+        <p class="eyebrow">Senior UX/UI Designer · Product Design</p>
+        <h1 class="t">
+          <span class="line" style="--i:0"><span class="line-inner">Thiết kế sản phẩm</span></span>
+          <span class="line" style="--i:1"><span class="line-inner">doanh nghiệp</span></span><br>
+          <span class="line acc" style="--i:2"><span class="line-inner">rõ ràng, đáng tin,</span></span>
+          <span class="line acc" style="--i:3"><span class="line-inner">dễ mở rộng.</span></span>
+        </h1>
+        <p class="lede">15 năm giúp doanh nghiệp tài chính và vận hành phức tạp biến yêu cầu rối rắm thành design system mạch lạc.</p>
+      </div>
+      <p class="note"><em>Chính xác, "được dựng".</em> Chữ trồi lên từ một mép vô hình — cảm giác kỹ thuật, có chủ ý. Ít ồn nhất trong nhóm có chuyển động.</p>
+    </article>
+
+    <!-- B -->
+    <article class="fx fx-words">
+      <header><h2><b>B</b>Từng từ nổi lên</h2><button>Chạy lại</button></header>
+      <div class="stage">
+        <p class="eyebrow">Senior UX/UI Designer · Product Design</p>
+        <h1 class="t">
+          <span class="w" style="--i:0">Thiết</span> <span class="w" style="--i:1">kế</span> <span class="w" style="--i:2">sản</span> <span class="w" style="--i:3">phẩm</span> <span class="w" style="--i:4">doanh</span> <span class="w" style="--i:5">nghiệp</span><br>
+          <span class="w acc" style="--i:6">rõ</span> <span class="w acc" style="--i:7">ràng,</span> <span class="w acc" style="--i:8">đáng</span> <span class="w acc" style="--i:9">tin,</span> <span class="w acc" style="--i:10">dễ</span> <span class="w acc" style="--i:11">mở</span> <span class="w acc" style="--i:12">rộng.</span>
+        </h1>
+        <p class="lede">15 năm giúp doanh nghiệp tài chính và vận hành phức tạp biến yêu cầu rối rắm thành design system mạch lạc.</p>
+      </div>
+      <p class="note"><em>Mềm, biên tập.</em> Ấm hơn A nhưng hơi "blog/editorial"; với khách doanh nghiệp có thể kém "kỹ thuật" hơn.</p>
+    </article>
+
+    <!-- C -->
+    <article class="fx fx-track">
+      <header><h2><b>C</b>Tracking khớp lại</h2><button>Chạy lại</button></header>
+      <div class="stage">
+        <p class="eyebrow">Senior UX/UI Designer · Product Design</p>
+        <h1 class="t">
+          <span class="line" style="--i:0">Thiết kế sản phẩm</span>
+          <span class="line" style="--i:1">doanh nghiệp</span>
+          <span class="line acc" style="--i:2">rõ ràng, đáng tin,</span>
+          <span class="line acc" style="--i:3">dễ mở rộng.</span>
+        </h1>
+        <p class="lede">15 năm giúp doanh nghiệp tài chính và vận hành phức tạp biến yêu cầu rối rắm thành design system mạch lạc.</p>
+      </div>
+      <p class="note"><em>"Khớp khít".</em> Chữ đang giãn rồi xiết lại đúng chỗ — rất hợp ý design system. Tinh tế, dễ bị bỏ qua ở tốc độ thật; animate letter-spacing tốn layout hơn A.</p>
+    </article>
+
+    <!-- D -->
+    <article class="fx fx-blur">
+      <header><h2><b>D</b>Mờ → nét</h2><button>Chạy lại</button></header>
+      <div class="stage">
+        <p class="eyebrow">Senior UX/UI Designer · Product Design</p>
+        <h1 class="t">
+          <span class="line" style="--i:0">Thiết kế sản phẩm</span>
+          <span class="line" style="--i:1">doanh nghiệp</span>
+          <span class="line acc" style="--i:2">rõ ràng, đáng tin,</span>
+          <span class="line acc" style="--i:3">dễ mở rộng.</span>
+        </h1>
+        <p class="lede">15 năm giúp doanh nghiệp tài chính và vận hành phức tạp biến yêu cầu rối rắm thành design system mạch lạc.</p>
+      </div>
+      <p class="note"><em>Ẩn dụ đúng chữ "rõ ràng".</em> Từ mờ đến nét — kể đúng câu chuyện. Dùng filter nên nặng hơn trên máy yếu; chỉ nên chạy một lần, không lặp.</p>
+    </article>
+
+    <!-- E -->
+    <article class="fx fx-ul">
+      <header><h2><b>E</b>Fade dòng + gạch chân vẽ dưới lời hứa</h2><button>Chạy lại</button></header>
+      <div class="stage">
+        <p class="eyebrow">Senior UX/UI Designer · Product Design</p>
+        <h1 class="t">
+          <span class="line" style="--i:0">Thiết kế sản phẩm doanh nghiệp</span>
+          <span class="line acc" style="--i:1"><span class="u" style="--j:0">rõ ràng, đáng tin,</span> <span class="u" style="--j:1">dễ mở rộng.</span></span>
+        </h1>
+        <p class="lede">15 năm giúp doanh nghiệp tài chính và vận hành phức tạp biến yêu cầu rối rắm thành design system mạch lạc.</p>
+      </div>
+      <p class="note"><em>Nhấn vào cam kết.</em> Chữ vào bình thường, rồi gạch chân "vẽ" dưới đúng ba lời hứa — như ký tên. Ghép được với A hoặc C.</p>
+    </article>
+
+    <!-- G -->
+    <article class="fx fx-hwipe">
+      <header><h2><b>G</b>Wipe ngang từ trái</h2><button>Chạy lại</button></header>
+      <div class="stage">
+        <p class="eyebrow">Senior UX/UI Designer · Product Design</p>
+        <h1 class="t">
+          <span class="line" style="--i:0">Thiết kế sản phẩm</span>
+          <span class="line" style="--i:1">doanh nghiệp</span><br>
+          <span class="line acc" style="--i:2">rõ ràng, đáng tin,</span>
+          <span class="line acc" style="--i:3">dễ mở rộng.</span>
+        </h1>
+        <p class="lede">15 năm giúp doanh nghiệp tài chính và vận hành phức tạp biến yêu cầu rối rắm thành design system mạch lạc.</p>
+      </div>
+      <p class="note"><em>Như được in/vẽ ra.</em> Cùng họ với A nhưng theo hướng đọc. Trình diễn hơn một chút; hợp nếu muốn cảm giác "đang dựng bản vẽ".</p>
+    </article>
+
+    <!-- H -->
+    <article class="fx fx-type">
+      <header><h2><b>H</b>Typing + mờ → nét (kết hợp D)</h2><button>Chạy lại</button></header>
+      <div class="stage">
+        <p class="eyebrow">Senior UX/UI Designer · Product Design</p>
+        <h1 class="t" data-typed>
+          <span class="line">Thiết kế sản phẩm doanh nghiệp</span>
+          <span class="line acc">rõ ràng, đáng tin, dễ mở rộng.</span>
+        </h1>
+        <p class="lede">15 năm giúp doanh nghiệp tài chính và vận hành phức tạp biến yêu cầu rối rắm thành design system mạch lạc.</p>
+      </div>
+      <p class="note"><em>Gõ ra, mép trước mờ rồi nét dần.</em> Bắt mắt nhất nhóm, nhưng người xem phải chờ ~2s mới đọc xong tiêu đề. Nếu chọn, nên chỉ chạy ở lần vào đầu tiên; quay lại trang thì hiện tĩnh.</p>
+    </article>
+
+  </div>
+</div>
+
+<script>
+  // H: tách text thành từng ký tự (theo grapheme để không vỡ dấu tiếng Việt),
+  // giữ từ trong .wd để chỉ ngắt dòng ở khoảng trắng.
+  document.querySelectorAll('[data-typed]').forEach(h => {
+    const seg = 'Segmenter' in Intl ? new Intl.Segmenter('vi', { granularity: 'grapheme' }) : null;
+    const chars = s => seg ? [...seg.segment(s)].map(x => x.segment) : Array.from(s);
+    let i = 0;
+    h.querySelectorAll('.line').forEach(line => {
+      const words = line.textContent.trim().split(/\s+/);
+      line.textContent = '';
+      words.forEach((w, wi) => {
+        const wd = document.createElement('span');
+        wd.className = 'wd';
+        chars(w).forEach(ch => {
+          const c = document.createElement('span');
+          c.className = 'c';
+          c.style.setProperty('--i', i++);
+          c.textContent = ch;
+          wd.appendChild(c);
+        });
+        line.appendChild(wd);
+        if (wi < words.length - 1) line.appendChild(document.createTextNode(' '));
+      });
+    });
+    h.closest('.fx').style.setProperty('--n', i);
+  });
+
+  const cards = [...document.querySelectorAll('.fx')];
+  function play(c){ c.classList.remove('play'); void c.offsetWidth; c.classList.add('play'); }
+  cards.forEach(c => c.querySelector('header button').addEventListener('click', () => play(c)));
+  const playAll = () => cards.forEach((c, i) => setTimeout(() => play(c), i * 140));
+  document.getElementById('all').addEventListener('click', playAll);
+
+  const speedBtn = document.getElementById('speed');
+  let slow = false;
+  speedBtn.addEventListener('click', () => {
+    slow = !slow;
+    document.documentElement.style.setProperty('--k', slow ? '2' : '1');
+    speedBtn.textContent = slow ? 'Tốc độ thật' : 'Chậm 2×';
+    speedBtn.classList.toggle('on', slow);
+    playAll();
+  });
+
+  document.fonts?.ready.then(playAll) ?? window.addEventListener('load', playAll);
+</script>
+</body>
+</html>

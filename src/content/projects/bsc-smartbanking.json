@@ -1,0 +1,60 @@
+{
+  "slug": "bsc-smartbanking",
+  "title": "BSC trong BIDV SmartBanking",
+  "client": "BIDV Securities JSC (BSC)",
+  "real": true,
+  "featured": false,
+  "order": 2,
+  "cover": "../../assets/projects/bsc-smartbanking/01.jpg",
+  "summary": "Ứng dụng giao dịch chứng khoán tích hợp trong BIDV SmartBanking. Tối ưu trải nghiệm nhúng trong app SmartBanking, đảm bảo đồng nhất với hệ sinh thái BIDV - từ hệ thống màu, icon, grid đến các màn hình đặt lệnh, sổ lệnh và chỉ số thị trường.",
+  "tags": [
+    "Fintech",
+    "Mobile app",
+    "Design system"
+  ],
+  "role": "Thiết kế UI/UX & hệ thống thiết kế (màu, icon, grid)",
+  "tools": [
+    "Figma"
+  ],
+  "context": "Ứng dụng không chạy độc lập mà được nhúng trong BIDV SmartBanking, nên mọi quyết định về màu, icon và lưới đều phải vừa đúng nhận diện BSC vừa không lệch khỏi hệ sinh thái BIDV mà người dùng đã quen.",
+  "process": [
+    {
+      "title": "Hệ thống màu",
+      "body": "Bảng màu xây trên tone thương hiệu của BIDV và BSC, mở rộng thành các scale 100-900. Mỗi scale có 9 sắc độ để đáp ứng đủ ngữ cảnh sử dụng, từ nền nhạt, trạng thái hover đến text đậm nhấn mạnh."
+    },
+    {
+      "title": "Hệ thống icon",
+      "body": "Bộ icon được chuẩn hoá theo 3 trạng thái nhất quán cho từng icon, thuận tiện cho việc mở rộng bộ icon mới mà vẫn giữ đúng chuẩn thiết kế."
+    },
+    {
+      "title": "Grid system",
+      "body": "Toàn bộ giao diện xây trên lưới chuẩn: padding lề trái/phải 16px, gap giữa các cột 20px, áp dụng đồng nhất cho mọi màn hình để căn chỉnh và mở rộng layout luôn chính xác."
+    }
+  ],
+  "gallery": [
+    {
+      "src": "../../assets/projects/bsc-smartbanking/02.jpg",
+      "caption": "Màn hình mở đầu và đặt lệnh: giá trần, sàn, tham chiếu, sức mua và khối lượng mua tối đa hiện ngay trong form lệnh."
+    },
+    {
+      "src": "../../assets/projects/bsc-smartbanking/03.jpg",
+      "caption": "Hệ thống màu: Primary Emerald Green, Secondary Mã Brown, Tertiary Mã Yellow và Neutral Ink, mỗi scale 9 sắc độ 100-900."
+    },
+    {
+      "src": "../../assets/projects/bsc-smartbanking/04.jpg",
+      "caption": "Hệ thống icon chuẩn hoá theo 3 trạng thái cho từng icon."
+    },
+    {
+      "src": "../../assets/projects/bsc-smartbanking/05.jpg",
+      "caption": "Grid system: padding 16px, gap 20px, áp dụng đồng nhất mọi màn hình."
+    },
+    {
+      "src": "../../assets/projects/bsc-smartbanking/06.jpg",
+      "caption": "Orderbook: theo dõi toàn bộ lệnh trong ngày theo trạng thái Tất cả, Đang chờ, Đã khớp, Đã huỷ. Giá đặt - giá khớp và khối lượng đặt - khối lượng khớp đặt song song để so sánh nhanh."
+    },
+    {
+      "src": "../../assets/projects/bsc-smartbanking/07.jpg",
+      "caption": "Chỉ số thị trường: VN-Index theo thời gian thực, khung 1D đến 5Y, biểu đồ giá kết hợp volume theo phiên, thống kê nhanh số mã tăng, đứng giá, giảm giá."
+    }
+  ]
+}

@@ -1,0 +1,571 @@
+---
+import { ClientRouter } from "astro:transitions";
+import Icon from "../components/Icon.astro";
+import { locales, localePath, resolveLocale, switchLocalePath, t, type Locale } from "../i18n/ui";
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description?: string;
+  /** Trang đã có nội dung đúng ngôn ngữ hiện tại → tắt dải "English version in progress". */
+  translated?: boolean;
+}
+
+const {
+  title,
+  description = "Trần Minh Đức - Senior UX/UI Designer, thiết kế sản phẩm doanh nghiệp và fintech.",
+  translated = false,
+} = Astro.props;
+
+// Locale lấy từ URL (Astro i18n: /en/* → "en", còn lại "vi"). Menu/footer/nút
+// đổi theo locale; nội dung trang do từng page quyết định (xem src/i18n/ui.ts).
+const locale: Locale = resolveLocale(Astro.currentLocale);
+const l = (path: string) => localePath(locale, path);
+
+const navItems = [
+  { href: l("/"), label: t(locale, "nav.home"), home: true },
+  { href: l("/du-an"), label: t(locale, "nav.projects") },
+  { href: l("/kinh-nghiem"), label: t(locale, "nav.experience") },
+  { href: l("/lien-he"), label: t(locale, "nav.contact") },
+];
+
+const currentPath = Astro.url.pathname;
+const showLangNotice = locale !== "vi" && !translated;
+---
+
+<html lang={locale}>
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="generator" content={Astro.generator} />
+		<meta name="description" content={description} />
+		<title>{title}</title>
+		<!-- hreflang cần URL tuyệt đối → chỉ phát khi đã khai báo `site` trong
+		     astro.config.mjs (khi deploy). Chưa có site thì bỏ qua, không phát localhost. -->
+		{Astro.site &&
+			locales.map((alt) => (
+				<link rel="alternate" hreflang={alt} href={new URL(switchLocalePath(currentPath, alt), Astro.site).href} />
+			))}
+		<ClientRouter />
+			<!-- Theme đặt TRƯỚC khi vẽ để không nháy trắng→tối. Mặc định light (không
+			     đọc prefers-color-scheme, theo yêu cầu); chỉ localStorage "dark" mới
+			     bật. data-astro-rerun: Astro chép lại attribute <html> từ trang mới
+			     khi swap nên script phải chạy lại mỗi lần chuyển trang (ngoài ra
+			     after-swap trong header cũng gắn lại - hai lớp bảo hiểm). -->
+			<script is:inline data-astro-rerun>
+				document.documentElement.classList.add("js-reveal");
+				try {
+					if (localStorage.getItem("theme") === "dark") {
+						document.documentElement.setAttribute("data-theme", "dark");
+					}
+				} catch (e) {}
+			</script>
+	</head>
+	<body>
+		<!-- transition:persist giữ nguyên DOM header qua các lần chuyển trang, nhưng
+		     KHÔNG tự tách nó khỏi ảnh chụp "root" của View Transition: header bị chụp
+		     chung với cả trang rồi mờ/dịch theo keyframe của root → hai bản lệch nhau.
+		     Không dùng transition:name ở đây: rule của Astro bám theo
+		     data-astro-transition-scope sinh RIÊNG cho từng trang, còn header persist
+		     là DOM cũ mang sang nên sang trang mới sẽ mất tên. Tên đặt bằng CSS theo
+		     class (.site-header, xem <style> dưới) + rule đứng yên trong global.css.
+		     Id persist PHẢI đặt tường minh: id tự sinh (astro-…-N) có N phụ thuộc số
+		     directive transition trên từng trang (-1 / -4 / -2), khác nhau thì Astro
+		     không ghép được phần tử cũ/mới → header bị render lại, không persist.
+		     Id mang theo locale: đổi VI↔EN thì id khác → header render lại có đúng
+		     nhãn/href ngôn ngữ mới (persist giữ DOM cũ nên menu sẽ kẹt tiếng Việt -
+		     đo 2026-09-18). Cùng locale vẫn persist như cũ. -->
+		<header class="site-header" transition:persist={`site-header-${locale}`}>
+			<a class="brand" href={l("/")}>
+				<img class="brand-mark" src="/logo-dt-green.svg" width="377" height="434" alt="" />
+				<span>Trần Minh Đức</span>
+			</a>
+			<nav class="site-nav" aria-label={t(locale, "nav.aria")}>
+				{
+					navItems.map((item) => (
+						<a href={item.href} data-home={item.home ? "" : undefined} aria-current={currentPath === item.href ? "page" : undefined}>
+							{item.label}
+						</a>
+					))
+				}
+				<!-- Một vạch active duy nhất, JS trượt nó tới mục đang mở (Smart Animate:
+				     lớp giống nhau đổi vị trí thì di chuyển, không tắt/bật). Header
+				     persist nên vạch trượt liền qua cả lúc chuyển trang. -->
+				<span class="nav-indicator" aria-hidden="true"></span>
+			</nav>
+			<!-- Nút "Liên hệ" cũ bỏ (2026-09-18: trùng với mục menu Liên hệ). Thay bằng
+			     hai điều khiển: đổi ngôn ngữ VI | EN (link thật, đổi cùng trang) và
+			     đổi theme sáng/tối (button, lưu localStorage, mặc định sáng). Header
+			     persist nên hai điều khiển này sống xuyên suốt điều hướng; nút ngôn ngữ
+			     cập nhật href theo trang hiện tại ở astro:after-swap. -->
+			<div class="header-tools">
+				<div class="lang-switch" role="group" aria-label={t(locale, "lang.aria")}>
+					{locales.map((alt) => (
+						<a
+							href={switchLocalePath(currentPath, alt)}
+							data-lang={alt}
+							lang={alt}
+							hreflang={alt}
+							aria-label={t(locale, alt === "vi" ? "lang.vi" : "lang.en")}
+							aria-current={alt === locale ? "true" : undefined}
+						>
+							{alt.toUpperCase()}
+						</a>
+					))}
+				</div>
+				<button
+					type="button"
+					class="theme-toggle"
+					data-label-dark={t(locale, "theme.toDark")}
+					data-label-light={t(locale, "theme.toLight")}
+					aria-label={t(locale, "theme.toDark")}
+					aria-pressed="false"
+				>
+					<Icon name="sun" size={20} class="theme-icon theme-icon-sun" />
+					<Icon name="moon" size={20} class="theme-icon theme-icon-moon" />
+				</button>
+			</div>
+			<!-- Thanh tiến độ đọc (vạch accent chạy dưới header theo scroll) đã bỏ
+			     2026-09-19 theo yêu cầu người dùng. -->
+			<script>
+				function initReveals() {
+					const els = document.querySelectorAll<HTMLElement>("[data-reveal]:not(.is-visible)");
+					if (!els.length) return;
+					if (!("IntersectionObserver" in window)) {
+						els.forEach((el) => el.classList.add("is-visible"));
+						return;
+					}
+					const io = new IntersectionObserver(
+						(entries) => {
+							for (const entry of entries) {
+								if (entry.isIntersecting) {
+									entry.target.classList.add("is-visible");
+									io.unobserve(entry.target);
+								}
+							}
+						},
+						{ threshold: 0.15 },
+					);
+					els.forEach((el) => io.observe(el));
+				}
+
+				function prefersReducedMotion() {
+					return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+				}
+
+				// Header có `transition:persist` nên qua mỗi lần chuyển trang bằng
+				// ClientRouter, DOM này KHÔNG render lại — `aria-current` gắn lúc
+				// server-render lần đầu sẽ đứng yên mãi ở trang đó. Phải tự cập nhật
+				// theo `location.pathname` mỗi lần `astro:page-load`.
+				function updateNavActive() {
+					const nav = document.querySelector<HTMLElement>(".site-nav");
+					if (!nav) return;
+					const path = window.location.pathname;
+					let active: HTMLAnchorElement | null = null;
+					nav.querySelectorAll<HTMLAnchorElement>("a").forEach((a) => {
+						const href = a.getAttribute("href") || "";
+						// Trang con (/du-an/<slug>) vẫn thuộc mục "Dự án". Mục Trang chủ
+						// (data-home: "/" hoặc "/en") chỉ khớp tuyệt đối, không dùng
+						// startsWith vì "/en/" là tiền tố của mọi trang EN.
+						const isHome = a.hasAttribute("data-home");
+						const isActive = href === path || (!isHome && path.startsWith(href + "/"));
+						if (isActive) {
+							a.setAttribute("aria-current", "page");
+							active = a;
+						} else {
+							a.removeAttribute("aria-current");
+						}
+					});
+					positionNavIndicator(nav, active);
+				}
+
+				// Vạch active: chỉ transform (translateX + scaleX trên bề rộng gốc 100px),
+				// không đổi width/left.
+				// Chuyển động trượt do View Transition đảm nhiệm: vạch có view-transition-name
+				// riêng nên trình duyệt tự morph vị trí/bề rộng từ ảnh chụp cũ sang mới,
+				// cùng nhịp với cả trang. Vì thế vị trí mới phải được đặt NGAY ở
+				// astro:after-swap (trước khi chụp trạng thái mới) và KHÔNG qua CSS
+				// transition — trong lúc VT chạy, màn hình là ảnh chụp tĩnh, transition
+				// sống không ai thấy, và ảnh mới sẽ bị bắt giữa chừng → vạch nhảy nốt
+				// đoạn còn lại khi VT kết thúc. Chỉ trình duyệt không có VT mới bật
+				// transition CSS (sau lần đặt đầu, để không trượt từ góc trái khi tải).
+				function positionNavIndicator(nav: HTMLElement, active: HTMLAnchorElement | null) {
+					const bar = nav.querySelector<HTMLElement>(".nav-indicator");
+					if (!bar) return;
+					if (!active) {
+						bar.style.opacity = "0";
+						return;
+					}
+					const navRect = nav.getBoundingClientRect();
+					const r = active.getBoundingClientRect();
+					bar.style.opacity = "1";
+					bar.style.transform = `translateX(${r.left - navRect.left}px) scaleX(${r.width / 100})`;
+					if (!("startViewTransition" in document) && !bar.classList.contains("is-ready")) {
+						requestAnimationFrame(() => requestAnimationFrame(() => bar.classList.add("is-ready")));
+					}
+				}
+
+				function animateCount(el: HTMLElement) {
+					const target = parseFloat(el.dataset.countTo || "0");
+					const suffix = el.dataset.suffix || "";
+					const dur = 1100;
+					const start = performance.now();
+					function tick(now: number) {
+						const p = Math.min(1, (now - start) / dur);
+						const eased = 1 - Math.pow(1 - p, 3);
+						el.textContent = Math.round(target * eased) + suffix;
+						if (p < 1) requestAnimationFrame(tick);
+					}
+					requestAnimationFrame(tick);
+				}
+
+				function initCounts() {
+					const els = document.querySelectorAll<HTMLElement>("[data-count-to]:not(.counted)");
+					if (!els.length) return;
+					if (!("IntersectionObserver" in window) || prefersReducedMotion()) {
+						els.forEach((el) => el.classList.add("counted"));
+						return;
+					}
+					const io = new IntersectionObserver(
+						(entries) => {
+							for (const entry of entries) {
+								if (entry.isIntersecting) {
+									const el = entry.target as HTMLElement;
+									el.classList.add("counted");
+									el.textContent = "0";
+									animateCount(el);
+									io.unobserve(el);
+								}
+							}
+						},
+						{ threshold: 0.6 },
+					);
+					els.forEach((el) => io.observe(el));
+				}
+
+				// ---- Theme sáng/tối: thuộc tính data-theme trên <html>, lưu localStorage.
+				// Mặc định light. Astro chép attribute <html> từ trang mới khi swap →
+				// gắn lại ở after-swap (giống js-reveal). Nút nằm trong header persist
+				// nên chỉ bind một lần (data-bound).
+				function currentTheme(): "light" | "dark" {
+					return document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
+				}
+
+				function applyTheme(theme: "light" | "dark") {
+					if (theme === "dark") document.documentElement.setAttribute("data-theme", "dark");
+					else document.documentElement.removeAttribute("data-theme");
+					const btn = document.querySelector<HTMLButtonElement>(".theme-toggle");
+					if (btn) {
+						btn.setAttribute("aria-pressed", theme === "dark" ? "true" : "false");
+						btn.setAttribute("aria-label", btn.dataset[theme === "dark" ? "labelLight" : "labelDark"] || "");
+					}
+				}
+
+				function restoreTheme() {
+					let saved: string | null = null;
+					try {
+						saved = localStorage.getItem("theme");
+					} catch {}
+					applyTheme(saved === "dark" ? "dark" : "light");
+				}
+
+				function initThemeToggle() {
+					const btn = document.querySelector<HTMLButtonElement>(".theme-toggle");
+					if (!btn || btn.dataset.bound) return;
+					btn.dataset.bound = "1";
+					btn.addEventListener("click", () => {
+						const next = currentTheme() === "dark" ? "light" : "dark";
+						// Lớp .theme-switching bật transition màu ngắn chỉ trong lúc đổi.
+						const root = document.documentElement;
+						if (!prefersReducedMotion()) {
+							root.classList.add("theme-switching");
+							window.setTimeout(() => root.classList.remove("theme-switching"), 350);
+						}
+						applyTheme(next);
+						try {
+							localStorage.setItem("theme", next);
+						} catch {}
+					});
+				}
+
+				// ---- Nút ngôn ngữ: header persist nên href phải bám theo trang hiện tại.
+				// Quy ước prefix: "en" có /en, "vi" không prefix (khớp src/i18n/ui.ts).
+				function updateLangLinks() {
+					const path = window.location.pathname;
+					const stripped = path === "/en" ? "/" : path.startsWith("/en/") ? path.slice(3) : path;
+					document.querySelectorAll<HTMLAnchorElement>(".lang-switch a").forEach((a) => {
+						const lang = a.dataset.lang;
+						const href = lang === "vi" ? stripped : stripped === "/" ? "/en" : "/en" + stripped;
+						a.setAttribute("href", href + window.location.hash);
+						if ((lang === "en") === path.startsWith("/en")) a.setAttribute("aria-current", "true");
+						else a.removeAttribute("aria-current");
+					});
+				}
+
+				// Magnetic button (nút trôi theo con trỏ) đã bỏ 2026-09-20: nút không
+				// chuyển động khi hover, chỉ đổi màu (yêu cầu người dùng).
+
+				// Bề rộng chữ đổi khi đổi cỡ cửa sổ hoặc khi web font tải xong → đặt lại vạch.
+				window.addEventListener("resize", updateNavActive);
+				document.fonts?.ready.then(updateNavActive);
+				// after-swap chạy bên trong callback của startViewTransition: DOM mới đã
+				// vào, ảnh trạng thái mới CHƯA chụp → đặt active + vị trí vạch ở đây để
+				// ảnh chụp mới đúng là trạng thái cuối, VT morph từ cũ sang đó.
+				document.addEventListener("astro:after-swap", updateNavActive);
+
+				// Astro chép lại attribute của <html> từ trang mới khi swap → class
+				// `js-reveal` (chỉ gắn bằng script lúc tải cứng) bị mất, và mọi hiệu ứng
+				// reveal/timeline im lặng không chạy sau khi đi bằng menu (đo 2026-09-18).
+				// Gắn lại ngay trong after-swap (trước khi chụp trạng thái mới). Phần tử
+				// đang nằm trong viewport được đánh dấu hiện luôn, để ảnh chụp trang mới
+				// đầy đủ trong lúc crossfade — chỉ phần dưới màn hình mới chờ cuộn tới.
+				document.addEventListener("astro:after-swap", () => {
+					document.documentElement.classList.add("js-reveal");
+					restoreTheme();
+					updateLangLinks();
+					const vh = window.innerHeight;
+					document.querySelectorAll<HTMLElement>("[data-reveal]:not(.is-visible)").forEach((el) => {
+						const r = el.getBoundingClientRect();
+						if (r.top < vh && r.bottom > 0) el.classList.add("is-visible");
+					});
+				});
+				document.addEventListener("astro:page-load", () => {
+					updateNavActive();
+					updateLangLinks();
+					initThemeToggle();
+					initReveals();
+					initCounts();
+				});
+				updateNavActive();
+				restoreTheme();
+				updateLangLinks();
+				initThemeToggle();
+				initReveals();
+				initCounts();
+			</script>
+		</header>
+
+		<!-- Dải báo bản EN chưa dịch: nằm ngoài header (không persist) nên tự biến
+		     mất khi sang trang đã truyền `translated`. -->
+		{showLangNotice && <p class="lang-notice" role="status">{t(locale, "notice.inProgress")}</p>}
+
+		<slot />
+
+		<footer class="site-footer">
+			<p>
+				© {new Date().getFullYear()} Trần Minh Đức. {t(locale, "footer.text")}{" "}
+				<a href="https://behance.net/tranducdesign" target="_blank" rel="noopener noreferrer">Behance</a>.
+			</p>
+		</footer>
+
+		<style>
+			.site-header {
+				/* Group View Transition riêng, đứng yên (rule trong global.css). Đặt theo
+				   class nên khớp ở CẢ hai trạng thái cũ/mới, không phụ thuộc scope Astro. */
+				view-transition-name: site-header;
+				position: sticky;
+				top: 0;
+				z-index: 20;
+				display: flex;
+				align-items: center;
+				gap: clamp(1rem, 3vw, 2.5rem);
+				padding: 0.6rem clamp(1.25rem, 5vw, 3rem);
+				background: var(--header-bg);
+				backdrop-filter: blur(10px);
+				-webkit-backdrop-filter: blur(10px);
+				border-bottom: 1px solid var(--border);
+			}
+
+			.brand {
+				display: inline-flex;
+				align-items: center;
+				gap: 0.6rem;
+				font-family: var(--display);
+				font-weight: 400;
+				font-size: 1.2rem;
+				text-decoration: none;
+				color: var(--ink);
+				margin-right: auto;
+			}
+
+			/* Logo tỷ lệ 377:434 (cao hơn rộng); neo theo chiều cao, bề rộng tự suy
+			   ra. alt="" vì tên thương hiệu đã nằm ngay bên cạnh — tránh đọc trùng
+			   trên screen reader. */
+			.brand-mark {
+				height: 52px;
+				width: auto;
+				display: block;
+			}
+
+			.site-nav {
+				position: relative;
+				display: flex;
+				gap: clamp(1rem, 2.5vw, 1.75rem);
+			}
+
+			.site-nav a {
+				text-decoration: none;
+				color: var(--ink-secondary);
+				font-size: 0.94rem;
+				font-weight: 500;
+				padding-bottom: 0.2rem;
+				transition: color 0.25s var(--ease-smooth);
+			}
+
+			.site-nav a:hover {
+				color: var(--ink);
+			}
+
+			.site-nav a[aria-current="page"] {
+				color: var(--ink);
+			}
+
+			/* Vạch active dùng chung, trượt giữa các mục. Bề rộng gốc 100px, JS đặt
+			   translateX + scaleX; là khối màu đặc nên scale không làm nhoè.
+			   view-transition-name riêng → group riêng, trình duyệt morph vị trí/bề
+			   rộng trong lúc chuyển trang (Smart Animate: lớp giống nhau đổi chỗ thì
+			   di chuyển). Nhịp/easing lấy từ ::view-transition-group(*) trong global.css. */
+			.nav-indicator {
+				view-transition-name: nav-indicator;
+				position: absolute;
+				left: 0;
+				bottom: 0;
+				width: 100px;
+				height: 2px;
+				background: var(--accent);
+				transform-origin: left center;
+				opacity: 0;
+				pointer-events: none;
+			}
+
+			.nav-indicator.is-ready {
+				transition: transform 0.45s var(--ease-page), opacity 0.2s var(--ease-smooth);
+			}
+
+			/* ---- Điều khiển bên phải: ngôn ngữ + theme ----
+			   Hai điều khiển "công cụ" nên cùng chiều cao 36px, ghost, không nổi bằng
+			   nút CTA cũ — hành động chính của site giờ nằm trong nội dung, không ở
+			   header. */
+			.header-tools {
+				display: inline-flex;
+				align-items: center;
+				gap: 0.5rem;
+			}
+
+			/* Segmented VI | EN: pill viền hairline, mục đang chọn tô bg-soft + chữ ink;
+			   mục kia chữ ink-faint. Là <a> thật (crawler theo được hreflang). */
+			.lang-switch {
+				display: inline-flex;
+				padding: 3px;
+				border: 1px solid var(--border);
+				border-radius: 999px;
+				background: var(--surface);
+			}
+
+			.lang-switch a {
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				min-width: 2.1rem;
+				height: 28px;
+				padding: 0 0.55rem;
+				border-radius: 999px;
+				text-decoration: none;
+				font-size: 0.72rem;
+				font-weight: 600;
+				letter-spacing: 0.06em;
+				color: var(--ink-faint);
+				transition: color 0.25s var(--ease-smooth), background 0.25s var(--ease-smooth);
+			}
+
+			.lang-switch a:hover {
+				color: var(--ink);
+			}
+
+			.lang-switch a[aria-current="true"] {
+				background: var(--bg-soft);
+				color: var(--ink);
+			}
+
+			.theme-toggle {
+				position: relative;
+				width: 36px;
+				height: 36px;
+				padding: 0;
+				border: 1px solid var(--border);
+				border-radius: 50%;
+				background: var(--surface);
+				color: var(--ink-secondary);
+				cursor: pointer;
+				display: inline-grid;
+				place-items: center;
+				transition: color 0.25s var(--ease-smooth), background 0.25s var(--ease-smooth), border-color 0.25s var(--ease-smooth);
+			}
+
+			.theme-toggle:hover {
+				color: var(--ink);
+				background: var(--bg-soft);
+			}
+
+			/* Hai icon xếp cùng ô; icon không hợp theme xoay đi và tan (Smart
+			   Animate: cùng vị trí, đổi lớp). Chỉ transform/opacity. */
+			.theme-toggle :global(.theme-icon) {
+				grid-area: 1 / 1;
+				transition: transform 0.4s var(--ease-page), opacity 0.3s var(--ease-page);
+			}
+
+			.theme-toggle :global(.theme-icon-moon),
+			:global(html[data-theme="dark"]) .theme-toggle :global(.theme-icon-sun) {
+				opacity: 0;
+				transform: rotate(90deg) scale(0.6);
+			}
+
+			:global(html[data-theme="dark"]) .theme-toggle :global(.theme-icon-moon) {
+				opacity: 1;
+				transform: none;
+			}
+
+			/* Dải báo bản EN đang dịch: mảnh, accent-tint, canh giữa, không che nội dung. */
+			.lang-notice {
+				margin: 0;
+				padding: 0.55rem clamp(1.25rem, 5vw, 3rem);
+				text-align: center;
+				font-size: 0.85rem;
+				color: var(--accent-strong);
+				background: var(--accent-tint);
+			}
+
+			.site-footer {
+				max-width: 1160px;
+				margin-inline: auto;
+				padding: 2rem clamp(1.25rem, 5vw, 3rem) 3rem;
+				color: var(--ink-faint);
+				font-size: 0.85rem;
+			}
+
+			.site-footer a {
+				color: inherit;
+			}
+
+			@media (max-width: 720px) {
+				.site-nav {
+					display: none;
+				}
+			}
+
+			@media (max-width: 560px) {
+				.brand-mark {
+					height: 40px;
+				}
+				.brand {
+					font-size: 1.05rem;
+				}
+				.lang-switch a {
+					min-width: 1.9rem;
+					padding-inline: 0.4rem;
+				}
+			}
+		</style>
+	</body>
+</html>

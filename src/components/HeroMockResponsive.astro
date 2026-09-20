@@ -1,0 +1,611 @@
+---
+// Phương án B: MỘT khung duy nhất morph qua lại giữa mobile (tỷ lệ iPhone
+// 375:812) và desktop 16:10 — giống Smart Animate của Figma / Morph của
+// PowerPoint.
+//
+// Cách làm: cả hai trạng thái dùng đúng một cây DOM, và mọi khác biệt về bố cục
+// được biểu đạt bằng **giá trị hình học chuyển tiếp được** (width/height/top/
+// left/border-radius). Mọi khối bên trong định vị tuyệt đối theo phần trăm của
+// màn hình, nên khi khung co giãn thì từng khối trượt và đổi kích thước liên
+// tục, không nhảy sang bố cục mới.
+//
+// Đây là chỗ duy nhất trong hệ thống được phép animate thuộc tính layout: chính
+// chuyển động hình học là nội dung cần thể hiện (responsive), không phải hiệu
+// ứng trang trí. Phạm vi reflow được giới hạn trong khung bằng `contain`.
+//
+// impeccable-disable layout-transition: morph mobile<->desktop là nội dung của
+// hero, không phải hiệu ứng trang trí; reflow được giới hạn bằng `contain:
+// layout` và chỉ chạy 1.4s mỗi 6s trên một khung nhỏ. Luật vẫn còn hiệu lực
+// ở mọi file khác — chỉ miễn trừ đúng file này.
+---
+
+<div class="mk" id="mk-root">
+	<div class="mk-frame">
+		<!-- Chrome trình duyệt: chỉ hiện ở trạng thái desktop -->
+		<div class="mk-chrome">
+			<span class="mk-traffic">
+				<span class="mk-dot mk-dot-red"></span>
+				<span class="mk-dot mk-dot-yellow"></span>
+				<span class="mk-dot mk-dot-green"></span>
+			</span>
+			<span class="mk-address">
+				<svg viewBox="0 0 12 12" width="9" height="9" fill="none"><rect x="2.5" y="5.5" width="7" height="5" rx="1" stroke="currentColor" stroke-width="1"/><path d="M4 5.5V4a2 2 0 0 1 4 0v1.5" stroke="currentColor" stroke-width="1"/></svg>
+				<span class="mk-url">tranducdesign.com</span>
+			</span>
+			<span class="mk-chrome-end"></span>
+		</div>
+
+		<!-- Dynamic island + home bar: chỉ hiện ở trạng thái mobile -->
+		<span class="mk-island"></span>
+		<span class="mk-home"></span>
+
+		<div class="mk-screen">
+			<div class="mk-nav">
+				<span class="mk-navicon mk-navicon-active"></span>
+				<span class="mk-navicon"></span>
+				<span class="mk-navicon"></span>
+				<span class="mk-navicon"></span>
+			</div>
+
+			<div class="mk-head">
+				<span class="mk-title"></span>
+				<span class="mk-avatar"></span>
+			</div>
+
+			<span class="mk-card mk-card-1"></span>
+			<span class="mk-card mk-card-2 mk-card-accent"></span>
+			<span class="mk-card mk-card-3"></span>
+
+			<div class="mk-chart">
+				<span style="height: 48%"></span>
+				<span style="height: 72%"></span>
+				<span style="height: 58%"></span>
+				<span class="mk-bar-accent" style="height: 94%"></span>
+				<span style="height: 66%"></span>
+				<span style="height: 80%"></span>
+			</div>
+
+			<div class="mk-list">
+				<span class="mk-row"><i></i><b></b></span>
+				<span class="mk-row"><i></i><b></b></span>
+				<span class="mk-row"><i></i><b></b></span>
+			</div>
+
+			<span class="mk-btn">Primary</span>
+		</div>
+	</div>
+</div>
+
+<script>
+	function mkReducedMotion() {
+		return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+	}
+
+	function initHeroMorph() {
+		const root = document.getElementById("mk-root");
+		if (!root) return;
+
+		const prev = (window as any).__heroMorphInterval;
+		if (prev) clearInterval(prev);
+
+		if (mkReducedMotion()) {
+			// Không animate: đứng yên ở trạng thái desktop (rộng hơn, đủ thông tin hơn).
+			root.classList.add("is-desktop");
+			return;
+		}
+
+		root.classList.remove("is-desktop");
+		(window as any).__heroMorphInterval = setInterval(() => {
+			root.classList.toggle("is-desktop");
+		}, 6000);
+	}
+
+	document.addEventListener("astro:page-load", initHeroMorph);
+	initHeroMorph();
+</script>
+
+<style>
+	.mk {
+		--morph: 1.4s cubic-bezier(0.5, 0, 0.2, 1);
+		position: relative;
+		aspect-ratio: 1 / 1.3;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		/* Giữ phạm vi reflow của morph trong khung này. */
+		contain: layout;
+	}
+
+	/* ---------- Khung: mobile 375:812 → desktop 16:10 ---------- */
+
+	.mk-frame {
+		position: relative;
+		/* 375/812 của chiều cao stage (stage cao 1.3× bề rộng) */
+		width: 60%;
+		height: 100%;
+		background: var(--ink);
+		border: 1px solid transparent;
+		border-radius: 13% / 6%;
+		box-shadow: var(--shadow-lg);
+		transition:
+			width var(--morph),
+			height var(--morph),
+			border-radius var(--morph),
+			border-color var(--morph),
+			/* Bezel đổi màu ở nửa sau: khung giữ nguyên chất liệu thiết bị cũ
+			   trong lúc đang biến hình, rồi mới chuyển sang chất liệu đích. */
+				background 0.8s ease 0.5s;
+	}
+
+	.mk.is-desktop .mk-frame {
+		width: 100%;
+		/* 100%/1.6 của chiều rộng stage, quy ra % chiều cao stage */
+		height: 48.1%;
+		background: var(--bg-soft);
+		border-radius: var(--radius-md);
+		border-color: var(--border);
+	}
+
+	/* ---------- Chrome trình duyệt (desktop) ---------- */
+
+	.mk-chrome {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		height: 5.6%;
+		display: grid;
+		grid-template-columns: auto 1fr auto;
+		align-items: center;
+		gap: 0.5rem;
+		padding-inline: 0.6rem;
+		opacity: 0;
+		overflow: hidden;
+		/* Tiết tấu có hướng: transition khai báo ở trạng thái nào thì áp dụng khi
+		   chuyển VÀO trạng thái đó. Nhờ vậy chrome của thiết bị cũ biến mất ngay,
+		   còn chrome của thiết bị đích chỉ xuất hiện ở cuối morph. */
+		transition: height var(--morph), opacity 0.35s ease;
+	}
+
+	.mk.is-desktop .mk-chrome {
+		height: 13%;
+		opacity: 1;
+		transition: height var(--morph), opacity 0.6s ease 0.7s;
+	}
+
+	.mk-traffic {
+		display: inline-flex;
+		gap: 0.3rem;
+	}
+
+	.mk-dot {
+		width: 9px;
+		height: 9px;
+		border-radius: 50%;
+	}
+
+	.mk-dot-red {
+		background: #ff5f57;
+	}
+	.mk-dot-yellow {
+		background: #febc2e;
+	}
+	.mk-dot-green {
+		background: #28c840;
+	}
+
+	.mk-address {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.3rem;
+		max-width: 210px;
+		margin-inline: auto;
+		padding: 0.15rem 0.6rem;
+		border-radius: 999px;
+		border: 1px solid var(--border);
+		background: var(--surface);
+		color: var(--ink-faint);
+		white-space: nowrap;
+	}
+
+	.mk-url {
+		font-size: 0.66rem;
+	}
+
+	.mk-chrome-end {
+		width: 30px;
+	}
+
+	/* ---------- Chi tiết thiết bị (mobile) ---------- */
+
+	.mk-island {
+		position: absolute;
+		top: 1.6%;
+		left: 50%;
+		transform: translateX(-50%);
+		width: 30%;
+		height: 1.1%;
+		border-radius: 999px;
+		background: #000;
+		opacity: 1;
+		z-index: 2;
+		transition: opacity 0.6s ease 0.7s, top var(--morph), height var(--morph);
+	}
+
+	.mk.is-desktop .mk-island {
+		opacity: 0;
+		top: 0.4%;
+		height: 0.4%;
+		transition: opacity 0.35s ease, top var(--morph), height var(--morph);
+	}
+
+	.mk-home {
+		position: absolute;
+		bottom: 0.9%;
+		left: 50%;
+		transform: translateX(-50%);
+		width: 32%;
+		height: 0.5%;
+		border-radius: 999px;
+		background: rgba(255, 255, 255, 0.5);
+		opacity: 1;
+		z-index: 2;
+		transition: opacity 0.6s ease 0.7s;
+	}
+
+	.mk.is-desktop .mk-home {
+		opacity: 0;
+		transition: opacity 0.35s ease;
+	}
+
+	/* ---------- Màn hình ---------- */
+
+	.mk-screen {
+		position: absolute;
+		top: 5.6%;
+		left: 3.4%;
+		right: 3.4%;
+		bottom: 2.6%;
+		background: var(--bg-soft);
+		border-radius: 10% / 4.4%;
+		overflow: hidden;
+		transition:
+			top var(--morph),
+			left var(--morph),
+			right var(--morph),
+			bottom var(--morph),
+			border-radius var(--morph);
+	}
+
+	.mk.is-desktop .mk-screen {
+		top: 13%;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		border-radius: 0 0 var(--radius-md) var(--radius-md);
+	}
+
+	/* Mọi khối định vị tuyệt đối theo % của màn hình, nên mỗi khác biệt bố cục
+	   giữa hai trạng thái là một giá trị chuyển tiếp được — nền tảng của morph. */
+	.mk-screen > * {
+		position: absolute;
+		transition:
+			top var(--morph),
+			left var(--morph),
+			width var(--morph),
+			height var(--morph),
+			border-radius var(--morph),
+			border-color var(--morph);
+	}
+
+	/* Tab bar (mobile) → Sidebar (desktop) */
+	.mk-nav {
+		top: 86.5%;
+		left: 0;
+		width: 100%;
+		height: 13.5%;
+		background: var(--surface);
+		border-top: 1px solid var(--border);
+	}
+
+	.mk.is-desktop .mk-nav {
+		top: 0;
+		left: 0;
+		width: 9%;
+		height: 100%;
+		border-top-color: transparent;
+	}
+
+	.mk-navicon {
+		position: absolute;
+		width: 11px;
+		height: 11px;
+		border-radius: var(--radius-xs, 4px);
+		background: var(--border);
+		transition:
+			top var(--morph),
+			left var(--morph),
+			width var(--morph),
+			height var(--morph);
+	}
+
+	.mk-navicon-active {
+		background: var(--accent);
+	}
+
+	.mk-navicon:nth-child(1) {
+		top: 28%;
+		left: 11%;
+	}
+	.mk-navicon:nth-child(2) {
+		top: 28%;
+		left: 36%;
+	}
+	.mk-navicon:nth-child(3) {
+		top: 28%;
+		left: 61%;
+	}
+	.mk-navicon:nth-child(4) {
+		top: 28%;
+		left: 86%;
+	}
+
+	.mk.is-desktop .mk-navicon {
+		width: 14px;
+		height: 14px;
+		left: 24%;
+	}
+
+	.mk.is-desktop .mk-navicon:nth-child(1) {
+		top: 5%;
+	}
+	.mk.is-desktop .mk-navicon:nth-child(2) {
+		top: 16%;
+	}
+	.mk.is-desktop .mk-navicon:nth-child(3) {
+		top: 27%;
+	}
+	.mk.is-desktop .mk-navicon:nth-child(4) {
+		top: 38%;
+	}
+
+	/* Header */
+	.mk-head {
+		top: 3%;
+		left: 5%;
+		width: 90%;
+		height: 4%;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
+
+	.mk.is-desktop .mk-head {
+		top: 5%;
+		left: 13%;
+		width: 84%;
+		height: 9%;
+	}
+
+	.mk-title {
+		width: 48%;
+		height: 55%;
+		border-radius: 999px;
+		background: var(--ink);
+		opacity: 0.85;
+		transition: width var(--morph), height var(--morph);
+	}
+
+	.mk.is-desktop .mk-title {
+		width: 30%;
+		height: 42%;
+	}
+
+	.mk-avatar {
+		height: 100%;
+		aspect-ratio: 1;
+		border-radius: 50%;
+		background: var(--accent-tint);
+		border: 1.2px solid var(--accent);
+	}
+
+	/* Thẻ số liệu: 2 + 1 (mobile) → 3 cột (desktop) */
+	.mk-card {
+		height: 7.5%;
+		width: 43%;
+		border-radius: var(--radius-xs, 4px);
+		background: var(--surface);
+		box-shadow: var(--shadow-sm);
+	}
+
+	.mk-card-accent {
+		background: var(--accent);
+	}
+
+	.mk-card-1 {
+		top: 9%;
+		left: 5%;
+	}
+	.mk-card-2 {
+		top: 9%;
+		left: 52%;
+	}
+	/* Ở mobile cả 3 thẻ cùng kích thước (2 + 1), nên khi morph sang 3 cột chúng
+	   chỉ cần di chuyển chứ không đổi hình nhiều — ít chồng chéo giữa chừng. */
+	.mk-card-3 {
+		top: 18%;
+		left: 5%;
+	}
+
+	.mk.is-desktop .mk-card {
+		top: 18%;
+		height: 19%;
+		width: 26.5%;
+	}
+
+	.mk.is-desktop .mk-card-1 {
+		left: 13%;
+	}
+	.mk.is-desktop .mk-card-2 {
+		left: 41.7%;
+	}
+	.mk.is-desktop .mk-card-3 {
+		left: 70.5%;
+	}
+
+	/* Chart trên list (mobile) → chart cạnh list (desktop) */
+	.mk-chart {
+		top: 27.5%;
+		left: 5%;
+		width: 90%;
+		height: 21%;
+		display: flex;
+		align-items: flex-end;
+		gap: 4%;
+		padding: 5% 4% 4%;
+		border-radius: var(--radius-xs, 4px);
+		background: var(--surface);
+		box-shadow: var(--shadow-sm);
+	}
+
+	.mk.is-desktop .mk-chart {
+		top: 42%;
+		left: 13%;
+		width: 51%;
+		height: 39%;
+	}
+
+	.mk-chart span {
+		flex: 1;
+		border-radius: 4px 4px 0 0;
+		background: var(--border);
+		transform-origin: bottom;
+		animation: mk-bar-live 3.2s ease-in-out infinite alternate;
+	}
+
+	.mk-chart span:nth-child(1) {
+		animation-duration: 3s;
+		animation-delay: -0.3s;
+	}
+	.mk-chart span:nth-child(2) {
+		animation-duration: 3.7s;
+		animation-delay: -1.5s;
+	}
+	.mk-chart span:nth-child(3) {
+		animation-duration: 3.2s;
+		animation-delay: -2.4s;
+	}
+	.mk-chart span:nth-child(4) {
+		animation-duration: 4s;
+		animation-delay: -0.8s;
+	}
+	.mk-chart span:nth-child(5) {
+		animation-duration: 3.4s;
+		animation-delay: -2s;
+	}
+	.mk-chart span:nth-child(6) {
+		animation-duration: 2.8s;
+		animation-delay: -1.2s;
+	}
+
+	@keyframes mk-bar-live {
+		from {
+			transform: scaleY(0.58);
+		}
+		to {
+			transform: scaleY(1);
+		}
+	}
+
+	.mk-bar-accent {
+		background: var(--accent) !important;
+	}
+
+	.mk-list {
+		top: 50.5%;
+		left: 5%;
+		width: 90%;
+		height: 25%;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		gap: 5%;
+		padding: 4% 5%;
+		border-radius: var(--radius-xs, 4px);
+		background: var(--surface);
+		box-shadow: var(--shadow-sm);
+	}
+
+	.mk.is-desktop .mk-list {
+		top: 42%;
+		left: 66%;
+		width: 31%;
+		height: 39%;
+	}
+
+	.mk-row {
+		flex: 1;
+		display: flex;
+		align-items: center;
+		gap: 6%;
+	}
+
+	.mk-row i {
+		width: 9%;
+		aspect-ratio: 1;
+		border-radius: 50%;
+		background: var(--border);
+		flex: none;
+	}
+
+	.mk-row b {
+		height: 20%;
+		width: 62%;
+		border-radius: 999px;
+		background: var(--border);
+	}
+
+	/* Button full-width (mobile) → inline (desktop) */
+	.mk-btn {
+		top: 78%;
+		left: 5%;
+		width: 90%;
+		height: 6%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 0.6rem;
+		font-weight: 600;
+		color: var(--inverse-ink);
+		background: var(--inverse-bg);
+		border-radius: var(--radius-xs, 4px);
+		white-space: nowrap;
+		overflow: hidden;
+	}
+
+	.mk.is-desktop .mk-btn {
+		top: 85%;
+		left: 13%;
+		width: 15%;
+		height: 9%;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.mk {
+			--morph: 0.001s linear;
+		}
+	}
+
+	@media (max-width: 560px) {
+		.mk-url {
+			display: none;
+		}
+		.mk-address {
+			max-width: 60px;
+		}
+		.mk-btn {
+			font-size: 0.5rem;
+		}
+	}
+</style>

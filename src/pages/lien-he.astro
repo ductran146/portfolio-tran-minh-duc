@@ -1,0 +1,139 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Liên hệ - Trần Minh Đức" description="Liên hệ Trần Minh Đức để trao đổi dự án thiết kế sản phẩm.">
+	<main>
+		<section class="hero">
+			<p class="section-label" data-reveal>Liên hệ</p>
+			<h1 data-reveal>Đang tìm đối tác thiết kế cho dự án tiếp theo, hoặc vị trí Senior UX/UI Designer.</h1>
+			<p class="lede" data-reveal>
+				Trao đổi ngắn gọn về bài toán của bạn - mình phản hồi trong vòng 24 giờ.
+			</p>
+		</section>
+
+		<section class="contact-grid">
+			<a class="contact-card contact-card-primary" href="mailto:ducdesign.tm@gmail.com" data-reveal>
+				<span class="label">Email</span>
+				<span class="value">ducdesign.tm@gmail.com</span>
+				<span class="arrow">→</span>
+			</a>
+			<a class="contact-card" href="tel:+84918293262" data-reveal>
+				<span class="label">Điện thoại</span>
+				<span class="value">091 829 3262</span>
+			</a>
+			<a class="contact-card" href="https://behance.net/tranducdesign" target="_blank" rel="noopener noreferrer" data-reveal>
+				<span class="label">Behance</span>
+				<span class="value">behance.net/tranducdesign</span>
+			</a>
+			<div class="contact-card" data-reveal>
+				<span class="label">Địa điểm</span>
+				<span class="value">Hà Nội, Việt Nam</span>
+			</div>
+		</section>
+	</main>
+
+	<style>
+		main {
+			max-width: 900px;
+			margin-inline: auto;
+			padding: clamp(1.5rem, 4vw, 2.5rem) clamp(1.25rem, 5vw, 3rem) clamp(4rem, 8vw, 6rem);
+		}
+
+		.hero {
+			padding-block: clamp(2rem, 6vw, 3.5rem);
+			max-width: 60ch;
+		}
+
+		.section-label {
+			font-size: 0.85rem;
+			font-weight: 600;
+			color: var(--ink-faint);
+			text-transform: uppercase;
+			letter-spacing: 0.08em;
+			margin: 0 0 0.75rem;
+		}
+
+		h1 {
+			font-size: clamp(2rem, 4.5vw, 3rem);
+			line-height: 1.15;
+		}
+
+		.lede {
+			margin-top: 1.25rem;
+			font-size: 1.1rem;
+			color: var(--ink-secondary);
+		}
+
+		.contact-grid {
+			display: grid;
+			grid-template-columns: repeat(2, 1fr);
+			gap: 1.25rem;
+			margin-top: 2rem;
+		}
+
+		.contact-card {
+			display: flex;
+			flex-direction: column;
+			gap: 0.4rem;
+			padding: 1.75rem;
+			border-radius: var(--radius-lg);
+			background: var(--surface);
+			box-shadow: var(--shadow-sm);
+			text-decoration: none;
+			color: var(--ink);
+			position: relative;
+			transition: box-shadow 0.3s var(--ease-smooth), transform 0.3s var(--ease-smooth);
+		}
+
+		a.contact-card:hover {
+			box-shadow: var(--shadow-md);
+			transform: translateY(-3px);
+		}
+
+		.contact-card-primary {
+			grid-column: span 2;
+			background: var(--inverse-bg);
+			color: var(--inverse-ink);
+			padding: 2.25rem;
+		}
+
+		.contact-card-primary .label {
+			color: var(--inverse-ink-secondary);
+		}
+
+		.contact-card-primary .value {
+			font-size: 1.4rem;
+		}
+
+		.label {
+			font-size: 0.8rem;
+			font-weight: 600;
+			color: var(--ink-faint);
+			text-transform: uppercase;
+			letter-spacing: 0.06em;
+		}
+
+		.value {
+			font-family: var(--display);
+			font-size: 1.15rem;
+			font-weight: 400;
+		}
+
+		.arrow {
+			position: absolute;
+			top: 2rem;
+			right: 2rem;
+			font-size: 1.3rem;
+		}
+
+		@media (max-width: 640px) {
+			.contact-grid {
+				grid-template-columns: 1fr;
+			}
+			.contact-card-primary {
+				grid-column: span 1;
+			}
+		}
+	</style>
+</BaseLayout>

@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pattern từ logo DT</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cal+Sans&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#121815; --ink2:#4b544e; --ink3:#838d86; --border:#e6e9e6; --soft:#f6f7f6;
+    --accent:#0b7a5b; --accent-strong:#075f46; --tint:#e6f3ee; --logo:#0E7E5E;
+    --on-ink:#fff; --on-ink2:rgba(255,255,255,.68);
+    --display:"Cal Sans",ui-sans-serif,system-ui,sans-serif;
+    --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --pk:1;            /* độ rõ pattern: 1 = bản demo (rõ), .5 = cỡ dùng thật trên site */
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:#fff;color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.55}
+  .wrap{max-width:1240px;margin:0 auto;padding:32px 28px 80px}
+  .top{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:flex-start;justify-content:space-between}
+  .top h1{font-family:var(--display);font-weight:400;font-size:1.5rem;margin:0}
+  .top p{margin:6px 0 0;color:var(--ink3);font-size:.9rem;max-width:72ch}
+  button{font:inherit;font-weight:600;border:1px solid var(--border);background:#fff;color:var(--ink);padding:8px 14px;border-radius:10px;cursor:pointer}
+  button.on{background:var(--tint);border-color:var(--accent);color:var(--accent-strong)}
+  .src{display:flex;gap:28px;align-items:center;margin-top:18px;padding:18px 22px;border-radius:14px;background:var(--soft)}
+  .src svg{width:64px;height:auto;color:var(--logo);flex-shrink:0}
+  .src p{margin:0;font-size:.88rem;color:var(--ink2);max-width:80ch}
+  .src b{color:var(--ink)}
+  h2.sec{font-family:var(--display);font-weight:400;font-size:1.15rem;margin:44px 0 14px}
+  .fx{margin-top:26px}
+  .fx header{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:10px}
+  .fx h3{margin:0;font-size:.95rem;font-weight:600}
+  .fx h3 b{display:inline-block;min-width:1.9em;color:var(--accent-strong)}
+  .use{font-size:.78rem;color:var(--ink3)}
+  .pair{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media (max-width:820px){.pair{grid-template-columns:1fr}}
+  .note{margin:10px 0 0;color:var(--ink2);font-size:.88rem;max-width:96ch}
+  .note em{color:var(--ink);font-style:normal;font-weight:600}
+  .rec{display:inline-block;font-size:.72rem;font-weight:600;color:var(--accent-strong);background:var(--tint);padding:2px 8px;border-radius:999px;margin-left:6px;vertical-align:middle}
+
+  /* khung ngữ cảnh */
+  .ctx{position:relative;isolation:isolate;overflow:hidden;border-radius:16px;min-height:300px;padding:40px 36px;display:flex;flex-direction:column;justify-content:center}
+  .ctx.light{background:#fff;border:1px solid var(--border)}
+  .ctx.dark{background:var(--ink);color:var(--on-ink)}
+  .ctx .kicker{font-size:.8rem;font-weight:600;color:var(--accent-strong);margin:0 0 8px}
+  .ctx.dark .kicker{color:#5fc2a2}
+  .ctx h4{font-family:var(--display);font-weight:400;font-size:clamp(1.5rem,2.4vw,2rem);line-height:1.1;margin:0 0 10px;max-width:16ch}
+  .ctx p.lede{margin:0;color:var(--ink2);max-width:36ch;font-size:.95rem}
+  .ctx.dark p.lede{color:var(--on-ink2)}
+  .ctx .btn{display:inline-block;margin-top:18px;padding:.7rem 1.2rem;border-radius:12px;background:var(--ink);color:#fff;font-weight:600;font-size:.9rem;width:max-content}
+  .ctx.dark .btn{background:#fff;color:var(--ink)}
+
+  /* Lớp pattern: DIV có background-image là SVG data-URI — không phụ thuộc <defs>,
+     không mask SVG. Mờ nhẹ về mép bằng CSS mask trên div (đáng tin ở mọi trình duyệt). */
+  .bg{position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:var(--pk);
+      -webkit-mask-image:radial-gradient(110% 130% at 70% 40%,#000 55%,transparent 100%);
+              mask-image:radial-gradient(110% 130% at 70% 40%,#000 55%,transparent 100%)}
+
+  /* ---- P2: tổ ong lục giác nét (bóng bao logo). Ô 40×69.28 = 1 hex đỉnh nhọn + 2 nửa hex lệch ---- */
+  .p2.light .bg{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='69.28' viewBox='0 0 40 69.28'><g fill='none' stroke='%23121815' stroke-opacity='.16' stroke-width='1'><polygon points='20,0 40,11.55 40,34.64 20,46.19 0,34.64 0,11.55'/><polygon points='0,34.64 20,46.19 20,69.28 0,80.83 -20,69.28 -20,46.19'/><polygon points='40,34.64 60,46.19 60,69.28 40,80.83 20,69.28 20,46.19'/></g></svg>")}
+  .p2.dark .bg{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='69.28' viewBox='0 0 40 69.28'><g fill='none' stroke='%23ffffff' stroke-opacity='.16' stroke-width='1'><polygon points='20,0 40,11.55 40,34.64 20,46.19 0,34.64 0,11.55'/><polygon points='0,34.64 20,46.19 20,69.28 0,80.83 -20,69.28 -20,46.19'/><polygon points='40,34.64 60,46.19 60,69.28 40,80.83 20,69.28 20,46.19'/></g></svg>")}
+
+  /* ---- P2b: tổ ong cỡ lớn, nét mảnh hơn — ít "lưới", nhiều "kiến trúc" ---- */
+  .p2b.light .bg{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='96' height='166.28' viewBox='0 0 96 166.28'><g fill='none' stroke='%230b7a5b' stroke-opacity='.22' stroke-width='1'><polygon points='48,0 96,27.71 96,83.14 48,110.85 0,83.14 0,27.71'/><polygon points='0,83.14 48,110.85 48,166.28 0,193.99 -48,166.28 -48,110.85'/><polygon points='96,83.14 144,110.85 144,166.28 96,193.99 48,166.28 48,110.85'/></g></svg>")}
+  .p2b.dark .bg{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='96' height='166.28' viewBox='0 0 96 166.28'><g fill='none' stroke='%23ffffff' stroke-opacity='.14' stroke-width='1'><polygon points='48,0 96,27.71 96,83.14 48,110.85 0,83.14 0,27.71'/><polygon points='0,83.14 48,110.85 48,166.28 0,193.99 -48,166.28 -48,110.85'/><polygon points='96,83.14 144,110.85 144,166.28 96,193.99 48,166.28 48,110.85'/></g></svg>")}
+
+  /* ---- P8: chấm tại đỉnh lục giác (lưới tam giác) ---- */
+  .p8.light .bg{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='69.28' viewBox='0 0 40 69.28'><g fill='%23121815' fill-opacity='.28'><circle cx='20' cy='0' r='1.1'/><circle cx='40' cy='11.55' r='1.1'/><circle cx='0' cy='11.55' r='1.1'/><circle cx='20' cy='23.1' r='1.1'/><circle cx='40' cy='34.64' r='1.1'/><circle cx='0' cy='34.64' r='1.1'/><circle cx='20' cy='46.19' r='1.1'/><circle cx='0' cy='57.74' r='1.1'/><circle cx='40' cy='57.74' r='1.1'/></g></svg>")}
+  .p8.dark .bg{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='69.28' viewBox='0 0 40 69.28'><g fill='%23ffffff' fill-opacity='.26'><circle cx='20' cy='0' r='1.1'/><circle cx='40' cy='11.55' r='1.1'/><circle cx='0' cy='11.55' r='1.1'/><circle cx='20' cy='23.1' r='1.1'/><circle cx='40' cy='34.64' r='1.1'/><circle cx='0' cy='34.64' r='1.1'/><circle cx='20' cy='46.19' r='1.1'/><circle cx='0' cy='57.74' r='1.1'/><circle cx='40' cy='57.74' r='1.1'/></g></svg>")}
+
+  /* ---- P5: mark rải thưa xen kẽ (ô 120×138.6, 2 mark 26px). Path logo scale 0.069 ---- */
+  .p5.light .bg{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='138.6' viewBox='0 0 120 138.6'><g fill='%230b7a5b' fill-opacity='.22'><g transform='translate(14 8) scale(0.069)'><path d='M74 283.97C73.84 283.88 73.75 283.71 73.75 283.53V154.9L0 112.32V326.41L185.41 433.45V348.29L74.01 283.97H74Z'/><path d='M376.9 112.32L303.15 154.9V283.54C303.15 283.72 303.05 283.89 302.9 283.98L191.5 348.3V433.46L376.91 326.41V112.32H376.9Z'/><path d='M185.41 299.22L157.9 283.34V235.36C157.9 235.29 157.86 235.23 157.81 235.2L116.26 211.21V179.45L185.41 219.38V299.23V299.22Z'/><path d='M191.5 299.22L219.01 283.34V235.36C219.01 235.29 219.05 235.23 219.1 235.2L260.65 211.21V179.45L191.5 219.38V299.23V299.22Z'/><path d='M257.58 174.12L230.06 158.25L188.52 182.26C188.46 182.29 188.39 182.29 188.33 182.26L146.76 158.29L119.26 174.19L188.44 214.07L257.57 174.1L257.58 174.12Z'/><path d='M3.04004 107.05L76.8 149.63L114.6 127.8L40.85 85.22L3.04004 107.05Z'/><path d='M188.45 0L114.6 42.64L188.43 85.27H188.47V85.31C188.55 85.31 188.63 85.27 188.7 85.31L300.1 149.63L373.85 107.05L188.45 0Z'/></g><g transform='translate(74 77.3) scale(0.069)'><path d='M74 283.97C73.84 283.88 73.75 283.71 73.75 283.53V154.9L0 112.32V326.41L185.41 433.45V348.29L74.01 283.97H74Z'/><path d='M376.9 112.32L303.15 154.9V283.54C303.15 283.72 303.05 283.89 302.9 283.98L191.5 348.3V433.46L376.91 326.41V112.32H376.9Z'/><path d='M185.41 299.22L157.9 283.34V235.36C157.9 235.29 157.86 235.23 157.81 235.2L116.26 211.21V179.45L185.41 219.38V299.23V299.22Z'/><path d='M191.5 299.22L219.01 283.34V235.36C219.01 235.29 219.05 235.23 219.1 235.2L260.65 211.21V179.45L191.5 219.38V299.23V299.22Z'/><path d='M257.58 174.12L230.06 158.25L188.52 182.26C188.46 182.29 188.39 182.29 188.33 182.26L146.76 158.29L119.26 174.19L188.44 214.07L257.57 174.1L257.58 174.12Z'/><path d='M3.04004 107.05L76.8 149.63L114.6 127.8L40.85 85.22L3.04004 107.05Z'/><path d='M188.45 0L114.6 42.64L188.43 85.27H188.47V85.31C188.55 85.31 188.63 85.27 188.7 85.31L300.1 149.63L373.85 107.05L188.45 0Z'/></g></g></svg>")}
+  .p5.dark .bg{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='138.6' viewBox='0 0 120 138.6'><g fill='%23ffffff' fill-opacity='.14'><g transform='translate(14 8) scale(0.069)'><path d='M74 283.97C73.84 283.88 73.75 283.71 73.75 283.53V154.9L0 112.32V326.41L185.41 433.45V348.29L74.01 283.97H74Z'/><path d='M376.9 112.32L303.15 154.9V283.54C303.15 283.72 303.05 283.89 302.9 283.98L191.5 348.3V433.46L376.91 326.41V112.32H376.9Z'/><path d='M185.41 299.22L157.9 283.34V235.36C157.9 235.29 157.86 235.23 157.81 235.2L116.26 211.21V179.45L185.41 219.38V299.23V299.22Z'/><path d='M191.5 299.22L219.01 283.34V235.36C219.01 235.29 219.05 235.23 219.1 235.2L260.65 211.21V179.45L191.5 219.38V299.23V299.22Z'/><path d='M257.58 174.12L230.06 158.25L188.52 182.26C188.46 182.29 188.39 182.29 188.33 182.26L146.76 158.29L119.26 174.19L188.44 214.07L257.57 174.1L257.58 174.12Z'/><path d='M3.04004 107.05L76.8 149.63L114.6 127.8L40.85 85.22L3.04004 107.05Z'/><path d='M188.45 0L114.6 42.64L188.43 85.27H188.47V85.31C188.55 85.31 188.63 85.27 188.7 85.31L300.1 149.63L373.85 107.05L188.45 0Z'/></g><g transform='translate(74 77.3) scale(0.069)'><path d='M74 283.97C73.84 283.88 73.75 283.71 73.75 283.53V154.9L0 112.32V326.41L185.41 433.45V348.29L74.01 283.97H74Z'/><path d='M376.9 112.32L303.15 154.9V283.54C303.15 283.72 303.05 283.89 302.9 283.98L191.5 348.3V433.46L376.91 326.41V112.32H376.9Z'/><path d='M185.41 299.22L157.9 283.34V235.36C157.9 235.29 157.86 235.23 157.81 235.2L116.26 211.21V179.45L185.41 219.38V299.23V299.22Z'/><path d='M191.5 299.22L219.01 283.34V235.36C219.01 235.29 219.05 235.23 219.1 235.2L260.65 211.21V179.45L191.5 219.38V299.23V299.22Z'/><path d='M257.58 174.12L230.06 158.25L188.52 182.26C188.46 182.29 188.39 182.29 188.33 182.26L146.76 158.29L119.26 174.19L188.44 214.07L257.57 174.1L257.58 174.12Z'/><path d='M3.04004 107.05L76.8 149.63L114.6 127.8L40.85 85.22L3.04004 107.05Z'/><path d='M188.45 0L114.6 42.64L188.43 85.27H188.47V85.31C188.55 85.31 188.63 85.27 188.7 85.31L300.1 149.63L373.85 107.05L188.45 0Z'/></g></g></svg>")}
+
+  /* ---- P5b: mark nét (outline) rải thưa, cỡ lớn hơn ---- */
+  .p5b.light .bg{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='207.9' viewBox='0 0 180 207.9'><g fill='none' stroke='%230b7a5b' stroke-opacity='.3' stroke-width='9'><g transform='translate(22 12) scale(0.12)'><path d='M74 283.97C73.84 283.88 73.75 283.71 73.75 283.53V154.9L0 112.32V326.41L185.41 433.45V348.29L74.01 283.97H74Z'/><path d='M376.9 112.32L303.15 154.9V283.54C303.15 283.72 303.05 283.89 302.9 283.98L191.5 348.3V433.46L376.91 326.41V112.32H376.9Z'/><path d='M185.41 299.22L157.9 283.34V235.36C157.9 235.29 157.86 235.23 157.81 235.2L116.26 211.21V179.45L185.41 219.38V299.23V299.22Z'/><path d='M191.5 299.22L219.01 283.34V235.36C219.01 235.29 219.05 235.23 219.1 235.2L260.65 211.21V179.45L191.5 219.38V299.23V299.22Z'/><path d='M257.58 174.12L230.06 158.25L188.52 182.26C188.46 182.29 188.39 182.29 188.33 182.26L146.76 158.29L119.26 174.19L188.44 214.07L257.57 174.1L257.58 174.12Z'/><path d='M3.04004 107.05L76.8 149.63L114.6 127.8L40.85 85.22L3.04004 107.05Z'/><path d='M188.45 0L114.6 42.64L188.43 85.27H188.47V85.31C188.55 85.31 188.63 85.27 188.7 85.31L300.1 149.63L373.85 107.05L188.45 0Z'/></g><g transform='translate(112 116) scale(0.12)'><path d='M74 283.97C73.84 283.88 73.75 283.71 73.75 283.53V154.9L0 112.32V326.41L185.41 433.45V348.29L74.01 283.97H74Z'/><path d='M376.9 112.32L303.15 154.9V283.54C303.15 283.72 303.05 283.89 302.9 283.98L191.5 348.3V433.46L376.91 326.41V112.32H376.9Z'/><path d='M185.41 299.22L157.9 283.34V235.36C157.9 235.29 157.86 235.23 157.81 235.2L116.26 211.21V179.45L185.41 219.38V299.23V299.22Z'/><path d='M191.5 299.22L219.01 283.34V235.36C219.01 235.29 219.05 235.23 219.1 235.2L260.65 211.21V179.45L191.5 219.38V299.23V299.22Z'/><path d='M257.58 174.12L230.06 158.25L188.52 182.26C188.46 182.29 188.39 182.29 188.33 182.26L146.76 158.29L119.26 174.19L188.44 214.07L257.57 174.1L257.58 174.12Z'/><path d='M3.04004 107.05L76.8 149.63L114.6 127.8L40.85 85.22L3.04004 107.05Z'/><path d='M188.45 0L114.6 42.64L188.43 85.27H188.47V85.31C188.55 85.31 188.63 85.27 188.7 85.31L300.1 149.63L373.85 107.05L188.45 0Z'/></g></g></svg>")}
+  .p5b.dark .bg{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='207.9' viewBox='0 0 180 207.9'><g fill='none' stroke='%23ffffff' stroke-opacity='.2' stroke-width='9'><g transform='translate(22 12) scale(0.12)'><path d='M74 283.97C73.84 283.88 73.75 283.71 73.75 283.53V154.9L0 112.32V326.41L185.41 433.45V348.29L74.01 283.97H74Z'/><path d='M376.9 112.32L303.15 154.9V283.54C303.15 283.72 303.05 283.89 302.9 283.98L191.5 348.3V433.46L376.91 326.41V112.32H376.9Z'/><path d='M185.41 299.22L157.9 283.34V235.36C157.9 235.29 157.86 235.23 157.81 235.2L116.26 211.21V179.45L185.41 219.38V299.23V299.22Z'/><path d='M191.5 299.22L219.01 283.34V235.36C219.01 235.29 219.05 235.23 219.1 235.2L260.65 211.21V179.45L191.5 219.38V299.23V299.22Z'/><path d='M257.58 174.12L230.06 158.25L188.52 182.26C188.46 182.29 188.39 182.29 188.33 182.26L146.76 158.29L119.26 174.19L188.44 214.07L257.57 174.1L257.58 174.12Z'/><path d='M3.04004 107.05L76.8 149.63L114.6 127.8L40.85 85.22L3.04004 107.05Z'/><path d='M188.45 0L114.6 42.64L188.43 85.27H188.47V85.31C188.55 85.31 188.63 85.27 188.7 85.31L300.1 149.63L373.85 107.05L188.45 0Z'/></g><g transform='translate(112 116) scale(0.12)'><path d='M74 283.97C73.84 283.88 73.75 283.71 73.75 283.53V154.9L0 112.32V326.41L185.41 433.45V348.29L74.01 283.97H74Z'/><path d='M376.9 112.32L303.15 154.9V283.54C303.15 283.72 303.05 283.89 302.9 283.98L191.5 348.3V433.46L376.91 326.41V112.32H376.9Z'/><path d='M185.41 299.22L157.9 283.34V235.36C157.9 235.29 157.86 235.23 157.81 235.2L116.26 211.21V179.45L185.41 219.38V299.23V299.22Z'/><path d='M191.5 299.22L219.01 283.34V235.36C219.01 235.29 219.05 235.23 219.1 235.2L260.65 211.21V179.45L191.5 219.38V299.23V299.22Z'/><path d='M257.58 174.12L230.06 158.25L188.52 182.26C188.46 182.29 188.39 182.29 188.33 182.26L146.76 158.29L119.26 174.19L188.44 214.07L257.57 174.1L257.58 174.12Z'/><path d='M3.04004 107.05L76.8 149.63L114.6 127.8L40.85 85.22L3.04004 107.05Z'/><path d='M188.45 0L114.6 42.64L188.43 85.27H188.47V85.31C188.55 85.31 188.63 85.27 188.7 85.31L300.1 149.63L373.85 107.05L188.45 0Z'/></g></g></svg>")}
+
+  /* ---- P4 / P4b: watermark đơn ---- */
+  .wm{position:absolute;z-index:-1;right:-6%;top:50%;height:150%;transform:translateY(-50%);width:auto;pointer-events:none;opacity:var(--pk)}
+  .p4.light .wm{fill:var(--accent);opacity:calc(.09*var(--pk))}
+  .p4.dark .wm{fill:#fff;opacity:calc(.08*var(--pk))}
+  .p4b .wm{fill:none;stroke-width:1.4}
+  .p4b.light .wm{stroke:var(--accent);opacity:calc(.5*var(--pk))}
+  .p4b.dark .wm{stroke:#fff;opacity:calc(.32*var(--pk))}
+  /* vẽ dần một lần */
+  .p4b .wm path{stroke-dasharray:1600;stroke-dashoffset:1600;animation:draw 2.4s cubic-bezier(.4,0,.2,1) forwards}
+  @keyframes draw{to{stroke-dashoffset:0}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="mark" viewBox="0 0 377 434">
+      <path d="M74 283.97C73.84 283.88 73.75 283.71 73.75 283.53V154.9L0 112.32V326.41L185.41 433.45V348.29L74.01 283.97H74Z"/>
+      <path d="M376.9 112.32L303.15 154.9V283.54C303.15 283.72 303.05 283.89 302.9 283.98L191.5 348.3V433.46L376.91 326.41V112.32H376.9Z"/>
+      <path d="M185.41 299.22L157.9 283.34V235.36C157.9 235.29 157.86 235.23 157.81 235.2L116.26 211.21V179.45L185.41 219.38V299.23V299.22Z"/>
+      <path d="M191.5 299.22L219.01 283.34V235.36C219.01 235.29 219.05 235.23 219.1 235.2L260.65 211.21V179.45L191.5 219.38V299.23V299.22Z"/>
+      <path d="M257.58 174.12L230.06 158.25L188.52 182.26C188.46 182.29 188.39 182.29 188.33 182.26L146.76 158.29L119.26 174.19L188.44 214.07L257.57 174.1L257.58 174.12Z"/>
+      <path d="M3.04004 107.05L76.8 149.63L114.6 127.8L40.85 85.22L3.04004 107.05Z"/>
+      <path d="M188.45 0L114.6 42.64L188.43 85.27H188.47V85.31C188.55 85.31 188.63 85.27 188.7 85.31L300.1 149.63L373.85 107.05L188.45 0Z"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="wrap">
+  <div class="top">
+    <div>
+      <h1>Pattern từ logo DT — bản 2</h1>
+      <p>Đã bỏ P1 / P3 / P6. Pattern lặp giờ vẽ bằng <em>background-image</em> (SVG data-URI) nên hiện đúng ở mọi trình duyệt, không phụ thuộc mask SVG. Mặc định hiển thị <em>rõ</em> để so; bấm nút để xem ở độ mờ dùng thật trên site.</p>
+    </div>
+    <button id="k">Xem ở độ mờ dùng thật</button>
+  </div>
+
+  <div class="src">
+    <svg viewBox="0 0 377 434" aria-hidden="true"><use href="#mark" fill="currentColor"/></svg>
+    <p><b>Nguyên liệu từ logo:</b> bóng bao là <b>lục giác đỉnh nhọn</b> (tỷ lệ 377:434 ≈ cos 30° → isometric chuẩn) và <b>chính mark</b>. Hai họ pattern dưới đây: họ lục giác (P2, P2b, P8) và họ mark (P5, P5b, P4, P4b).</p>
+  </div>
+
+  <h2 class="sec">A. Họ lục giác (pattern lặp)</h2>
+
+  <section class="fx">
+    <header><h3><b>P2</b>Tổ ong lục giác nét mảnh, ô 40px</h3><span class="use">dải tối · footer</span></header>
+    <div class="pair">
+      <div class="ctx light p2"><span class="bg"></span><p class="kicker">Senior UX/UI Designer</p><h4>Thiết kế sản phẩm doanh nghiệp</h4><p class="lede">15 năm giúp doanh nghiệp tài chính biến yêu cầu rối rắm thành design system mạch lạc.</p></div>
+      <div class="ctx dark p2"><span class="bg"></span><p class="kicker">Công cụ</p><h4>Figma · Photoshop · ChatGPT · Claude</h4><p class="lede">Bốn ô công cụ nằm trên lưới này.</p></div>
+    </div>
+    <p class="note"><em>Cấu trúc, module</em> — đúng tinh thần design system. Dày nên phải để mờ; hợp dải tối hơn nền sáng.</p>
+  </section>
+
+  <section class="fx">
+    <header><h3><b>P2b</b>Tổ ong cỡ lớn (ô 96px), nét accent <span class="rec">gợi ý cho dải tối</span></h3><span class="use">dải tối · CTA</span></header>
+    <div class="pair">
+      <div class="ctx light p2b"><span class="bg"></span><p class="kicker">Dự án tiếp theo</p><h4>Đang tìm đối tác thiết kế?</h4><p class="lede">Trao đổi ngắn về bài toán của bạn, phản hồi trong 24 giờ.</p><span class="btn">Liên hệ ngay</span></div>
+      <div class="ctx dark p2b"><span class="bg"></span><p class="kicker">Công cụ</p><h4>Figma · Photoshop · ChatGPT · Claude</h4><p class="lede">Lục giác lớn, ít đường hơn.</p></div>
+    </div>
+    <p class="note"><em>Ít "lưới", nhiều "kiến trúc".</em> Ô lớn nên mỗi khối chỉ có vài đường cắt qua — đọc như bóng bao của logo phóng to, không thành tổ ong.</p>
+  </section>
+
+  <section class="fx">
+    <header><h3><b>P8</b>Chấm tại đỉnh lục giác (lưới tam giác)</h3><span class="use">thay chấm vuông hiện tại ở dải tối</span></header>
+    <div class="pair">
+      <div class="ctx light p8"><span class="bg"></span><p class="kicker">Senior UX/UI Designer</p><h4>Thiết kế sản phẩm doanh nghiệp</h4><p class="lede">15 năm giúp doanh nghiệp tài chính biến yêu cầu rối rắm thành design system mạch lạc.</p></div>
+      <div class="ctx dark p8"><span class="bg"></span><p class="kicker">Công cụ</p><h4>Figma · Photoshop · ChatGPT · Claude</h4><p class="lede">Chấm xếp tam giác thay cho ô vuông.</p></div>
+    </div>
+    <p class="note"><em>Thay thế gần nhất cho chấm hiện tại.</em> Cùng độ yên, nhưng chấm xếp tam giác nên mắt đọc ra cấu trúc isometric của logo.</p>
+  </section>
+
+  <h2 class="sec">B. Họ mark</h2>
+
+  <section class="fx">
+    <header><h3><b>P5</b>Mark đặc rải thưa, xen kẽ (26px)</h3><span class="use">footer · 404</span></header>
+    <div class="pair">
+      <div class="ctx light p5"><span class="bg"></span><p class="kicker">Senior UX/UI Designer</p><h4>Thiết kế sản phẩm doanh nghiệp</h4><p class="lede">15 năm giúp doanh nghiệp tài chính biến yêu cầu rối rắm thành design system mạch lạc.</p></div>
+      <div class="ctx dark p5"><span class="bg"></span><p class="kicker">Công cụ</p><h4>Figma · Photoshop · ChatGPT · Claude</h4><p class="lede">Mark nhỏ rải đều phía sau.</p></div>
+    </div>
+    <p class="note"><em>Nhận diện trực tiếp nhất</em>, nhưng dễ thành wallpaper. Hợp footer / 404 hơn hero.</p>
+  </section>
+
+  <section class="fx">
+    <header><h3><b>P5b</b>Mark nét rải thưa, cỡ lớn (45px)</h3><span class="use">footer · dải tối</span></header>
+    <div class="pair">
+      <div class="ctx light p5b"><span class="bg"></span><p class="kicker">Senior UX/UI Designer</p><h4>Thiết kế sản phẩm doanh nghiệp</h4><p class="lede">15 năm giúp doanh nghiệp tài chính biến yêu cầu rối rắm thành design system mạch lạc.</p></div>
+      <div class="ctx dark p5b"><span class="bg"></span><p class="kicker">Công cụ</p><h4>Figma · Photoshop · ChatGPT · Claude</h4><p class="lede">Mark dạng nét, thưa hơn.</p></div>
+    </div>
+    <p class="note"><em>Nhẹ hơn P5</em>: chỉ đường viền nên không "đặc" sau chữ, vẫn đọc ra logo. Thưa hơn → ít wallpaper hơn.</p>
+  </section>
+
+  <section class="fx">
+    <header><h3><b>P4</b>Watermark logo khổ lớn, cắt mép <span class="rec">gợi ý cho hero / CTA</span></h3><span class="use">hero · CTA · trang chi tiết dự án</span></header>
+    <div class="pair">
+      <div class="ctx light p4"><svg class="wm" viewBox="0 0 377 434"><use href="#mark"/></svg><p class="kicker">Senior UX/UI Designer</p><h4>Thiết kế sản phẩm doanh nghiệp</h4><p class="lede">15 năm giúp doanh nghiệp tài chính biến yêu cầu rối rắm thành design system mạch lạc.</p></div>
+      <div class="ctx dark p4"><svg class="wm" viewBox="0 0 377 434"><use href="#mark"/></svg><p class="kicker">Công cụ</p><h4>Figma · Photoshop · ChatGPT · Claude</h4><p class="lede">Logo lớn 150% chiều cao, lệch phải.</p></div>
+    </div>
+    <p class="note"><em>Một hình duy nhất, đọc ngay là DT.</em> Cắt mép để thành khối kiến trúc chứ không phải logo dán. Không lặp nên không rối chữ.</p>
+  </section>
+
+  <section class="fx">
+    <header><h3><b>P4b</b>Watermark dạng nét, vẽ dần khi tải</h3><span class="use">hero · dải tối</span></header>
+    <div class="pair">
+      <div class="ctx light p4b"><svg class="wm" viewBox="0 0 377 434"><use href="#mark"/></svg><p class="kicker">Senior UX/UI Designer</p><h4>Thiết kế sản phẩm doanh nghiệp</h4><p class="lede">15 năm giúp doanh nghiệp tài chính biến yêu cầu rối rắm thành design system mạch lạc.</p></div>
+      <div class="ctx dark p4b"><svg class="wm" viewBox="0 0 377 434"><use href="#mark"/></svg><p class="kicker">Công cụ</p><h4>Figma · Photoshop · ChatGPT · Claude</h4><p class="lede">Chỉ đường viền, như bản vẽ dựng.</p></div>
+    </div>
+    <p class="note"><em>"Bản vẽ" hơn P4</em>; nét vẽ dần trong 2.4s khi vào trang (tải lại trang để xem), một lần, không lặp. Hợp tinh thần kỹ thuật của site.</p>
+  </section>
+
+  <h2 class="sec">C. Đề xuất kết hợp</h2>
+  <p class="note" style="max-width:100ch">
+    Ít motif, dùng nhất quán: (1) <em>Hero trang chủ</em> — P4b vẽ dần, lệch phải sau khung thiết bị. (2) <em>Dải công cụ tối</em> — P8 thay chấm vuông, hoặc P2b nếu muốn nền có "hình" hơn (chọn một). (3) <em>CTA band</em> — P4 cắt mép góc phải. (4) <em>Footer</em> — P5b rất mờ. Không dùng hai pattern lặp trong cùng một khối.
+  </p>
+</div>
+
+<script>
+  const b = document.getElementById("k"); let real = false;
+  b.addEventListener("click", () => {
+    real = !real;
+    document.documentElement.style.setProperty("--pk", real ? ".5" : "1");
+    b.textContent = real ? "Xem rõ (bản demo)" : "Xem ở độ mờ dùng thật";
+    b.classList.toggle("on", real);
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+{
+  "slug": "san-xin-ha",
+  "title": "Sàn Xịn Ha",
+  "real": true,
+  "featured": false,
+  "order": 4,
+  "cover": "../../assets/projects/san-xin-ha/01.jpg",
+  "summary": "Thiết kế trải nghiệm ứng dụng giao dịch chứng khoán - từ tổng quan tài khoản, thị trường, đặt lệnh đến quản lý tài sản. Mục tiêu: đơn giản hoá luồng đặt lệnh, giúp nhà đầu tư nắm bắt thị trường nhanh và quản lý tài sản minh bạch, rõ ràng.",
+  "tags": [
+    "Fintech",
+    "Mobile app",
+    "Lite/Pro"
+  ],
+  "role": "Product Designer: nghiên cứu người dùng, wireframe luồng nghiệp vụ, UI hi-fi và hệ thống thiết kế (design token)",
+  "tools": [
+    "Figma"
+  ],
+  "context": "Hai nhóm người dùng khác nhau rõ: nhà đầu tư cá nhân mới bắt đầu và nhà đầu tư có kinh nghiệm cần công cụ phân tích chuyên sâu. Cách giải là hai chế độ Lite/Pro trên cùng một ứng dụng - Lite đơn giản cho người mới, Pro đầy đủ sổ lệnh 3 mức giá cho trader chuyên sâu.",
+  "process": [
+    {
+      "title": "Nghiên cứu người dùng",
+      "body": "Xác định hai nhóm mục tiêu và nhu cầu khác nhau của họ trước khi quyết định cấu trúc Lite/Pro."
+    },
+    {
+      "title": "Wireframe luồng nghiệp vụ",
+      "body": "Vẽ luồng từ trang chủ, thị trường, chi tiết mã, đặt lệnh, tài sản đến giao dịch tiền (nạp, rút, ứng trước)."
+    },
+    {
+      "title": "UI hi-fi & design token",
+      "body": "Hoàn thiện giao diện và xây hệ thống token để đội phát triển triển khai nhất quán trên mọi màn hình."
+    }
+  ],
+  "gallery": [
+    {
+      "src": "../../assets/projects/san-xin-ha/02.jpg",
+      "caption": "Bài toán: xây dựng trải nghiệm đầu tư đáng tin cậy cho nhà đầu tư Việt Nam - vai trò, mục tiêu và đối tượng của dự án."
+    },
+    {
+      "src": "../../assets/projects/san-xin-ha/03.jpg",
+      "caption": "Trang chủ & tổng quan tài khoản: chỉ số thị trường dạng thẻ vuốt ngang cập nhật thời gian thực, ẩn/hiện giá trị tài sản ròng (NAV), truy cập nhanh Nạp / Rút / Ứng trước."
+    },
+    {
+      "src": "../../assets/projects/san-xin-ha/04.jpg",
+      "caption": "Theo dõi thị trường & danh mục quan tâm: gợi ý mã phổ biến cho người mới, nhiều watchlist đặt tên riêng, chuyển linh hoạt giữa Portfolio / Watchlist / Bảng giá / Ngành."
+    },
+    {
+      "src": "../../assets/projects/san-xin-ha/05.jpg",
+      "caption": "Chi tiết mã & phân tích chỉ số: heatmap ngành, P/E, EPS, vốn hoá, khối lượng giao dịch, báo cáo kết quả kinh doanh theo quý/năm."
+    },
+    {
+      "src": "../../assets/projects/san-xin-ha/06.jpg",
+      "caption": "Đặt lệnh Lite & Pro: giá trần/sàn/tham chiếu bằng badge màu ngay trong bảng giá; sức mua, ký quỹ, khối lượng tối đa tính theo thời gian thực; chuyển nhanh Mua/Bán và loại lệnh LO/ATO/MP."
+    },
+    {
+      "src": "../../assets/projects/san-xin-ha/07.jpg",
+      "caption": "Quản lý tài sản & hiệu suất đầu tư: so sánh danh mục với VN-Index theo thời gian, lãi/lỗ từng mã, lợi nhuận theo tháng/quý bằng biểu đồ cột kết hợp đường."
+    },
+    {
+      "src": "../../assets/projects/san-xin-ha/08.jpg",
+      "caption": "Giao dịch tiền Nạp / Rút / Ứng trước: rút về tài khoản ngân hàng liên kết và theo dõi trạng thái duyệt, ứng trước tiền bán kèm phí minh bạch, lịch sử giao dịch theo ngày."
+    }
+  ]
+}

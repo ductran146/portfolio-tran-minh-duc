@@ -1,0 +1,56 @@
+{
+  "slug": "kiggle",
+  "title": "Kiggle",
+  "client": "Kiggle - Kết nối học tập thông minh",
+  "real": true,
+  "featured": false,
+  "order": 5,
+  "cover": "../../assets/projects/kiggle/01.jpg",
+  "summary": "Thiết kế trải nghiệm và giao diện cho ứng dụng phụ huynh cùng hệ thống quản lý dành cho đối tác giáo dục. Mục tiêu là một hành trình rõ ràng và nhất quán, từ khám phá lớp học, tư vấn, đặt lịch đến theo dõi dịch vụ.",
+  "tags": [
+    "EdTech",
+    "Mobile app",
+    "Web app"
+  ],
+  "role": "Thiết kế UX/UI cho hai nền tảng: app phụ huynh & Partner center",
+  "tools": [
+    "Figma"
+  ],
+  "context": "Hai nhóm người dùng chính, hai nền tảng có cách sử dụng khác nhau. Phụ huynh khám phá lớp học, tìm kiếm theo vị trí, tư vấn và theo dõi booking trên di động. Partner center trên web tiếp nhận tư vấn, xem thông tin học sinh, tạo booking và quản lý dịch vụ.",
+  "process": [
+    {
+      "title": "Chat giữ đầy đủ ngữ cảnh",
+      "body": "Thông tin lớp học hiện ngay trong hội thoại, mỗi cuộc tư vấn gắn với một học sinh cụ thể, nội dung dịch tự động và xem được bản gốc lẫn bản dịch, chia sẻ được hình ảnh và thông tin thanh toán. Hành động tạo booking đặt ngay cạnh nội dung tư vấn."
+    },
+    {
+      "title": "Thông tin phức tạp thành giao diện dễ theo dõi",
+      "body": "Booking chia ba khu vực Tổng quan / Lịch học / Thanh toán. Các chỉ số quan trọng - tổng số buổi, số buổi hoàn thành, ngày bắt đầu và kết thúc - đưa lên cấp cao để kiểm tra nhanh; hành động liên hệ giáo viên giữ cố định ở vị trí dễ tiếp cận."
+    },
+    {
+      "title": "Công cụ vận hành cho đối tác",
+      "body": "Partner center là một không gian làm việc tập trung, xử lý nhiều tác vụ mà không phải chuyển đổi liên tục giữa các màn hình. Màn hình quản lý booking xây trên hệ thống bảng, bộ lọc, trạng thái và dialog nhất quán."
+    }
+  ],
+  "gallery": [
+    {
+      "src": "../../assets/projects/kiggle/02.jpg",
+      "caption": "Hai nhóm người dùng, hai nền tảng: app phụ huynh tìm lớp gần nhất theo vị trí; Partner center theo dõi booking đã xác nhận."
+    },
+    {
+      "src": "../../assets/projects/kiggle/03.jpg",
+      "caption": "Chat cho cả phụ huynh và đối tác, giữ đầy đủ ngữ cảnh lớp học và học sinh trong suốt cuộc trao đổi, có dịch tự động."
+    },
+    {
+      "src": "../../assets/projects/kiggle/04.jpg",
+      "caption": "Tạo booking: thông tin học sinh, lịch học theo tuần với chọn ngày và lặp lịch, thanh toán."
+    },
+    {
+      "src": "../../assets/projects/kiggle/05.jpg",
+      "caption": "Partner center: quản lý booking với bảng lịch buổi học, trạng thái từng buổi và các chỉ số tổng quan ở đầu trang."
+    },
+    {
+      "src": "../../assets/projects/kiggle/06.jpg",
+      "caption": "Trang chủ app phụ huynh với trợ lý Kiggle AI gợi ý lớp và danh sách lớp học gần bạn."
+    }
+  ]
+}

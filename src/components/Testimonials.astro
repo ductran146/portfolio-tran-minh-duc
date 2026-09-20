@@ -1,0 +1,251 @@
+---
+// Carousel đánh giá — một nhận xét mỗi lần, bố cục canh giữa theo mẫu người
+// dùng chọn (2026-09-18): dấu ngoặc kép khổ lớn rất mờ sau góc trên-trái, chữ
+// cỡ thường canh giữa, tên đậm dưới, hai mũi tên chevron accent ở hai mép.
+// Dùng chung cho trang chủ và Kinh nghiệm; dữ liệu từ src/data/testimonials.ts.
+import Icon from "./Icon.astro";
+import { testimonials } from "../data/testimonials";
+
+interface Props {
+  heading?: string;
+  /** id của stage — cần khác nhau nếu một trang đặt hai carousel. */
+  id?: string;
+}
+
+const { heading = "Đánh giá từ khách hàng", id = "testimonials" } = Astro.props;
+---
+
+<div class="tm">
+  <h2 class="tm-heading" data-reveal>{heading}</h2>
+  <div class="tm-carousel">
+    <button type="button" class="tm-btn tm-prev" data-dir="-1" aria-label="Nhận xét trước">
+      <Icon name="chevron-left" size={28} />
+    </button>
+
+    <div class="tm-stage" id={id} role="region" aria-roledescription="carousel" aria-label={heading} data-reveal>
+      <span class="tm-mark" aria-hidden="true">”</span>
+      {
+        testimonials.map((t, i) => (
+          <blockquote class:list={["tm-slide", { "is-active": i === 0 }]} aria-hidden={i === 0 ? undefined : "true"}>
+            <p class="tm-quote">{t.quote}</p>
+            <footer>
+              <strong>{t.name}</strong>
+              <span>{t.role}</span>
+            </footer>
+          </blockquote>
+        ))
+      }
+      <!-- Đếm cho screen reader; mẫu thị giác không có số nên ẩn. -->
+      <p class="tm-count" aria-live="polite">
+        Nhận xét <b data-current>1</b> / {testimonials.length}
+      </p>
+    </div>
+
+    <button type="button" class="tm-btn tm-next" data-dir="1" aria-label="Nhận xét tiếp theo">
+      <Icon name="chevron-right" size={28} />
+    </button>
+  </div>
+</div>
+
+<script>
+  // Bind một lần trên mỗi DOM (data-bound); sau chuyển trang DOM mới nên bind
+  // lại tự nhiên. Điều khiển: nút, phím ←/→ khi focus stage, vuốt ngang ≥40px.
+  function initTestimonials() {
+    document.querySelectorAll<HTMLElement>(".tm-carousel").forEach((root) => {
+      if (root.dataset.bound) return;
+      root.dataset.bound = "1";
+      const stage = root.querySelector<HTMLElement>(".tm-stage")!;
+      const slides = Array.from(stage.querySelectorAll<HTMLElement>(".tm-slide"));
+      const current = stage.querySelector<HTMLElement>("[data-current]");
+      let index = 0;
+
+      function go(dir: number) {
+        const n = slides.length;
+        index = (index + dir + n) % n;
+        stage.dataset.dir = String(dir);
+        slides.forEach((s, k) => {
+          const on = k === index;
+          s.classList.toggle("is-active", on);
+          if (on) s.removeAttribute("aria-hidden");
+          else s.setAttribute("aria-hidden", "true");
+        });
+        if (current) current.textContent = String(index + 1);
+      }
+
+      root.querySelectorAll<HTMLButtonElement>(".tm-btn").forEach((b) => {
+        b.addEventListener("click", () => go(Number(b.dataset.dir)));
+      });
+      stage.tabIndex = 0;
+      stage.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight") go(1);
+        if (e.key === "ArrowLeft") go(-1);
+      });
+      let startX = 0;
+      stage.addEventListener("pointerdown", (e) => (startX = e.clientX));
+      stage.addEventListener("pointerup", (e) => {
+        const dx = e.clientX - startX;
+        if (Math.abs(dx) > 40) go(dx < 0 ? 1 : -1);
+      });
+    });
+  }
+
+  document.addEventListener("astro:page-load", initTestimonials);
+  initTestimonials();
+</script>
+
+<style>
+  .tm {
+    text-align: center;
+  }
+
+  .tm-heading {
+    font-size: 1.5rem;
+    margin: 0 0 2.25rem;
+  }
+
+  .tm-carousel {
+    position: relative;
+    /* Chừa chỗ hai bên cho mũi tên; chữ ở giữa ≤ 62ch. */
+    padding-inline: 3.5rem;
+  }
+
+  /* Các slide xếp chồng cùng một ô grid → chiều cao = nhận xét dài nhất,
+     không nhảy layout khi đổi. Chỉ animate opacity/transform. */
+  .tm-stage {
+    position: relative;
+    display: grid;
+    padding-top: 1.75rem;
+  }
+
+  .tm-slide {
+    grid-area: 1 / 1;
+    margin: 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Cỡ chữ THƯỜNG theo yêu cầu (không phóng to như pull-quote); màu phụ để
+     nhường tên người nói. */
+  .tm-quote {
+    margin: 0 auto;
+    max-width: 62ch;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--ink-secondary);
+  }
+
+  .tm-slide footer {
+    margin-top: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.15rem;
+    font-style: normal;
+  }
+
+  .tm-slide footer strong {
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .tm-slide footer span {
+    font-size: 0.85rem;
+    color: var(--ink-faint);
+  }
+
+  /* Dấu ngoặc kép khổ lớn, rất mờ, sau góc trên-trái khối chữ (mẫu). Cal Sans
+     có glyph này nên vẫn trong hệ font. */
+  .tm-mark {
+    position: absolute;
+    left: max(0px, calc(50% - 31ch - 1.25rem));
+    top: -0.35rem;
+    z-index: 0;
+    font-family: var(--display);
+    font-size: 8rem;
+    line-height: 1;
+    color: var(--border);
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .tm-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--accent);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+    transition: background 0.25s var(--ease-smooth), color 0.25s var(--ease-smooth);
+  }
+
+  .tm-prev {
+    left: 0;
+  }
+
+  .tm-next {
+    right: 0;
+  }
+
+  .tm-btn:hover {
+    background: var(--accent-tint);
+    color: var(--accent-strong);
+  }
+
+  .tm-count {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  /* Có JS: chỉ slide đang chọn hiện; slide khác chờ phía theo hướng bấm. */
+  :global(.js-reveal) .tm-slide {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(28px);
+    transition: opacity 0.45s var(--ease-page), transform 0.45s var(--ease-page), visibility 0s linear 0.45s;
+  }
+
+  :global(.js-reveal) .tm-stage[data-dir="-1"] .tm-slide {
+    transform: translateX(-28px);
+  }
+
+  :global(.js-reveal) .tm-slide.is-active {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition-delay: 0s;
+  }
+
+  /* Không JS: xếp dọc, hiện đủ, ẩn mũi tên. */
+  :global(html:not(.js-reveal)) .tm-stage {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  :global(html:not(.js-reveal)) .tm-btn {
+    display: none;
+  }
+
+  @media (max-width: 560px) {
+    .tm-carousel {
+      padding-inline: 2.25rem;
+    }
+    .tm-mark {
+      font-size: 6rem;
+      left: 0;
+    }
+  }
+</style>

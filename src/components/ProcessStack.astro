@@ -1,0 +1,519 @@
+---
+// Minh hoạ quy trình làm việc ở hero trang Kinh nghiệm (2026-09-19): 4 ảnh
+// render 3D trong images/images 3D (01→04, copy y nguyên sang src/assets/
+// process) xếp thành stack bung tầng theo mẫu Template.png — lớp dưới cùng là
+// luồng nghiệp vụ, lên dần: wireframe → design system → UI hoàn thiện. PNG có
+// kênh alpha THẬT (quầng sáng trong file chỉ nằm ở RGB với alpha 0 nên trình
+// duyệt không hiện) → các lớp che nhau đúng thứ tự. Không thẻ nền/shadow bọc
+// ngoài; theme sáng giữ bóng mềm nhẹ dưới tấm + một vệt tint accent rất nhạt
+// phía sau để có chiều sâu, theme tối dùng quầng sáng mờ. Ảnh qua astro:assets
+// → webp giữ alpha, 3 cỡ.
+//
+// Cách kể (đổi 2026-09-19 sau tư vấn, thay cho vòng lặp mờ-dựng-lại 12s):
+// 1) DỰNG MỘT LẦN khi vào viewport: từng tầng hạ xuống từ trên (cách nhau
+//    1.2s), đường nối vươn tới giao điểm tầng vừa tới, chấm hiện, bước tương
+//    ứng trong chú giải sáng lên. Xong ~4.5s rồi GIỮ NGUYÊN — hero không bao
+//    giờ trống.
+// 2) Sau đó chu kỳ "soi" (JS nhỏ): cứ 3s một tầng được làm nổi (nhích lên,
+//    sáng hơn), tầng khác hơi mờ, bước tương ứng trong chú giải đậm lên.
+// 3) Rê chuột / focus / chạm vào một bước trong chú giải → soi đúng tầng đó,
+//    tạm dừng chu kỳ; rời ra → chạy tiếp. Không JS: stack dựng xong đứng yên,
+//    chú giải hiện đủ 4 bước. Reduced-motion: hiện thẳng trạng thái đủ, không
+//    chu kỳ.
+//
+// Hình học — đo bằng PIL trên ảnh gốc, quy về % chiều cao SÂN KHẤU (= 1.575
+// khung 3:2; mỗi khung cao 63.49% sân khấu): `top` từng tầng đặt sao cho tâm
+// tấm 01/02/03/04 (0.71/0.54/0.53/0.24 chiều cao khung) rơi ở 80/60/42/22%.
+// Đường nối: 3 cột x theo mẫu (26.7/48/70.5%); tại mỗi cột, điểm nối trên MỖI
+// tầng = trung điểm dải alpha>200 của tấm ở cột đó → y1..y4 dưới đây (nằm đúng
+// trên bề mặt tấm). Đường chạy từ y1 (tấm 01) lên y4 (tấm 04), chấm tại cả 4
+// giao điểm; vươn theo tỉ lệ khoảng cách thật (--f2/--f3).
+import { Image } from "astro:assets";
+import img01 from "../assets/process/01.png";
+import img02 from "../assets/process/02.png";
+import img03 from "../assets/process/03.png";
+import img04 from "../assets/process/04.png";
+
+const steps = [
+	{ n: "01", label: "Phân tích nghiệp vụ & luồng", img: img01, top: 34.9 },
+	{ n: "02", label: "Wireframe & cấu trúc", img: img02, top: 25.7 },
+	{ n: "03", label: "Design system & component", img: img03, top: 8.3 },
+	{ n: "04", label: "UI hoàn thiện & prototype", img: img04, top: 6.8 },
+];
+
+// y: [tầng 01, 02, 03, 04] — % chiều cao sân khấu, đo tại cột x.
+const lines = [
+	{ x: 26.7, y: [72.5, 53.0, 34.1, 19.3] },
+	{ x: 48.0, y: [79.0, 57.7, 39.7, 19.9] },
+	{ x: 70.5, y: [86.5, 64.9, 46.1, 24.8] },
+].map((l) => {
+	const span = l.y[0] - l.y[3];
+	return {
+		...l,
+		f2: +((l.y[0] - l.y[1]) / span).toFixed(3),
+		f3: +((l.y[0] - l.y[2]) / span).toFixed(3),
+		height: +span.toFixed(1),
+	};
+});
+---
+
+<div class="process-stack" data-process-stack data-reveal>
+	<div class="ps-stage" aria-hidden="true">
+		{
+			steps.map((s, i) => (
+				<div class={`ps-layer ps-layer-${i + 1}`} style={`--top: ${s.top}%; --i: ${i}`}>
+					<Image
+						src={s.img}
+						widths={[480, 720, 960]}
+						sizes="(max-width: 900px) 92vw, 480px"
+						format="webp"
+						quality={82}
+						alt=""
+						loading="eager"
+						decoding="async"
+					/>
+				</div>
+			))
+		}
+		<div class="ps-lines">
+			{
+				lines.map((l) => (
+					<>
+						<span
+							class="ps-line"
+							style={`--x: ${l.x}%; --y-top: ${l.y[3]}%; --h: ${l.height}%; --f2: ${l.f2}; --f3: ${l.f3}`}
+						/>
+						{l.y.map((y, i) => (
+							<span class={`ps-node ps-node-${i + 1}`} style={`--x: ${l.x}%; --y: ${y}%; --i: ${i}`} />
+						))}
+					</>
+				))
+			}
+		</div>
+	</div>
+	<!-- Chú giải 4 bước = nội dung thật (đọc được), chỉ sân khấu ảnh là trang trí. -->
+	<ol class="ps-legend">
+		{
+			steps.map((s, i) => (
+				<li class={`ps-step ps-step-${i + 1}`} style={`--i: ${i}`}>
+					<button type="button" class="ps-step-btn" data-step={i + 1}>
+						<span class="ps-num tabular">{s.n}</span>
+						<span class="ps-step-label">{s.label}</span>
+					</button>
+				</li>
+			))
+		}
+	</ol>
+</div>
+
+<script>
+	// Chu kỳ "soi" từng tầng sau khi dựng xong + tương tác chú giải. Gắn một
+	// lần cho mỗi khối (guard data-ps-bound) qua astro:page-load như các init
+	// khác trong site. Chỉ chạy khi khối đang trong viewport (IO) và không
+	// giảm chuyển động.
+	const BUILD_END_MS = 4500;
+	const CYCLE_MS = 3000;
+
+	function initProcessStack() {
+		document.querySelectorAll<HTMLElement>("[data-process-stack]:not([data-ps-bound])").forEach((root) => {
+			root.dataset.psBound = "1";
+			const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+			const buttons = Array.from(root.querySelectorAll<HTMLButtonElement>(".ps-step-btn"));
+			let current = 0;
+			let timer: number | undefined;
+			let manual = false;
+			let visible = true;
+
+			const setFocus = (n: number) => {
+				root.dataset.focus = String(n);
+				buttons.forEach((b, i) => {
+					if (i + 1 === n) b.setAttribute("aria-current", "true");
+					else b.removeAttribute("aria-current");
+				});
+			};
+			const stop = () => {
+				if (timer !== undefined) {
+					window.clearTimeout(timer);
+					timer = undefined;
+				}
+			};
+			const tick = () => {
+				if (manual || !visible) return;
+				current = (current % buttons.length) + 1;
+				setFocus(current);
+				timer = window.setTimeout(tick, CYCLE_MS);
+			};
+			const start = (delay: number) => {
+				stop();
+				if (manual || !visible || reduce) return;
+				timer = window.setTimeout(tick, delay);
+			};
+
+			// Đánh dấu dựng xong để CSS bỏ animation dựng (fill forwards sẽ chặn
+			// transition của chu kỳ soi) và chuyển sang trạng thái tĩnh có transition.
+			const built = () => {
+				root.classList.add("is-built");
+				start(700);
+			};
+			if (reduce) {
+				root.classList.add("is-built");
+			} else {
+				window.setTimeout(built, BUILD_END_MS + 300);
+			}
+
+			buttons.forEach((b, i) => {
+				const enter = () => {
+					manual = true;
+					stop();
+					current = i + 1;
+					setFocus(current);
+				};
+				const leave = () => {
+					manual = false;
+					start(1500);
+				};
+				b.addEventListener("mouseenter", enter);
+				b.addEventListener("focus", enter);
+				b.addEventListener("click", enter);
+				b.addEventListener("mouseleave", leave);
+				b.addEventListener("blur", leave);
+			});
+
+			// Chiều cao chú giải (kể cả margin-top) → biến toàn cục --ps-legend-h để
+			// trang bù vào khối chữ hero, giữ tâm chữ trùng tâm sân khấu ở mọi bề
+			// rộng (chú giải 2 cột/1 cột tuỳ container). Cập nhật khi đổi kích thước.
+			const legend = root.querySelector<HTMLElement>(".ps-legend");
+			if (legend && "ResizeObserver" in window) {
+				const publish = () => {
+					const mt = parseFloat(getComputedStyle(legend).marginTop) || 0;
+					document.documentElement.style.setProperty("--ps-legend-h", `${Math.round(legend.offsetHeight + mt)}px`);
+				};
+				new ResizeObserver(publish).observe(legend);
+				publish();
+			}
+
+			if ("IntersectionObserver" in window) {
+				const io = new IntersectionObserver(
+					(entries) => {
+						for (const e of entries) {
+							visible = e.isIntersecting;
+							if (visible && root.classList.contains("is-built")) start(600);
+							else if (!visible) stop();
+						}
+					},
+					{ threshold: 0.2 },
+				);
+				io.observe(root);
+			}
+		});
+	}
+
+	document.addEventListener("astro:page-load", initProcessStack);
+	initProcessStack();
+</script>
+
+<style>
+	.process-stack {
+		--ps-step: 1.2s;
+		--ps-drop: 0.9s;
+		position: relative;
+	}
+
+	/* Sân khấu: rộng 100%, cao 1.05× rộng (= 1.575 khung 3:2 của ảnh). Vệt tint
+	   accent rất nhạt phía sau (không thẻ, không viền) cho tấm trắng có chiều
+	   sâu trên nền sáng; theme tối nhạt hơn nữa. */
+	.ps-stage {
+		position: relative;
+		aspect-ratio: 1 / 1.05;
+	}
+
+	.ps-stage::before {
+		content: "";
+		position: absolute;
+		inset: 8% -6% 4%;
+		border-radius: 50%;
+		background: radial-gradient(ellipse 55% 50% at 50% 55%, var(--accent-tint), transparent 70%);
+		pointer-events: none;
+	}
+
+	.ps-layer {
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: var(--top);
+		opacity: 0;
+		transform: translateY(-36px) scale(1.03);
+		will-change: transform, opacity;
+	}
+
+	.ps-layer img {
+		display: block;
+		width: 100%;
+		height: auto;
+		filter: drop-shadow(0 14px 22px rgba(18, 24, 21, 0.14));
+	}
+
+	:global(html[data-theme="dark"]) .ps-layer img {
+		filter: drop-shadow(0 0 14px rgba(255, 255, 255, 0.18)) drop-shadow(0 0 36px rgba(255, 255, 255, 0.08));
+	}
+
+	/* Đường nối dọc + chấm giao điểm — toạ độ đo từ ảnh (xem frontmatter). */
+	.ps-lines {
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+	}
+
+	.ps-line {
+		position: absolute;
+		left: var(--x);
+		top: var(--y-top);
+		height: var(--h);
+		width: 1.5px;
+		margin-left: -0.75px;
+		background: var(--accent);
+		opacity: 0.6;
+		transform-origin: bottom;
+		transform: scaleY(0);
+	}
+
+	.ps-node {
+		position: absolute;
+		left: var(--x);
+		top: var(--y);
+		width: 7px;
+		height: 7px;
+		margin: -3.5px 0 0 -3.5px;
+		border-radius: 50%;
+		background: var(--accent);
+		box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent);
+		opacity: 0;
+	}
+
+	/* ---- Chú giải 4 bước: lưới 2×2, mỗi bước là nút (soi tầng khi rê/chạm).
+	   Bước chưa tới: nhạt; bước đã dựng: màu chữ thường; bước đang soi: đậm +
+	   gạch accent bên trái. ---- */
+	.ps-legend {
+		list-style: none;
+		margin: 1rem 0 0;
+		padding: 0;
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 0.35rem 1rem;
+	}
+
+	/* Luôn 2 cột (yêu cầu 2026-09-19 "để ngang, không để dọc"); nhãn dài có thể
+	   xuống dòng trong ô — chiều cao thật được JS đo lại (--ps-legend-h) nên
+	   không ảnh hưởng căn giữa. Chỉ điện thoại rất hẹp mới 1 cột. */
+	@media (max-width: 400px) {
+		.ps-legend {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	.ps-step {
+		opacity: 0.35;
+		transform: translateY(4px);
+	}
+
+	.ps-step-btn {
+		all: unset;
+		position: relative;
+		display: flex;
+		align-items: baseline;
+		gap: 0.5rem;
+		width: 100%;
+		box-sizing: border-box;
+		padding: 0.3rem 0 0.3rem 1rem;
+		font-size: 0.82rem;
+		font-weight: 500;
+		line-height: 1.35;
+		color: var(--ink-secondary);
+		cursor: pointer;
+		transition: color 0.3s var(--ease-smooth);
+	}
+
+	/* Dấu bước đang soi (2026-09-19, thay gạch dọc theo yêu cầu): tam giác nhỏ
+	   chỉ sang phải, góc bo nhẹ — vẽ bằng mask SVG (path có stroke-linejoin
+	   round nên góc mềm), tô màu accent qua background để đổi theo theme. */
+	.ps-step-btn::before {
+		content: "";
+		position: absolute;
+		left: 0;
+		top: 0.55em;
+		width: 8px;
+		height: 10px;
+		background: var(--accent);
+		mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 10'%3E%3Cpath d='M1.6 1.5 L6.6 5 L1.6 8.5 Z' fill='%23000' stroke='%23000' stroke-width='1.8' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+		opacity: 0;
+		transform: translateX(-4px);
+		transition:
+			opacity 0.3s var(--ease-smooth),
+			transform 0.3s var(--ease-smooth);
+	}
+
+	.ps-step-btn:focus-visible {
+		outline: 2px solid var(--accent);
+		outline-offset: 2px;
+		border-radius: var(--radius-sm);
+	}
+
+	.ps-num {
+		color: var(--accent);
+		font-size: 0.75rem;
+		font-weight: 600;
+		letter-spacing: 0.04em;
+	}
+
+	/* ---- Pha dựng (một lần, chỉ khi .is-visible): tầng i hạ xuống ở i×1.2s
+	   trong 0.9s; chấm giao điểm hiện lúc tầng chạm; đường vươn tới giao điểm
+	   tầng vừa tới; bước chú giải sáng lên cùng lúc. Tất cả fill forwards → giữ
+	   trạng thái đủ. ---- */
+	.ps-layer {
+		animation: ps-drop var(--ps-drop) var(--ease-smooth) calc(var(--i) * var(--ps-step)) both paused;
+	}
+	.ps-node {
+		animation: ps-appear 0.4s ease-out calc(var(--i) * var(--ps-step) + 0.75s) both paused;
+	}
+	.ps-line {
+		animation: ps-grow calc(3 * var(--ps-step) + var(--ps-drop)) linear both paused;
+	}
+	.ps-step {
+		animation: ps-step-in 0.5s var(--ease-smooth) calc(var(--i) * var(--ps-step) + 0.45s) both paused;
+	}
+
+	.process-stack.is-visible .ps-layer,
+	.process-stack.is-visible .ps-node,
+	.process-stack.is-visible .ps-line,
+	.process-stack.is-visible .ps-step {
+		animation-play-state: running;
+	}
+
+	@keyframes ps-drop {
+		from { opacity: 0; transform: translateY(-36px) scale(1.03); }
+		to { opacity: 1; transform: none; }
+	}
+	@keyframes ps-appear {
+		from { opacity: 0; transform: scale(0.4); }
+		to { opacity: 1; transform: none; }
+	}
+	/* 4.5s tổng: tầng 2 chạm ở 2.1s (46.7%), tầng 3 ở 3.3s (73.3%), tầng 4 ở
+	   4.5s (100%). var() trong giá trị keyframe hợp lệ → mỗi đường vươn đúng
+	   giao điểm của nó. */
+	@keyframes ps-grow {
+		0%, 26% { transform: scaleY(0); animation-timing-function: var(--ease-smooth); }
+		46.7%, 53% { transform: scaleY(var(--f2)); animation-timing-function: var(--ease-smooth); }
+		73.3%, 80% { transform: scaleY(var(--f3)); animation-timing-function: var(--ease-smooth); }
+		100% { transform: scaleY(1); }
+	}
+	@keyframes ps-step-in {
+		from { opacity: 0.35; transform: translateY(4px); }
+		to { opacity: 1; transform: none; }
+	}
+
+	/* ---- Sau khi dựng xong (.is-built do JS đặt): bỏ animation dựng, đặt cứng
+	   trạng thái đủ, bật transition để chu kỳ soi chuyển mượt. ---- */
+	.process-stack.is-built .ps-layer,
+	.process-stack.is-built .ps-node,
+	.process-stack.is-built .ps-line,
+	.process-stack.is-built .ps-step {
+		animation: none;
+	}
+	.process-stack.is-built .ps-layer {
+		opacity: 1;
+		transform: none;
+		transition:
+			opacity 0.6s var(--ease-smooth),
+			transform 0.6s var(--ease-smooth);
+	}
+	.process-stack.is-built .ps-node {
+		opacity: 1;
+		transition: opacity 0.6s var(--ease-smooth);
+	}
+	.process-stack.is-built .ps-line {
+		transform: scaleY(1);
+	}
+	.process-stack.is-built .ps-step {
+		opacity: 1;
+		transform: none;
+	}
+
+	/* Chu kỳ soi: data-focus="N" (JS) → tầng N nổi lên, tầng khác lùi nhẹ; chấm
+	   tầng khác mờ; bước N trong chú giải đậm + gạch accent. */
+	.process-stack[data-focus] .ps-layer {
+		opacity: 0.55;
+	}
+	.process-stack[data-focus] .ps-node {
+		opacity: 0.35;
+	}
+	.process-stack[data-focus="1"] .ps-layer-1,
+	.process-stack[data-focus="2"] .ps-layer-2,
+	.process-stack[data-focus="3"] .ps-layer-3,
+	.process-stack[data-focus="4"] .ps-layer-4 {
+		opacity: 1;
+		transform: translateY(-6px);
+	}
+	.process-stack[data-focus="1"] .ps-node-1,
+	.process-stack[data-focus="2"] .ps-node-2,
+	.process-stack[data-focus="3"] .ps-node-3,
+	.process-stack[data-focus="4"] .ps-node-4 {
+		opacity: 1;
+	}
+	.process-stack[data-focus="1"] .ps-step-1 .ps-step-btn,
+	.process-stack[data-focus="2"] .ps-step-2 .ps-step-btn,
+	.process-stack[data-focus="3"] .ps-step-3 .ps-step-btn,
+	.process-stack[data-focus="4"] .ps-step-4 .ps-step-btn {
+		color: var(--ink);
+		font-weight: 600;
+	}
+	.process-stack[data-focus="1"] .ps-step-1 .ps-step-btn::before,
+	.process-stack[data-focus="2"] .ps-step-2 .ps-step-btn::before,
+	.process-stack[data-focus="3"] .ps-step-3 .ps-step-btn::before,
+	.process-stack[data-focus="4"] .ps-step-4 .ps-step-btn::before {
+		opacity: 1;
+		transform: none;
+	}
+
+	/* Khối bao tự nó không fade theo [data-reveal] chung (chỉ dùng .is-visible
+	   để bật pha dựng). */
+	:global(.js-reveal) .process-stack[data-reveal] {
+		opacity: 1;
+		transform: none;
+		transition: none;
+	}
+
+	/* Giảm chuyển động / không JS: stack đủ, đường + chấm đủ, chú giải đủ; không
+	   chu kỳ (JS tự bỏ). Global `*{animation-duration:.001ms!important}` sẽ
+	   snap animation dựng về keyframe cuối = trạng thái đủ, nhưng vẫn đặt cứng
+	   cho chắc. */
+	@media (prefers-reduced-motion: reduce) {
+		.ps-layer,
+		.ps-node,
+		.ps-line,
+		.ps-step {
+			animation: none !important;
+			transition: none !important;
+		}
+		.ps-layer,
+		.ps-node,
+		.ps-step {
+			opacity: 1;
+			transform: none;
+		}
+		.ps-line {
+			transform: scaleY(1);
+		}
+	}
+
+	:global(html:not(.js-reveal)) .ps-layer,
+	:global(html:not(.js-reveal)) .ps-node,
+	:global(html:not(.js-reveal)) .ps-step {
+		animation: none;
+		opacity: 1;
+		transform: none;
+	}
+	:global(html:not(.js-reveal)) .ps-line {
+		animation: none;
+		transform: scaleY(1);
+	}
+</style>

@@ -1,0 +1,417 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+import { Image } from "astro:assets";
+import { localePath, resolveLocale } from "../i18n/ui";
+
+const l = (p: string) => localePath(resolveLocale(Astro.currentLocale), p);
+
+// Dữ liệu dự án giờ đọc từ src/content/projects/*.json (quản lý qua Keystatic
+// tại /keystatic khi chạy npm run dev - xem keystatic.config.ts). Sắp xếp
+// theo field "order" do người chỉnh nội dung tự đặt, không phụ thuộc thứ tự
+// file trên đĩa.
+const allProjects = (await getCollection("projects")).sort(
+	(a, b) => a.data.order - b.data.order,
+);
+
+// Dự án được đánh dấu "featured" kể như một case mở đầu lớn, tách khỏi lưới
+// các dự án còn lại phía dưới - số thứ tự tính theo vị trí trong allProjects
+// (đã sắp xếp theo order), không phụ thuộc mảng con.
+const featuredIndex = allProjects.findIndex((p) => p.data.featured);
+const featured = allProjects[featuredIndex];
+const others = allProjects
+	.map((entry, i) => ({ entry, displayIndex: i + 1 }))
+	.filter(({ entry }) => !entry.data.featured);
+---
+
+<BaseLayout title="Dự án - Trần Minh Đức" description="Các dự án thiết kế sản phẩm doanh nghiệp và fintech của Trần Minh Đức.">
+	<main>
+		<header class="page-head">
+			<p class="section-label" data-reveal>Dự án</p>
+			<h1 data-reveal>Sản phẩm doanh nghiệp, được thiết kế lại từ nghiệp vụ phức tạp.</h1>
+		</header>
+
+		<article class="featured-project" data-reveal>
+			<a class="featured-link" href={l(`/du-an/${featured.id}`)}>
+				<!-- Ảnh cover thật (2048×1280) khi có; plate trống chỉ còn cho dự án chưa có ảnh. -->
+				<div class="featured-plate" transition:name={`project-plate-${featured.id}`}>
+					{featured.data.cover ? (
+						<Image
+							src={featured.data.cover}
+							alt={`Ảnh tổng quan dự án ${featured.data.title}`}
+							widths={[640, 960, 1280]}
+							sizes="(max-width: 900px) 100vw, 620px"
+							format="webp"
+							quality={80}
+							loading="eager"
+							fetchpriority="high"
+						/>
+					) : (
+						<>
+							<span class="plate-index tabular" aria-hidden="true">{String(featuredIndex + 1).padStart(2, "0")}</span>
+							<span class="plate-label">{featured.data.plateLabel ?? "Ảnh sẽ cập nhật"}</span>
+						</>
+					)}
+				</div>
+				<div class="featured-body">
+					<span class="watermark tabular" aria-hidden="true">{String(featuredIndex + 1).padStart(2, "0")}</span>
+					<div class="project-tags">
+						{featured.data.tags.map((t) => (
+							<span class="tag">{t}</span>
+						))}
+					</div>
+					<h2>{featured.data.title}</h2>
+					<p>{featured.data.summary}</p>
+					<span class="view-detail">Xem chi tiết →</span>
+				</div>
+			</a>
+		</article>
+
+		<ol class="project-grid">
+			{
+				others.map(({ entry, displayIndex }, i) => (
+					<li class="project-card" data-reveal style={`--i: ${i}`}>
+						<a class="project-card-link" href={l(`/du-an/${entry.id}`)}>
+							<div class="project-plate-wrap">
+								<div class="project-plate" transition:name={`project-plate-${entry.id}`}>
+									{entry.data.cover ? (
+										<Image
+											src={entry.data.cover}
+											alt={`Ảnh tổng quan dự án ${entry.data.title}`}
+											widths={[480, 720, 1080]}
+											sizes="(max-width: 640px) 100vw, 540px"
+											format="webp"
+											quality={80}
+											loading={i < 2 ? "eager" : "lazy"}
+										/>
+									) : (
+										<>
+											<span class="plate-index tabular" aria-hidden="true">{String(displayIndex).padStart(2, "0")}</span>
+											<span class="plate-label">{entry.data.plateLabel ?? "Ảnh sẽ cập nhật"}</span>
+										</>
+									)}
+								</div>
+							</div>
+							<div class="project-body">
+								<div class="project-tags">
+									{entry.data.tags.map((t) => (
+										<span class="tag">{t}</span>
+									))}
+									{!entry.data.real && <span class="tag tag-demo">Minh hoạ</span>}
+								</div>
+								<h2>{entry.data.title}</h2>
+								<p>{entry.data.summary}</p>
+								<span class="view-detail">Xem chi tiết →</span>
+							</div>
+						</a>
+					</li>
+				))
+			}
+		</ol>
+
+		<section class="cta-band" data-reveal>
+			<h2>Có bài toán nghiệp vụ tương tự?</h2>
+			<a class="btn btn-primary btn-lg" href={l("/lien-he")}>Trao đổi dự án</a>
+		</section>
+	</main>
+
+	<style>
+		main {
+			max-width: 1160px;
+			margin-inline: auto;
+			padding: clamp(1.5rem, 4vw, 2.5rem) clamp(1.25rem, 5vw, 3rem) clamp(2rem, 6vw, 4.5rem);
+		}
+
+		.page-head {
+			max-width: 56ch;
+			padding-block: clamp(1.5rem, 4vw, 2.5rem);
+		}
+
+		.section-label {
+			font-size: 0.85rem;
+			font-weight: 600;
+			color: var(--ink-faint);
+			text-transform: uppercase;
+			letter-spacing: 0.08em;
+			margin: 0 0 0.75rem;
+		}
+
+		h1 {
+			font-size: clamp(1.9rem, 4vw, 2.6rem);
+			line-height: 1.15;
+		}
+
+		.featured-project {
+			margin-top: 2rem;
+		}
+
+		.featured-link {
+			position: relative;
+			display: grid;
+			grid-template-columns: 1.15fr 1fr;
+			gap: clamp(1.5rem, 4vw, 3rem);
+			align-items: center;
+			padding: clamp(1.75rem, 4vw, 2.75rem);
+			border-radius: var(--radius-lg);
+			background: var(--accent-tint);
+			isolation: isolate;
+			text-decoration: none;
+			color: inherit;
+			transition: box-shadow 0.3s var(--ease-smooth), transform 0.3s var(--ease-smooth);
+		}
+
+		.featured-link:hover {
+			box-shadow: var(--shadow-lg);
+			transform: translateY(-2px);
+		}
+
+		/* Cả thẻ lẫn mọi phần tử con (tag, tiêu đề, đoạn mô tả, nhãn plate...) đều
+		   không được có underline - đặt text-decoration:none trên cả link cha lẫn
+		   toàn bộ con để tránh việc trình duyệt vẫn vẽ underline mặc định của <a>
+		   xuyên qua các phần tử con khi link cha là flex/grid container. */
+		.featured-link,
+		.featured-link *,
+		.project-card-link,
+		.project-card-link * {
+			text-decoration: none;
+		}
+
+		.featured-plate {
+			aspect-ratio: 16/10;
+			border-radius: var(--radius-md);
+			background: var(--surface);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			position: relative;
+			overflow: hidden;
+			box-shadow: var(--shadow-md);
+		}
+
+		/* Ảnh cover 2048×1280 = đúng 16/10 nên không bị crop; bo góc theo plate. */
+		.featured-plate img,
+		.project-plate img {
+			display: block;
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+
+		.featured-plate .plate-index {
+			position: absolute;
+			top: 1rem;
+			left: 1rem;
+			font-size: 0.78rem;
+			font-weight: 600;
+			color: var(--accent-strong);
+		}
+
+		.featured-body {
+			position: relative;
+		}
+
+		.watermark {
+			position: absolute;
+			top: -2.75rem;
+			left: -0.1rem;
+			z-index: -1;
+			font-family: var(--display);
+			font-size: 6rem;
+			line-height: 1;
+			color: var(--ink);
+			opacity: 0.06;
+			pointer-events: none;
+		}
+
+		.featured-body h2 {
+			font-size: clamp(1.6rem, 3.2vw, 2.1rem);
+			margin-bottom: 0.7rem;
+		}
+
+		.featured-body p {
+			color: var(--ink-secondary);
+			max-width: 52ch;
+		}
+
+		.view-detail {
+			display: inline-block;
+			margin-top: 1rem;
+			font-size: 0.85rem;
+			font-weight: 600;
+			color: var(--accent-strong);
+		}
+
+		.project-grid {
+			list-style: none;
+			margin: 2rem 0 0;
+			padding: 0;
+			display: grid;
+			grid-template-columns: repeat(2, 1fr);
+			gap: 1.75rem;
+		}
+
+		.project-card {
+			border-radius: var(--radius-lg);
+			overflow: hidden;
+		}
+
+		.project-card-link {
+			display: flex;
+			flex-direction: column;
+			height: 100%;
+			border-radius: var(--radius-lg);
+			background: var(--surface);
+			box-shadow: var(--shadow-sm);
+			transition: box-shadow 0.3s var(--ease-smooth), transform 0.3s var(--ease-smooth);
+			overflow: hidden;
+			color: inherit;
+		}
+
+		.project-card-link:hover {
+			box-shadow: var(--shadow-md);
+			transform: translateY(-2px);
+		}
+
+		.project-plate-wrap {
+			overflow: hidden;
+		}
+
+		.project-plate {
+			aspect-ratio: 16/10;
+			background: var(--bg-soft);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			position: relative;
+			transition: transform 0.4s var(--ease-smooth);
+		}
+
+		.project-card-link:hover .project-plate {
+			transform: scale(1.04);
+		}
+
+		.project-plate .plate-index {
+			position: absolute;
+			top: 0.85rem;
+			left: 0.85rem;
+			font-size: 0.75rem;
+			font-weight: 600;
+			color: var(--ink-faint);
+		}
+
+		.plate-label {
+			font-size: 0.8rem;
+			font-weight: 600;
+			color: var(--ink-faint);
+			background: var(--surface);
+			padding: 0.35rem 0.75rem;
+			border-radius: 999px;
+			box-shadow: var(--shadow-sm);
+		}
+
+		.project-card .project-body {
+			padding: 1.35rem 1.5rem 1.6rem;
+		}
+
+		.project-tags {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.5rem;
+			margin-bottom: 0.9rem;
+		}
+
+		.tag {
+			font-size: 0.78rem;
+			font-weight: 600;
+			padding: 0.3rem 0.7rem;
+			border-radius: 999px;
+			background: var(--bg-soft);
+			color: var(--ink-secondary);
+		}
+
+		.featured-link .tag {
+			background: var(--surface);
+		}
+
+		.tag-demo {
+			background: transparent;
+			border: 1px solid var(--ink-faint);
+			color: var(--ink-faint);
+		}
+
+		.project-body h2 {
+			font-size: 1.2rem;
+			margin-bottom: 0.6rem;
+		}
+
+		.project-body p {
+			color: var(--ink-secondary);
+			/* Tóm tắt thật dài 2-3 câu; thẻ chỉ mở đầu, đọc đủ ở trang chi tiết. */
+			display: -webkit-box;
+			-webkit-box-orient: vertical;
+			-webkit-line-clamp: 4;
+			overflow: hidden;
+		}
+
+		.cta-band {
+			margin-top: clamp(2.5rem, 6vw, 4rem);
+			padding: clamp(2.5rem, 7vw, 4rem) clamp(1.5rem, 5vw, 3rem);
+			border-radius: var(--radius-lg);
+			background: var(--bg-soft);
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			justify-content: space-between;
+			gap: 1.5rem;
+		}
+
+		.cta-band h2 {
+			font-size: clamp(1.5rem, 3vw, 2rem);
+			max-width: 20ch;
+		}
+
+		.btn {
+			display: inline-flex;
+			align-items: center;
+			text-decoration: none;
+			font-weight: 600;
+			border-radius: var(--radius-md);
+			/* Chỉ đổi màu khi hover (2026-09-20): không dịch chuyển, không đổi bóng. */
+			transition: background 0.25s var(--ease-smooth), color 0.25s var(--ease-smooth);
+		}
+
+		.btn-primary {
+			background: var(--inverse-bg);
+			color: var(--inverse-ink);
+			box-shadow: var(--shadow-sm);
+		}
+
+		.btn-primary:hover {
+			background: var(--accent-strong);
+		}
+
+		.btn-lg {
+			padding: 1rem 2rem;
+			font-size: 1.05rem;
+		}
+
+		:global(.js-reveal) .project-grid .project-card[data-reveal] {
+			transition-delay: calc(var(--i) * 120ms);
+		}
+
+		@media (max-width: 900px) {
+			.featured-link {
+				grid-template-columns: 1fr;
+			}
+			.watermark {
+				display: none;
+			}
+		}
+
+		@media (max-width: 640px) {
+			.project-grid {
+				grid-template-columns: 1fr;
+			}
+		}
+	</style>
+</BaseLayout>

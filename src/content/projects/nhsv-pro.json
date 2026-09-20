@@ -1,0 +1,64 @@
+{
+  "slug": "nhsv-pro",
+  "title": "NHSV PRO",
+  "client": "NH Securities Vietnam",
+  "real": true,
+  "featured": false,
+  "order": 3,
+  "cover": "../../assets/projects/nhsv-pro/01.jpg",
+  "summary": "Ứng dụng giao dịch chứng khoán trên di động. Research người dùng và đối thủ để tìm điểm nghẽn trong trải nghiệm đặt lệnh, lên tone màu tin cậy cho ngành tài chính, xây hệ giao diện đồng bộ Light/Dark mode và tối ưu luồng đặt lệnh, quản lý tài sản, tính năng cộng đồng.",
+  "tags": [
+    "Fintech",
+    "Mobile app",
+    "Light/Dark mode"
+  ],
+  "role": "Thiết kế UX/UI: research, user flow, hệ giao diện Light/Dark",
+  "tools": [
+    "Figma"
+  ],
+  "context": "Nhà đầu tư cần đặt lệnh nhanh và theo dõi tài sản rõ ràng, nhưng ứng dụng còn phải phục vụ các tính năng cộng đồng (Challenge, Leaderboard, Copy Trading) và hỗ trợ kiến thức. Toàn bộ luồng - từ đăng ký eKYC, đăng nhập OTP/Face ID đến thị trường, đặt lệnh, tài sản - được vẽ thành một sơ đồ trước khi thiết kế màn hình.",
+  "process": [
+    {
+      "title": "Research người dùng & đối thủ",
+      "body": "Tìm điểm nghẽn trong trải nghiệm đặt lệnh của nhà đầu tư và cách các ứng dụng đối thủ đang xử lý."
+    },
+    {
+      "title": "Định hướng màu sắc & tone",
+      "body": "Lên ý tưởng màu sắc, tone thiết kế theo hướng tin cậy, chuyên nghiệp cho ngành tài chính."
+    },
+    {
+      "title": "Hệ giao diện Light/Dark đồng bộ",
+      "body": "Xây dựng hệ thống giao diện đồng bộ hai chế độ trên cùng một bộ component, không phải hai bản thiết kế tách rời."
+    },
+    {
+      "title": "Tối ưu các luồng chính",
+      "body": "Đặt lệnh (lệnh thường, One-Touch, xác nhận, sổ lệnh), quản lý tài sản (Portfolio, Realized P/L) và tính năng cộng đồng (Challenge, Leaderboard)."
+    }
+  ],
+  "gallery": [
+    {
+      "src": "../../assets/projects/nhsv-pro/02.jpg",
+      "caption": "Bốn đầu việc chính của dự án và một phần hệ màn hình trong Figma."
+    },
+    {
+      "src": "../../assets/projects/nhsv-pro/03.jpg",
+      "caption": "Light mode và Dark mode dùng chung một hệ component."
+    },
+    {
+      "src": "../../assets/projects/nhsv-pro/04.jpg",
+      "caption": "Đăng nhập: OTP, Face ID và các trạng thái lỗi (tên đăng nhập không hợp lệ, số lần thử còn lại)."
+    },
+    {
+      "src": "../../assets/projects/nhsv-pro/05.jpg",
+      "caption": "User flow toàn ứng dụng: đăng ký với OTP, sinh trắc học, eKYC; onboarding; từ trang chủ tới thị trường, thông tin mã, đặt lệnh, tài sản, tài khoản, cộng đồng, hỗ trợ & kiến thức và vận hành hệ thống."
+    },
+    {
+      "src": "../../assets/projects/nhsv-pro/06.jpg",
+      "caption": "Các màn hình chính ở Light mode: tổng quan tài sản, dịch vụ, watchlist, chi tiết mã và biểu đồ."
+    },
+    {
+      "src": "../../assets/projects/nhsv-pro/07.jpg",
+      "caption": "Cùng các màn hình đó ở Dark mode."
+    }
+  ]
+}

@@ -1,0 +1,1734 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Icon from "../components/Icon.astro";
+import Testimonials from "../components/Testimonials.astro";
+import ProcessStack from "../components/ProcessStack.astro";
+import { dtOutlinePaths, glintLayers } from "../data/dt-glint";
+
+// `era` KHÔNG còn dùng để chọn cảnh minh hoạ (2026-09-18: panel bên phải đổi
+// sang minh hoạ "cây" cố định — từ 2026-09-19 là <img> trỏ thẳng tới
+// public/images/tree-stroke-8-animated.svg — không còn đổi theo mốc thời gian
+// đang đọc). Giữ nguyên field này trong dữ liệu vì nó vẫn mô tả đúng giai đoạn
+// nghề nghiệp, phòng khi cần dùng lại sau này; chỉ không còn nơi nào đọc giá
+// trị của nó. `from`/`to` chỉ là năm rút từ `range`, dùng cho con số lớn trong
+// panel — không phải dữ liệu mới.
+
+// Câu dưới cây (người dùng soạn, 2026-09-19). Tách sẵn thành từng TỪ lúc build
+// cho hiệu ứng hiện dần theo từ (`--i` = thứ tự từ trên cả câu → độ trễ), cùng
+// cách làm với tiêu đề hero ở index.astro nhưng theo từ chứ không theo ký tự.
+// Từ khoá bọc trong *...* (dấu câu đứng ngay sau dấu * đóng vẫn dính vào từ):
+// sau khi cả câu hiện đủ ở weight thường, một vệt sáng mờ chạy lần lượt qua
+// từng dòng và cụm nào bị vệt sáng đi qua thì đậm lên (yêu cầu người dùng
+// 2026-09-19). `--k` = thứ tự cụm; `--kf` = vị trí tâm cụm trong dòng theo TỈ
+// LỆ KÝ TỰ (0..1) — CSS không đo được toạ độ chữ, tỉ lệ ký tự trên font tỉ lệ
+// là xấp xỉ đủ tốt để mốc đậm khớp lúc vệt sáng đi qua.
+const treeCaptionLines = [
+  { text: "*Cây* luôn hướng tới ánh sáng và *phát triển*,", me: false },
+  { text: "*tôi* luôn tìm cách *học hỏi* và *hoàn thiện*.", me: true },
+];
+type CaptionWord = { word: string; i: number; k?: number; kf?: number };
+let captionWordIndex = 0;
+let captionKeyIndex = 0;
+const treeCaption = treeCaptionLines.map((line) => {
+  const words: CaptionWord[] = [];
+  const plainLength = line.text.replace(/\*/g, "").length;
+  for (const m of line.text.matchAll(/\*([^*]+)\*(\S*)|(\S+)/g)) {
+    if (m[1] !== undefined) {
+      const k = captionKeyIndex++;
+      const starsBefore = (line.text.slice(0, m.index).match(/\*/g) ?? []).length;
+      const start = m.index - starsBefore;
+      const kf = +((start + (m[1].length + m[2].length) / 2) / plainLength).toFixed(3);
+      const parts = m[1].split(" ");
+      parts.forEach((p, pi) => words.push({ word: pi === parts.length - 1 ? p + m[2] : p, i: captionWordIndex++, k, kf }));
+    } else {
+      words.push({ word: m[3], i: captionWordIndex++ });
+    }
+  }
+  return { me: line.me, words };
+});
+const treeCaptionWordCount = captionWordIndex;
+
+const experience = [
+  {
+    range: "T12/2019 - Hiện tại",
+    from: 2019,
+    to: null,
+    current: true,
+    role: "Senior UI Designer",
+    company: "Difisoft Vietnam JSC",
+    era: "fintech",
+    lines: [
+      "Phối hợp với Product Owner thiết kế UI, tương tác cho sản phẩm fintech",
+      "Nghiên cứu người dùng, xây dựng user flow, định hướng UX cho mobile & web",
+      "Thiết kế landing page và banner marketing",
+    ],
+  },
+  {
+    range: "T4/2014 - T12/2019",
+    from: 2014,
+    to: 2019,
+    current: false,
+    role: "Lead of Design",
+    company: "CAIA Technology and Communications JSC",
+    era: "brand",
+    lines: [
+      "Dẫn dắt đội thiết kế giao diện website, banner, hình ảnh cho nhiều khách hàng",
+      "Xây dựng hệ thống nhận diện thương hiệu: logo, brochure, danh thiếp, brand guideline",
+    ],
+  },
+  {
+    range: "T4/2012 - T4/2014",
+    from: 2012,
+    to: 2014,
+    current: false,
+    role: "Lead of Design",
+    company: "Hurasoft JSC",
+    era: "web",
+    lines: [
+      "Chỉ đạo sản xuất thiết kế giao diện web và tài sản hình ảnh cho khách hàng",
+      "Thực hiện ấn phẩm nhận diện thương hiệu",
+    ],
+  },
+  {
+    range: "T10/2009 - T4/2012",
+    from: 2009,
+    to: 2012,
+    current: false,
+    role: "Web & Graphic Designer",
+    company: "Finalstyle Company Limited",
+    era: "graphic",
+    lines: [
+      "Thiết kế giao diện website, banner quảng cáo, tài sản hình ảnh",
+      "Xây dựng bộ nhận diện thương hiệu, prototype và mockup tương tác",
+    ],
+  },
+];
+
+// Nội dung 3 mục chuyên môn (người dùng cung cấp 2026-09-20, viết lại để nói
+// "có gì" — lĩnh vực/loại sản phẩm — không trùng với "cách làm" ở section quy
+// trình phía trên; mục AI cũ đã hoà vào hàng "Công cụ hỗ trợ").
+const expertise = [
+  {
+    icon: "chart",
+    title: "Fintech & sản phẩm nhiều dữ liệu",
+    body: "Thiết kế sản phẩm chứng khoán, giao dịch tài chính và dashboard có mật độ thông tin cao; tổ chức dữ liệu để người dùng theo dõi và thực hiện tác vụ chính xác hơn.",
+  },
+  {
+    icon: "layers",
+    title: "Hệ thống vận hành doanh nghiệp",
+    body: "Thiết kế sản phẩm phục vụ nhiều vai trò, quy trình và trạng thái; chuyển nghiệp vụ vận hành thành trải nghiệm rõ ràng và dễ sử dụng.",
+  },
+  {
+    icon: "tokens",
+    title: "Design System đa nền tảng",
+    body: "Xây dựng token, component, variant và responsive pattern dùng chung, giúp web và mobile duy trì tính nhất quán khi sản phẩm mở rộng.",
+  },
+] as const;
+
+// Nền tảng — tách riêng khỏi 3 mục chuyên môn (theo yêu cầu 2026-09-18). Hai mục
+// này lấy từ danh sách kỹ năng trong CV (Mobile App Design, Web Responsive
+// Design); mô tả ghép từ các dòng kinh nghiệm đã có — không thêm năng lực mới.
+// Mục Web Responsive viết lại 2026-09-20 để không lặp nguyên văn "token,
+// component dùng chung cho web và mobile" đã có ở "Design System đa nền tảng".
+const platforms = [
+  {
+    icon: "mobile",
+    title: "Mobile App Design",
+    body: "Thiết kế giao diện và tương tác ứng dụng di động cho sản phẩm fintech, đi từ user flow và định hướng UX đến màn hình hoàn thiện.",
+  },
+  {
+    icon: "responsive",
+    title: "Web Responsive Design",
+    body: "Thiết kế web hiển thị nhất quán trên mọi cỡ màn hình: bố cục, lưới và trạng thái tương tác được tính cho desktop lẫn tablet, nối liền với bản mobile.",
+  },
+] as const;
+
+// ---- Section "Cách tôi làm việc" (2026-09-20, thay dải công cụ) ----
+// 4 bước nối tiếp, nội dung nguyên văn người dùng cung cấp. Số thứ tự hiện to
+// mờ (aria-hidden), "Bước 0N:" đọc được qua .sr-only trong <h3>. Icon nét từ
+// Icon.astro (search/flow thêm 2026-09-20 cho đúng nghĩa bước 01/02).
+const processSteps = [
+  {
+    n: "01",
+    icon: "search",
+    title: "Làm rõ bài toán",
+    body: "Phân tích người dùng, quy trình và ràng buộc nghiệp vụ để xác định đúng vấn đề cần giải quyết.",
+  },
+  {
+    n: "02",
+    icon: "flow",
+    title: "Tổ chức trải nghiệm",
+    body: "Chuyển nghiệp vụ thành cấu trúc thông tin, user flow và trạng thái rõ ràng, dễ thao tác.",
+  },
+  {
+    n: "03",
+    icon: "tokens",
+    title: "Xây dựng hệ thống giao diện",
+    body: "Thiết kế token, component và responsive pattern dùng chung cho web và mobile.",
+  },
+  {
+    n: "04",
+    icon: "check-circle",
+    title: "Kiểm chứng và triển khai",
+    body: "Tạo prototype để kiểm tra giải pháp và phối hợp cùng đội ngũ trong quá trình phát triển.",
+  },
+] as const;
+
+// Công cụ hỗ trợ: SECTION RIÊNG ngay sau mảng tối (tách 2026-09-20 để hai nhóm
+// nội dung có phân cấp rõ; trước là một hàng nhỏ cuối box tối). 4 card cùng
+// chiều cao, icon lớn. Mặc định trung tính (icon xám trên tile bg-soft); hover
+// mới lộ màu: card là .brand-hover-host nên mark Figma/Photoshop tự tô màu hãng
+// theo Icon.astro, icon nét (code/sparkle) sang accent. ChatGPT/Claude không
+// còn là hai năng lực riêng — gộp thành "AI-assisted workflow".
+const supportTools = [
+  { icon: "figma", name: "Figma", body: "Thiết kế UI, xây dựng component, design system và prototype tương tác." },
+  { icon: "code", name: "HTML/CSS", body: "Kiểm tra responsive, trạng thái giao diện và tạo prototype gần với sản phẩm thật." },
+  { icon: "photoshop", name: "Photoshop", body: "Xử lý hình ảnh, tài sản đồ họa và nội dung trực quan cho sản phẩm." },
+  { icon: "sparkle", name: "AI-assisted workflow", body: "Hỗ trợ phân tích yêu cầu, khám phá phương án và kiểm tra tính nhất quán trong quá trình thiết kế." },
+] as const;
+
+// Logo DT nét + vệt sáng: dữ liệu và công thức dùng chung với trang chủ ở
+// src/data/dt-glint.ts (tách 2026-09-20 khi trang chủ cũng dùng hiệu ứng này).
+
+// Đánh giá: dùng component Testimonials (dữ liệu chung src/data/testimonials.ts).
+---
+
+<BaseLayout title="Kinh nghiệm - Trần Minh Đức" description="Kinh nghiệm làm việc, chuyên môn và đánh giá khách hàng của Trần Minh Đức.">
+	<main>
+		<!-- Hero hai cột (2026-09-19): chữ bên trái, bên phải là minh hoạ quy trình
+		     4 bước (ProcessStack: 4 ảnh render 3D xếp tầng, animation lặp). Minh
+		     hoạ thuần trang trí (aria-hidden trong component) — lede đã kể đủ
+		     "từ phân tích nghiệp vụ đến UI, design system và prototype". -->
+		<header class="page-head">
+			<div class="page-head-copy">
+				<p class="section-label" data-reveal>Kinh nghiệm & Chuyên môn</p>
+				<!-- Tiêu đề do người dùng đặt (2026-09-19); ý "chuyên sâu fintech" chuyển
+				     xuống lede theo yêu cầu, lede viết lại cho liền mạch. -->
+				<h1 data-reveal>15+ năm kinh nghiệm thiết kế sản phẩm số</h1>
+				<p class="lede" data-reveal>
+					Với kinh nghiệm chuyên sâu trong fintech, tôi giúp đội ngũ đi từ phân tích nghiệp vụ đến UI,
+					design system và prototype để tạo ra sản phẩm dễ sử dụng, nhất quán và sẵn sàng phát triển.
+				</p>
+			</div>
+			<div class="page-head-visual">
+				<ProcessStack />
+			</div>
+		</header>
+
+		<section class="block">
+			<h2 data-reveal>Kinh nghiệm làm việc</h2>
+			<div class="timeline-layout">
+				<!-- Timeline "đọc theo cuộn": một đường accent tô dần theo vị trí cuộn
+				     (scaleY), chấm và nội dung của từng mốc chỉ hiện khi đường tô đi
+				     qua. Không dùng data-reveal chung: ở đây cần mốc nào cuộn tới mới
+				     hiện mốc đó, kể cả khi cả bốn mốc đã nằm trong viewport. -->
+				<ol class="timeline" id="timeline">
+					<span class="timeline-fill" aria-hidden="true"></span>
+					{
+						experience.map((job, i) => (
+							<li class="timeline-item" data-era={i}>
+								<div class="timeline-marker" aria-hidden="true">
+									<span class={`dot ${job.current ? "dot-current" : ""}`} />
+								</div>
+								<div class="timeline-content">
+									<span class="timeline-range tabular">{job.range}</span>
+									<h3>
+										{job.role} - {job.company}
+										{job.current && <span class="pill">Hiện tại</span>}
+									</h3>
+									<ul>
+										{job.lines.map((line) => (
+											<li>{line}</li>
+										))}
+									</ul>
+								</div>
+							</li>
+						))
+					}
+				</ol>
+
+				<!-- Panel dính bên phải: minh hoạ "cây" + câu ngắn gắn ẩn ý cây lớn =
+				     luôn học hỏi/phát triển (2026-09-19). Cây là <img> trỏ THẲNG tới
+				     file public/images/tree-stroke-8-animated.svg (bản sao y nguyên của
+				     images/tree-stroke-8-animated.svg) — animation, keyframes, chu kỳ
+				     15s đều nằm trong file, chạy được trong <img>; không component,
+				     không JS, không sửa file (yêu cầu người dùng). <source> reduced-
+				     motion trỏ bản tĩnh tree-stroke-8.svg (cùng 8 path, không
+				     animation): media query TRONG SVG-as-image chỉ nhận cài đặt cấp
+				     OS/trình duyệt, còn <source media> do trang đánh giá nên chắc ở
+				     mọi nguồn. width/height = viewBox để giữ chỗ, không nhảy layout.
+				     alt rỗng vì trang trí — câu chữ bên dưới mới mang nghĩa, nên
+				     <aside> KHÔNG aria-hidden. -->
+				<aside class="era-panel">
+					<picture>
+						<source media="(prefers-reduced-motion: reduce)" srcset="/images/tree-stroke-8.svg" type="image/svg+xml" />
+						<img
+							class="tree-figure"
+							src="/images/tree-stroke-8-animated.svg"
+							width="585"
+							height="586"
+							alt=""
+							decoding="async"
+						/>
+					</picture>
+					<p class="tree-caption" data-reveal style={`--tc-n: ${treeCaptionWordCount}`}>
+						<span class="tc-quote" aria-hidden="true">“</span>
+						{
+							treeCaption.map((line, li) => (
+								<>
+									<span class:list={["tc-line", line.me ? "tc-me" : "tc-tree"]} style={`--l: ${li}`}>
+										{line.words.map((w, wi) => (
+											<>
+												<span
+													class:list={["tc-w", { "tc-k": w.k !== undefined }]}
+													style={`--i: ${w.i}${w.k !== undefined ? `; --k: ${w.k}; --kf: ${w.kf}` : ""}`}
+													data-w={w.k !== undefined ? w.word : undefined}
+												>
+													{w.word}
+												</span>
+												{wi < line.words.length - 1 ? " " : null}
+											</>
+										))}
+									</span>
+									{/* Khoảng trắng giữa hai dòng để textContent/AT không dính "triển,tôi". */}
+									{li < treeCaption.length - 1 ? " " : null}
+								</>
+							))
+						}
+					</p>
+				</aside>
+			</div>
+		</section>
+
+		<!-- "Cách tôi làm việc" (2026-09-20, THAY dải công cụ): vẫn là mảng tối tràn
+		     hai mép, nhưng KHÔNG còn sticky + rèm che — section giờ cao hơn một
+		     màn hình ở tablet/mobile, sticky sẽ ghim phần trên và phần dưới không
+		     bao giờ lộ. Logo DT nét + vệt sáng giữ lại làm nền trang trí góc
+		     dưới-phải, mờ hơn. Nội dung: intro → 4 bước nối bằng một đường vẽ dần
+		     → hàng công cụ phụ. Không JS vẫn hiện đủ: mọi trạng thái ẩn chỉ áp
+		     khi html.js-reveal, mở khoá theo .is-visible của <ol> (cơ chế
+		     data-reveal chung). Thứ tự DOM = thứ tự đọc 01→04 ở mọi breakpoint. -->
+		<section class="process-band" aria-labelledby="process-title">
+			<!-- Logo DT dạng nét, khổ lớn, cạnh sáng + vệt sáng chạy theo nét (T8).
+			     Path lấy từ public/logo-dt-green.svg, bỏ fill; pathLength="1000" chuẩn
+			     hoá để vệt sáng cùng nhịp trên mọi path. Trang trí → aria-hidden. -->
+			<svg class="band-logo" viewBox="0 0 377 434" aria-hidden="true" focusable="false">
+				<defs>
+					<linearGradient id="dt-edge" x1="0" y1="0" x2="1" y2="1">
+						<stop offset="0" stop-color="#ffffff" stop-opacity="0.03" />
+						<stop offset="0.45" stop-color="#ffffff" stop-opacity="0.32" />
+						<stop offset="0.55" stop-color="#5fc2a2" stop-opacity="0.9" />
+						<stop offset="1" stop-color="#ffffff" stop-opacity="0.03" />
+					</linearGradient>
+					<g id="dt-outline">
+						{dtOutlinePaths.map((d) => <path pathLength="1000" d={d} />)}
+					</g>
+				</defs>
+				<use href="#dt-outline" class="base" />
+				<!-- Vệt sáng hình con thoi: xem glintLayers ở frontmatter. -->
+				{
+					glintLayers.map((l) => (
+						<use
+							href="#dt-outline"
+							class="g"
+							style={`--s0: ${l.s0}px; --w: ${l.w}; --o: ${l.o}; --blur: ${l.blur}px; --c: ${l.accent ? "var(--accent)" : "var(--on-ink)"}; stroke-dasharray: ${l.len} ${1000 - l.len}`}
+						/>
+					))
+				}
+			</svg>
+			<div class="process-inner">
+				<div class="process-intro">
+					<p class="section-label" data-reveal>Cách tôi làm việc</p>
+					<h2 id="process-title" data-reveal>Cách tôi đưa thiết kế đến gần sản phẩm</h2>
+					<p class="process-lede" data-reveal>
+						Tôi kết nối nghiệp vụ, trải nghiệm người dùng và khả năng triển khai để giải pháp không chỉ
+						đẹp trên bản thiết kế mà còn vận hành rõ ràng trong sản phẩm thực tế.
+					</p>
+				</div>
+
+				<!-- Một <ol> mang data-reveal: .is-visible mở khoá toàn bộ chuỗi (node →
+				     đoạn nối → node kế → nội dung) bằng transition/animation-delay theo
+				     --i; không cần listener riêng. Node + đoạn nối chỉ là thị giác. -->
+				<ol class="process-steps" data-reveal>
+					{
+						processSteps.map((s, i) => (
+							<li class="pstep" style={`--i: ${i}`}>
+								<span class="pstep-node" aria-hidden="true" />
+								<span class="pstep-seg" aria-hidden="true">
+									<span class="pstep-seg-line" />
+									<span class="pstep-seg-head" />
+								</span>
+								<div class="pstep-body">
+									<span class="pstep-num tabular" aria-hidden="true">{s.n}</span>
+									<span class="pstep-icon" aria-hidden="true">
+										<Icon name={s.icon} size={22} />
+									</span>
+									<h3>
+										<span class="sr-only">Bước {s.n}: </span>
+										{s.title}
+									</h3>
+									<p>{s.body}</p>
+								</div>
+							</li>
+						))
+					}
+				</ol>
+
+			</div>
+		</section>
+
+		<!-- Công cụ hỗ trợ (2026-09-20): section riêng, nền --bg-soft tràn hai mép =
+		     tông trung gian giữa mảng tối của quy trình và nền sáng của Chuyên môn.
+		     4 card cùng cao, icon lớn; hiện lần lượt trái→phải qua data-reveal. -->
+		<!-- Rút gọn 2026-09-20 (yêu cầu): chỉ còn 4 ô công cụ, bỏ nhãn/tiêu đề/mô tả
+		     và dòng kết — aria-label thay cho tiêu đề. -->
+		<section class="tools-section" aria-label="Công cụ hỗ trợ">
+			<div class="tools-inner">
+				<ul class="tools-grid">
+					{
+						supportTools.map((t, i) => (
+							<li class="tool-card brand-hover-host" data-reveal style={`--i: ${i}`}>
+								<span class="icon-tile icon-tile-lg tool-icon" aria-hidden="true">
+									<Icon name={t.icon} size={28} class="icon-anim" />
+								</span>
+								<h3>{t.name}</h3>
+								<p>{t.body}</p>
+							</li>
+						))
+					}
+				</ul>
+			</div>
+		</section>
+
+		<section class="block block-after-band">
+			<h2 data-reveal>Chuyên môn</h2>
+			<!-- Ba thẻ riêng, lưới 3 cột. Thẻ trắng + shadow trên nền trắng. -->
+			<ul class="expertise-grid">
+				{
+					expertise.map((e, i) => (
+						<li class="expertise-card icon-hover-host" data-reveal style={`--i: ${i}`}>
+							<span class="icon-tile icon-tile-lg" aria-hidden="true">
+								<Icon name={e.icon} size={28} class="icon-anim" />
+							</span>
+							<h3>{e.title}</h3>
+							<p>{e.body}</p>
+						</li>
+					))
+				}
+			</ul>
+		</section>
+
+		<!-- Nền tảng đứng sau Chuyên môn (nền --bg-soft) → khác nền → không kẻ
+		     (quy tắc 2026-09-20: chỉ kẻ giữa hai khối CÙNG nền). -->
+		<section class="block block-flush">
+			<h2 data-reveal>Nền tảng</h2>
+			<!-- Hai hộp ngang, nền soft — cố ý khác dáng với 3 thẻ chuyên môn ở trên
+			     để hai nhóm không đọc nhầm thành một. -->
+			<ul class="platform-grid">
+				{
+					platforms.map((p, i) => (
+						<li class="platform-card icon-hover-host" data-reveal style={`--i: ${i}`}>
+							<span class="icon-tile icon-tile-lg" aria-hidden="true">
+								<Icon name={p.icon} size={28} class="icon-anim" />
+							</span>
+							<div>
+								<h3>{p.title}</h3>
+								<p>{p.body}</p>
+							</div>
+						</li>
+					))
+				}
+			</ul>
+		</section>
+
+		<section class="block" id="danh-gia">
+			<Testimonials />
+		</section>
+	</main>
+
+	<script>
+		// Timeline đọc theo cuộn. Một "đường ngang hiện tại" nằm ở 60% chiều cao
+		// viewport (đủ thấp để mốc đầu — nằm ~500px dưới mép trên khi mới tải —
+		// hiện ngay, không để trống dưới tiêu đề); đường accent tô từ đầu timeline
+		// tới đường đó (scaleY), mốc nào có đầu mốc nằm trên đường đó thì đã "đọc
+		// tới": chấm sáng, nội dung hiện, panel bên phải đổi sang năm + cảnh của
+		// mốc đó. Chỉ transform/opacity.
+		function initTimeline() {
+			(window as any).__timelineUpdate = undefined;
+			const tl = document.getElementById("timeline");
+			if (!tl) return;
+			const fill = tl.querySelector<HTMLElement>(".timeline-fill");
+			const items = Array.from(tl.querySelectorAll<HTMLElement>(".timeline-item"));
+			const panel = document.querySelector<HTMLElement>(".era-panel");
+			const eraEls = panel ? Array.from(panel.querySelectorAll<HTMLElement>("[data-era]")) : [];
+			const indexEl = document.getElementById("era-index");
+			const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+			let active = -1;
+
+			function setActive(i: number) {
+				if (i === active) return;
+				active = i;
+				for (const el of eraEls) el.classList.toggle("is-active", Number(el.dataset.era) === i);
+				if (indexEl) indexEl.textContent = String(i + 1).padStart(2, "0");
+			}
+
+			function update() {
+				const rect = tl!.getBoundingClientRect();
+				const anchor = window.innerHeight * 0.6;
+				const p = Math.min(1, Math.max(0, (anchor - rect.top) / rect.height));
+				if (fill) fill.style.transform = `scaleY(${reduce ? 1 : p})`;
+				let reached = 0;
+				items.forEach((item, i) => {
+					const hit = reduce || item.getBoundingClientRect().top <= anchor;
+					item.classList.toggle("is-reached", hit);
+					if (hit) reached = i;
+				});
+				setActive(reached);
+			}
+
+			(window as any).__timelineUpdate = update;
+			update();
+		}
+
+		if (!(window as any).__timelineBound) {
+			(window as any).__timelineBound = true;
+			const run = () => (window as any).__timelineUpdate?.();
+			window.addEventListener("scroll", run, { passive: true });
+			window.addEventListener("resize", run);
+		}
+		// after-swap: DOM mới đã vào, ảnh trạng thái mới chưa chụp → tính ngay để mốc
+		// đang trong viewport hiện đủ trong crossfade. page-load: chạy lại cho chắc
+		// (font/ảnh có thể đổi chiều cao). Hàm idempotent nên gọi hai lần vô hại.
+		document.addEventListener("astro:after-swap", initTimeline);
+		document.addEventListener("astro:page-load", initTimeline);
+		initTimeline();
+	</script>
+
+	<style>
+		main {
+			max-width: 1160px;
+			margin-inline: auto;
+			padding: clamp(1.5rem, 4vw, 2.5rem) clamp(1.25rem, 5vw, 3rem) clamp(2rem, 6vw, 4.5rem);
+		}
+
+		/* Hero hai cột (2026-09-19): cùng nhịp lưới với hero trang chủ (chữ rộng
+		   hơn ảnh, canh giữa theo chiều dọc). ≤900px xếp một cột, minh hoạ nằm
+		   DƯỚI chữ (khác trang chủ) để tiêu đề trang vẫn đọc trước. */
+		.page-head {
+			display: grid;
+			grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+			gap: clamp(2rem, 5vw, 3.5rem);
+			align-items: center;
+			padding-block: clamp(1.5rem, 4vw, 2.5rem);
+		}
+
+		.page-head-copy {
+			max-width: 60ch;
+		}
+
+		/* Căn giữa chữ theo SÂN KHẤU ảnh chứ không theo cả cột phải (2026-09-19,
+		   theo yêu cầu): cột phải = sân khấu + chú giải 4 bước bên dưới, nên
+		   align-items:center đẩy tâm chữ thấp hơn tâm ảnh đúng nửa chiều cao chú
+		   giải. Bù bằng margin-bottom trên khối chữ đúng bằng chiều cao chú giải
+		   (ProcessStack đo thật và đặt --ps-legend-h trên <html>, kể cả khi chú
+		   giải đổi 2 cột ↔ 1 cột; 4.75rem là dự phòng khi chưa có JS) → tâm chữ
+		   trùng tâm sân khấu. Chỉ áp dụng khi hai cột (≤900px xếp dọc). */
+		@media (min-width: 901px) {
+			.page-head-copy {
+				margin-bottom: var(--ps-legend-h, 4.75rem);
+			}
+		}
+
+		@media (max-width: 900px) {
+			.page-head {
+				grid-template-columns: 1fr;
+			}
+			.page-head-visual {
+				max-width: 480px;
+			}
+		}
+
+		.section-label {
+			font-size: 0.85rem;
+			font-weight: 600;
+			color: var(--ink-faint);
+			text-transform: uppercase;
+			letter-spacing: 0.08em;
+			margin: 0 0 0.75rem;
+		}
+
+		h1 {
+			font-size: clamp(1.9rem, 4vw, 2.6rem);
+			line-height: 1.15;
+		}
+
+		.lede {
+			max-width: var(--measure);
+			font-size: 1.2rem;
+			color: var(--ink-secondary);
+			margin: 1.25rem 0 0;
+		}
+
+		/* Nhịp giữa các khối (siết lại 2026-09-20 từ 3–4.5rem: các khối giờ xen kẽ
+		   nền nên ranh giới đã rõ, đệm lớn làm nội dung xa nhau). Quy tắc đường kẻ
+		   (người dùng chốt 2026-09-20): CHỈ kẻ giữa hai khối cùng nền (đầu trang →
+		   Kinh nghiệm làm việc; Nền tảng → Đánh giá); hai khối khác nền thì đổi nền
+		   đã là ranh giới → .block-flush bỏ kẻ. */
+		.block {
+			padding-block: clamp(2.5rem, 6vw, 3.5rem);
+			border-top: 1px solid var(--border);
+		}
+
+		.block-flush {
+			border-top: 0;
+		}
+
+		/* Rèm che (sticky band + .curtain) đã bỏ 2026-09-20 cùng với dải công cụ —
+		   section "Cách tôi làm việc" cao hơn một màn hình nên không ghim được.
+		   Khối ngay sau mảng tối không cần đường kẻ: mép mảng đã là ranh giới. */
+		.block-after-band {
+			border-top: 0;
+			/* Nền --bg-soft tràn hai mép bằng pseudo-element (nội dung vẫn nằm trong
+			   cột 1160px của main); isolation để z-index:-1 không chui xuống dưới
+			   nền body. */
+			position: relative;
+			isolation: isolate;
+		}
+
+		.block-after-band::before {
+			content: "";
+			position: absolute;
+			inset: 0 auto 0 calc(50% - 50vw);
+			width: 100vw;
+			z-index: -1;
+			background: var(--bg-soft);
+		}
+
+		.sr-only {
+			position: absolute;
+			width: 1px;
+			height: 1px;
+			padding: 0;
+			margin: -1px;
+			overflow: hidden;
+			clip: rect(0, 0, 0, 0);
+			white-space: nowrap;
+			border: 0;
+		}
+
+		.block > h2 {
+			font-size: 1.5rem;
+			margin-bottom: 2rem;
+		}
+
+		.timeline-layout {
+			display: grid;
+			grid-template-columns: minmax(0, 1fr) minmax(0, 0.82fr);
+			gap: clamp(2rem, 5vw, 4.5rem);
+			align-items: start;
+		}
+
+		.timeline {
+			list-style: none;
+			margin: 0;
+			padding: 0;
+			position: relative;
+		}
+
+		.timeline::before {
+			content: "";
+			position: absolute;
+			left: 5px;
+			top: 6px;
+			bottom: 6px;
+			width: 1px;
+			background: var(--border);
+		}
+
+		/* Đường accent tô dần theo cuộn, đè lên đường ray xám. */
+		.timeline-fill {
+			position: absolute;
+			left: 5px;
+			top: 6px;
+			bottom: 6px;
+			width: 1px;
+			background: var(--accent);
+			transform: scaleY(0);
+			transform-origin: top;
+		}
+
+		.timeline-item {
+			display: grid;
+			grid-template-columns: 12px 1fr;
+			gap: 1.5rem;
+			padding-bottom: 2.25rem;
+		}
+
+		.timeline-item:last-child {
+			padding-bottom: 0;
+		}
+
+		.timeline-marker {
+			position: relative;
+		}
+
+		.dot {
+			display: block;
+			width: 11px;
+			height: 11px;
+			border-radius: 50%;
+			background: var(--border);
+			margin-top: 6px;
+			transition: background 0.4s var(--ease-smooth), box-shadow 0.4s var(--ease-smooth);
+		}
+
+		/* Chấm sáng khi đường tô đi qua (JS gắn .is-reached). Không JS: chấm của
+		   mốc hiện tại vẫn sáng như cũ để trang không mất tín hiệu. */
+		.timeline-item.is-reached .dot,
+		:global(html:not(.js-reveal)) .dot-current {
+			background: var(--accent);
+			box-shadow: 0 0 0 4px var(--accent-tint);
+		}
+
+		/* Nội dung mốc: ẩn cho tới khi cuộn tới. Chỉ dưới .js-reveal để không JS
+		   vẫn đọc được đầy đủ. */
+		:global(.js-reveal) .timeline-content {
+			opacity: 0;
+			transform: translateY(14px);
+			transition: opacity 0.6s var(--ease-smooth), transform 0.6s var(--ease-smooth);
+		}
+
+		:global(.js-reveal) .timeline-item.is-reached .timeline-content {
+			opacity: 1;
+			transform: none;
+		}
+
+		.timeline-range {
+			font-size: 0.85rem;
+			color: var(--ink-faint);
+			font-weight: 600;
+		}
+
+		.timeline-content h3 {
+			font-family: var(--sans);
+			font-size: 1.05rem;
+			font-weight: 700;
+			margin: 0.3rem 0 0.7rem;
+			display: flex;
+			align-items: center;
+			gap: 0.6rem;
+			flex-wrap: wrap;
+		}
+
+		.pill {
+			font-size: 0.72rem;
+			font-weight: 600;
+			background: var(--accent-tint);
+			color: var(--accent-strong);
+			padding: 0.2rem 0.6rem;
+			border-radius: 999px;
+		}
+
+		.timeline-content ul {
+			margin: 0;
+			padding-left: 1.1rem;
+			color: var(--ink-secondary);
+		}
+
+		.timeline-content li {
+			margin-bottom: 0.3rem;
+		}
+
+		/* ---- Panel năm + cảnh minh hoạ (dính bên phải timeline) ---- */
+		/* Không còn thẻ nền/shadow bọc ngoài (2026-09-18) — cây nằm trực tiếp
+		   trên nền trang, .era-panel chỉ lo việc sticky. */
+		.era-panel {
+			position: sticky;
+			top: 6rem;
+		}
+
+		/* Cây = <img> trỏ thẳng file public/images/tree-stroke-8-animated.svg
+		   (2026-09-19). Hệ quả của việc dùng <img> thay vì SVG inline: (1) màu nét
+		   cố định #0e7e5e trong file, KHÔNG nhận var(--accent) → dark mode sáng
+		   nét lên bằng filter trên chính <img> (không đụng file); (2) không thể
+		   dừng animation khi cuộn khỏi viewport như bản component cũ — trình
+		   duyệt tự tiết chế animation ngoài màn hình, chấp nhận. */
+		.tree-figure {
+			display: block;
+			width: 100%;
+			height: auto;
+		}
+
+		:global(html[data-theme="dark"]) .tree-figure {
+			/* #0e7e5e × 1.6 ≈ rgb(22,202,150) — sát --accent dark #3fc296. */
+			filter: brightness(1.6);
+		}
+
+		/* Câu dưới cây (2026-09-19): dấu mở ngoặc kép mờ + hai vế xếp hai dòng,
+		   cả câu weight thường, màu phụ; chỉ các từ khoá (.tc-k) đậm + màu ink —
+		   và chúng chỉ đậm lên khi vệt sáng chạy qua, sau khi cả câu đã hiện đủ
+		   (xem hiệu ứng bên dưới). Cỡ chữ nhỏ hơn nội dung chính để không cạnh
+		   tranh với cột timeline. */
+		.tree-caption {
+			margin: 1.25rem auto 0;
+			max-width: 32ch;
+			text-align: center;
+			line-height: 1.55;
+			/* Nhịp hiệu ứng (xem khối "Hiệu ứng" bên dưới); --tc-n = số từ, đặt
+			   inline từ frontmatter. */
+			--tc-start: 400ms;
+			--tc-step: 180ms;
+			--tc-in: 1.2s;
+			--tc-end: calc(var(--tc-start) + (var(--tc-n) - 1) * var(--tc-step) + var(--tc-in));
+			--tc-sweep-dur: 2.4s;
+			--tc-bold-in: 0.8s;
+			/* Màu vệt sáng + phép blend theo theme (xem .tc-line::after): theme sáng
+			   dùng lighten với accent pha sáng (kênh-max với chữ xám đậm ra mint
+			   thấy rõ); theme tối dùng darken với accent tối sẵn đã sáng. */
+			--tc-shine: color-mix(in srgb, var(--accent) 55%, white);
+			--tc-blend: lighten;
+		}
+
+		:global(html[data-theme="dark"]) .tree-caption {
+			--tc-shine: var(--accent);
+			--tc-blend: darken;
+		}
+
+		/* Dấu mở ngoặc kép mờ — cùng họ .tm-mark ở Testimonials (font display,
+		   rất nhạt) nhưng nhỏ và đứng ngay trên câu: báo "đây là câu nói". Thay
+		   cho gạch accent trước đó (gạch vốn chỉ là thế thân của dấu ngoặc). */
+		.tc-quote {
+			display: block;
+			height: 1.15rem;
+			font-family: var(--display);
+			font-size: 2.75rem;
+			line-height: 0.7;
+			color: var(--ink-faint);
+			opacity: 0.55;
+			user-select: none;
+		}
+
+		/* Mỗi dòng co vừa chữ + canh giữa để vệt sáng ::after chạy đúng trên bề
+		   rộng CHỮ (không phải bề rộng khối) — có thế vị trí từ khoá tính theo
+		   tỉ lệ ký tự (--kf) mới khớp lúc vệt sáng đi qua.
+		   Vệt sáng "mask trong chữ" (2026-09-19, theo yêu cầu) mà không cần
+		   background-clip:text (không dùng được vì các span con tự có màu riêng
+		   và lớp phủ từ khoá): dải sáng nằm TRÊN chữ với mix-blend-mode lighten
+		   (theme sáng) / darken (theme tối) — kênh-max/min với nền thì trả về
+		   đúng nền (vô hình), với nét chữ tối/sáng thì trả về màu vệt → chỉ hiện
+		   bên trong glyph. Điều kiện để nền "vô hình": nền phải nằm TRONG nhóm
+		   blend, nên dòng tự tô background: var(--bg) (giống hệt nền trang, không
+		   thấy khác) + isolation: isolate; hộp dải sáng inset 0 và KHÔNG dịch
+		   chuyển (xem .tc-line::after) để không lòi ra ngoài vùng có nền. */
+		.tc-line {
+			display: block;
+			position: relative;
+			isolation: isolate;
+			width: fit-content;
+			margin-inline: auto;
+			background: var(--bg);
+			--tc-sweep-delay: calc(var(--tc-end) + 300ms + var(--l) * var(--tc-sweep-dur));
+		}
+
+		/* Hộp dải sáng CỐ ĐỊNH đúng bằng hộp dòng (không translateX — phần hộp
+		   thò ra ngoài dòng sẽ không có nền để blend và hiện nguyên màu, đã gặp
+		   ở theme tối). Dải sáng di chuyển bằng background-position trên ảnh
+		   gradient rộng 300%: vệt ở giữa ảnh, position 100% → 0% đưa tâm vệt từ
+		   −0.5W tới +1.5W, tức đi qua bề rộng chữ trong nửa giữa hành trình
+		   (25% → 75%) — giữ nguyên nhịp đã tính cho --kf. Vệt rộng 10% ảnh =
+		   30% bề rộng dòng. */
+		.tc-line::after {
+			content: "";
+			position: absolute;
+			inset: 0;
+			z-index: 1;
+			background-image: linear-gradient(105deg, transparent 45%, var(--tc-shine) 50%, transparent 55%);
+			background-size: 300% 100%;
+			background-repeat: no-repeat;
+			background-position-x: 100%;
+			mix-blend-mode: var(--tc-blend);
+			opacity: 0;
+			pointer-events: none;
+		}
+
+		.tc-tree {
+			font-size: 0.875rem;
+			color: var(--ink-secondary);
+		}
+
+		.tc-me {
+			margin-top: 0.2rem;
+			font-size: 1rem;
+			color: var(--ink-secondary);
+		}
+
+		.tc-w {
+			display: inline-block;
+		}
+
+		/* Từ khoá: hai lớp chồng khít để chuyển thường → đậm bằng CROSSFADE thay
+		   vì transition font-weight (2026-09-19, sau phản hồi "bold đậm luôn,
+		   không chuyển dần"): font-weight chỉ nội suy được trên variable font và
+		   với ease nhanh vẫn trông như nhảy; crossfade thì mượt trên MỌI font.
+		   - Lớp nền = chính chữ trong span, ĐẬM, giữ layout ở bề rộng đậm ngay
+		     từ đầu → lúc đậm lên không đẩy chữ bên cạnh (không giật dòng).
+		   - Lớp phủ ::before = content: attr(data-w), weight thường, màu phụ,
+		     canh giữa đè lên trên; ẩn dần khi lớp nền hiện màu.
+		   Trạng thái CUỐI (không JS / giảm chuyển động): nền đậm+ink, phủ ẩn. */
+		.tc-k {
+			position: relative;
+			font-weight: 600;
+			color: var(--ink);
+		}
+
+		.tc-k::before {
+			content: attr(data-w);
+			position: absolute;
+			inset: 0;
+			text-align: center;
+			white-space: nowrap;
+			font-weight: 400;
+			color: var(--ink-secondary);
+			opacity: 0;
+			pointer-events: none;
+		}
+
+		/* Hiệu ứng (nhịp 2026-09-19 lần 3 — thêm vệt sáng + dấu ngoặc):
+		   1) dấu ngoặc mờ hiện trước (0.9s); từng từ mờ → nét 1.2s, cách nhau
+		      180ms kể từ 400ms, TẤT CẢ ở weight thường → câu hiện xong ~4.7s.
+		   2) sau --tc-end + 300ms, vệt sáng mờ chạy trái → phải qua dòng 1 rồi
+		      dòng 2 (mỗi dòng --tc-sweep-dur = 2.4s, --l = chỉ số dòng); tâm vệt
+		      đi qua bề rộng chữ trong nửa giữa hành trình (25% → 75%). Cụm từ
+		      khoá crossfade thường → đậm 0.8s ease-in-out, canh giữa đúng lúc
+		      tâm vệt đi tới vị trí của nó (--kf) → thứ tự tự nhiên theo chiều
+		      đọc: Cây → phát triển → tôi → học hỏi → hoàn thiện, xong ~9.5s.
+		   Khối <p> tự nó không fade (ghi đè [data-reveal] chung như hero làm).
+		   Không JS (không .js-reveal) → trạng thái cuối, đọc đủ. */
+		:global(.js-reveal) .tree-caption[data-reveal] {
+			opacity: 1;
+			transform: none;
+			transition: none;
+		}
+
+		:global(.js-reveal) .tree-caption[data-reveal] .tc-quote {
+			opacity: 0;
+			transform: translateY(0.2em);
+			transition:
+				opacity 0.9s var(--ease-smooth) 100ms,
+				transform 0.9s var(--ease-smooth) 100ms;
+		}
+
+		:global(.js-reveal) .tree-caption[data-reveal].is-visible .tc-quote {
+			opacity: 0.55;
+			transform: none;
+		}
+
+		:global(.js-reveal) .tree-caption[data-reveal].is-visible .tc-line::after {
+			animation: tc-sweep var(--tc-sweep-dur) linear var(--tc-sweep-delay) both;
+		}
+
+		@keyframes tc-sweep {
+			0% {
+				opacity: 0;
+				background-position-x: 100%;
+			}
+			15% {
+				opacity: 1;
+			}
+			85% {
+				opacity: 1;
+			}
+			100% {
+				opacity: 0;
+				background-position-x: 0%;
+			}
+		}
+
+		:global(.js-reveal) .tree-caption[data-reveal] .tc-w {
+			--tc-delay: calc(var(--tc-start) + var(--i) * var(--tc-step));
+			opacity: 0;
+			filter: blur(6px);
+			transform: translateY(0.3em);
+			transition:
+				opacity var(--tc-in) var(--ease-smooth) var(--tc-delay),
+				filter var(--tc-in) var(--ease-smooth) var(--tc-delay),
+				transform var(--tc-in) var(--ease-smooth) var(--tc-delay);
+		}
+
+		:global(.js-reveal) .tree-caption[data-reveal].is-visible .tc-w {
+			opacity: 1;
+			filter: blur(0);
+			transform: none;
+		}
+
+		/* Từ khoá lúc hiện ra: lớp phủ (thường, màu phụ) hiện, lớp nền (đậm)
+		   trong suốt — nhìn y như mọi từ khác. Tới --tc-bold-delay: nền hiện màu
+		   và phủ ẩn CÙNG một nhịp ease-in-out = crossfade thấy rõ quá trình. Mốc
+		   = lúc tâm vệt sáng của dòng (kế thừa --tc-sweep-delay từ .tc-line) đi
+		   tới --kf, trừ nửa thời lượng để crossfade ôm đúng khoảnh khắc đi qua.
+		   Phải khai báo lại cả cụm transition vì shorthand ghi đè toàn bộ. */
+		:global(.js-reveal) .tree-caption[data-reveal] .tc-k {
+			--tc-bold-delay: calc(var(--tc-sweep-delay) + (0.25 + 0.5 * var(--kf)) * var(--tc-sweep-dur) - var(--tc-bold-in) / 2);
+			color: transparent;
+			transition:
+				opacity var(--tc-in) var(--ease-smooth) var(--tc-delay),
+				filter var(--tc-in) var(--ease-smooth) var(--tc-delay),
+				transform var(--tc-in) var(--ease-smooth) var(--tc-delay),
+				color var(--tc-bold-in) ease-in-out var(--tc-bold-delay);
+		}
+
+		:global(.js-reveal) .tree-caption[data-reveal] .tc-k::before {
+			opacity: 1;
+			transition: opacity var(--tc-bold-in) ease-in-out var(--tc-bold-delay);
+		}
+
+		:global(.js-reveal) .tree-caption[data-reveal].is-visible .tc-k {
+			color: var(--ink);
+		}
+
+		:global(.js-reveal) .tree-caption[data-reveal].is-visible .tc-k::before {
+			opacity: 0;
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+			:global(.js-reveal) .tree-caption[data-reveal] .tc-quote {
+				opacity: 0.55;
+				transform: none;
+				transition: none;
+			}
+			:global(.js-reveal) .tree-caption[data-reveal].is-visible .tc-line::after {
+				animation: none;
+			}
+			:global(.js-reveal) .tree-caption[data-reveal] .tc-w {
+				opacity: 1;
+				filter: none;
+				transform: none;
+				transition: none;
+			}
+			:global(.js-reveal) .tree-caption[data-reveal] .tc-k {
+				color: var(--ink);
+				transition: none;
+			}
+			:global(.js-reveal) .tree-caption[data-reveal] .tc-k::before {
+				opacity: 0;
+				transition: none;
+			}
+		}
+
+		/* .era-kicker/.era-years/.era-year (chỉ số 01/04 + năm lớn đổi theo mốc
+		   đang đọc) đã bỏ (2026-09-18, theo yêu cầu "không cần thể hiện mốc thời
+		   gian") — panel giờ chỉ còn cây (.tree-figure) và câu chú thích
+		   (.tree-caption) ở trên. `initTimeline()` bên dưới vẫn còn đoạn cập nhật
+		   `#era-index`/`[data-era]` trong `.era-panel`, nhưng vô hại: các phần tử
+		   đó không còn tồn tại nên querySelector trả về rỗng/null, code đã có
+		   guard `if (indexEl)` từ trước — không cần sửa JS. */
+
+		/* ---- Cách tôi làm việc: mảng tối tràn hai mép (thay dải công cụ, 2026-09-20) ----
+		   Nền --band-bg (luôn tối ở cả hai theme), chữ --on-ink*, accent trên nền
+		   tối = --band-accent (token mới, xem global.css). Logo DT nét + vệt sáng
+		   (T8) giữ lại ở góc dưới-phải, nhỏ và mờ hơn: chỉ là kết cấu nền, không
+		   tranh với nội dung. Không còn sticky/rèm (xem ghi chú ở markup). Tràn mép
+		   bằng margin âm theo 50vw; html/body đã overflow-x: clip. */
+		.process-band {
+			position: relative;
+			isolation: isolate;
+			overflow: hidden;
+			width: 100vw;
+			margin-left: calc(50% - 50vw);
+			margin-block: clamp(1.5rem, 4vw, 2.5rem) 0;
+			/* Đáy ngắn hơn đỉnh (2026-09-20): box kết thúc ngay sau nội dung bước 04. */
+			padding: clamp(3rem, 6vw, 4.5rem) clamp(1.25rem, 5vw, 3rem) clamp(2.5rem, 5vw, 3.5rem);
+			background: var(--band-bg);
+			color: var(--on-ink);
+			/* Nhịp chuỗi: node 01 sáng ở --p0, mỗi đoạn nối vẽ trong --pseg; tổng
+			   ≈ 0.5 + 3×0.9 + 0.45 (hàng công cụ) ≈ 4.2s. Đổi hai số này là cả
+			   chuỗi đổi theo. */
+			--p0: 0.5s;
+			--pseg: 0.9s;
+			--pgap: 2rem;
+		}
+
+		.process-inner {
+			position: relative;
+			max-width: calc(1160px - 2 * clamp(1.25rem, 5vw, 3rem));
+			margin-inline: auto;
+		}
+
+		.band-logo {
+			position: absolute;
+			z-index: -1;
+			/* Canh giữa theo chiều dọc box, sát mép phải gần nội dung bước 04 (yêu cầu
+			   2026-09-20). Nét nền 0.07 + vệt sáng ×0.7 đủ mờ để chữ bước 04 vẫn đọc
+			   được khi chồng lên. */
+			right: -5%;
+			top: 50%;
+			transform: translateY(-50%);
+			height: 92%;
+			max-height: 560px;
+			width: auto;
+			pointer-events: none;
+		}
+
+		/* Nét nền gần như ẩn; viền chỉ hiện nơi vệt sáng đi qua. Hạ thêm so với dải
+		   cũ (0.1 → 0.07, vệt sáng ×0.7) vì giờ là nền cho chữ, không phải điểm
+		   nhấn chính. */
+		.band-logo .base {
+			fill: none;
+			stroke: url(#dt-edge);
+			stroke-width: 1;
+			opacity: 0.07;
+		}
+
+		/* Vệt sáng gradient hai đầu: các lớp dash cùng tâm do glintLayers sinh ra —
+		   mỗi lớp nhận --w/--o/--blur/--c/--s0 inline. Chạy một vòng 8s, linear;
+		   chỉ animate stroke-dashoffset. */
+		.band-logo .g {
+			fill: none;
+			stroke: var(--c);
+			stroke-width: var(--w);
+			opacity: calc(var(--o) * 0.7);
+			filter: blur(var(--blur));
+			stroke-linecap: butt;
+			animation: dt-glint 8s linear infinite;
+		}
+
+		@keyframes dt-glint {
+			from {
+				stroke-dashoffset: var(--s0);
+			}
+			to {
+				stroke-dashoffset: calc(var(--s0) - 1000px);
+			}
+		}
+
+		/* Intro: nhãn nhỏ + tiêu đề + lede, cột hẹp bên trên; hiện trước chuỗi
+		   (reveal chung 0.7s, lệch 0/80/160ms). */
+		.process-intro {
+			max-width: 62ch;
+			/* 2.5–3.5rem → 1.5–2rem (2026-09-20): intro sát timeline hơn. */
+			margin-bottom: clamp(1.5rem, 3vw, 2rem);
+		}
+
+		.process-intro .section-label {
+			color: var(--on-ink-secondary);
+		}
+
+		.process-intro h2 {
+			font-size: clamp(1.7rem, 3.2vw, 2.4rem);
+			line-height: 1.15;
+			margin: 0 0 1rem;
+			color: var(--on-ink);
+		}
+
+		.process-lede {
+			margin: 0;
+			font-size: 1.05rem;
+			line-height: 1.65;
+			color: var(--on-ink-secondary);
+		}
+
+		:global(.js-reveal) .process-intro h2[data-reveal] {
+			transition-delay: 80ms;
+		}
+
+		:global(.js-reveal) .process-lede[data-reveal] {
+			transition-delay: 160ms;
+		}
+
+		/* ---- 4 bước trên MỘT đường nối ----
+		   Desktop: 4 cột, node ở mép trên-trái mỗi bước, đường nằm ngang qua tâm
+		   node. Mỗi bước tự mang ĐOẠN nối tới bước kế (.pstep-seg: từ tâm node của
+		   mình, dài calc(100% + gap) = đúng tới tâm node bước sau vì node cùng toạ
+		   độ trong ô) — nên đường vẫn liên tục khi đổi lưới 2×2 hay dọc, chỉ cần
+		   đổi HƯỚNG đoạn theo breakpoint. Bước cuối không có đoạn. */
+		.process-steps {
+			list-style: none;
+			margin: 0;
+			padding: 0;
+			display: grid;
+			grid-template-columns: repeat(4, minmax(0, 1fr));
+			gap: var(--pgap);
+		}
+
+		.pstep {
+			position: relative;
+			padding-top: 2.25rem;
+		}
+
+		.pstep-node {
+			position: absolute;
+			top: 0;
+			left: 0;
+			z-index: 2;
+			box-sizing: border-box;
+			width: 14px;
+			height: 14px;
+			border-radius: 50%;
+			background: var(--band-bg);
+			border: 2px solid var(--on-ink-secondary);
+		}
+
+		/* Hộp đoạn nối dày 14px canh tâm với node, overflow hidden; đường 2px ở
+		   giữa; ĐẦU SÁNG là nền radial ở cuối hộp .pstep-seg-head — hộp trượt từ
+		   -100% về 0 nên chấm chạy đúng theo mép đang vẽ (trượt, không scale →
+		   chấm không méo). */
+		.pstep-seg {
+			position: absolute;
+			top: 0;
+			left: 7px;
+			z-index: 1;
+			width: calc(100% + var(--pgap));
+			height: 14px;
+			overflow: hidden;
+			pointer-events: none;
+		}
+
+		.pstep:last-child .pstep-seg {
+			display: none;
+		}
+
+		.pstep-seg-line {
+			position: absolute;
+			top: 6px;
+			left: 0;
+			right: 0;
+			height: 2px;
+			background: color-mix(in srgb, var(--band-accent) 55%, transparent);
+			transform-origin: left center;
+		}
+
+		.pstep-seg-head {
+			position: absolute;
+			inset: 0;
+			background: radial-gradient(circle at right center, var(--band-accent) 0 3px, transparent 4px);
+			filter: drop-shadow(0 0 4px var(--band-accent)) drop-shadow(0 0 10px color-mix(in srgb, var(--band-accent) 60%, transparent));
+			opacity: 0;
+		}
+
+		.pstep-body {
+			position: relative;
+		}
+
+		/* Số thứ tự to nhưng tương phản thấp (16%), cùng họ số bước ở trang chủ. */
+		.pstep-num {
+			display: block;
+			font-family: var(--display);
+			font-size: 2rem; /* 2.4 → 2rem (−17%, 2026-09-20) */
+			line-height: 1;
+			color: var(--on-ink);
+			opacity: 0.16;
+			margin-bottom: 0.9rem;
+		}
+
+		.pstep-icon {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			width: 40px;
+			height: 40px;
+			border-radius: var(--radius-md);
+			background: var(--ink-surface);
+			color: var(--band-accent);
+			margin-bottom: 0.9rem;
+		}
+
+		.pstep h3 {
+			font-size: 1.15rem;
+			line-height: 1.3;
+			margin: 0 0 0.5rem;
+			color: var(--on-ink);
+		}
+
+		.pstep p {
+			margin: 0;
+			font-size: 0.92rem;
+			line-height: 1.6;
+			color: var(--on-ink-secondary);
+		}
+
+		/* ---- Chuỗi xuất hiện (chỉ khi html.js-reveal; mở khoá bởi .is-visible của
+		   <ol>) — mốc theo --i: node i sáng ở p0 + i·pseg; đoạn i vẽ từ đúng lúc đó
+		   trong pseg (linear, đầu sáng bám mép, tắt khi chạm node kế); nội dung i
+		   hiện ở mốc node của nó trừ 0.15s (ngay trước khi đường chạm). Mỗi bước
+		   nối tiếp bước trước không khoảng dừng. Chạy MỘT lần (fill both). Trạng
+		   thái "đã qua": đường mờ 55%, node sáng vừa có quầng nhẹ. <ol> tự nó không
+		   fade (ghi đè [data-reveal] chung). Không JS → khối dưới không áp. ---- */
+		:global(.js-reveal) .process-steps[data-reveal] {
+			opacity: 1;
+			transform: none;
+			transition: none;
+		}
+
+		:global(.js-reveal) .process-steps[data-reveal] .pstep-node {
+			transform: scale(0.7);
+			transition:
+				border-color 0.35s var(--ease-smooth),
+				background-color 0.35s var(--ease-smooth),
+				box-shadow 0.35s var(--ease-smooth),
+				transform 0.35s var(--ease-smooth);
+			transition-delay: calc(var(--p0) + var(--i) * var(--pseg));
+		}
+
+		:global(.js-reveal) .process-steps[data-reveal].is-visible .pstep-node,
+		:global(html:not(.js-reveal)) .pstep-node {
+			transform: none;
+			background: var(--band-accent);
+			border-color: var(--band-accent);
+			box-shadow: 0 0 0 4px color-mix(in srgb, var(--band-accent) 22%, transparent);
+		}
+
+		:global(.js-reveal) .process-steps[data-reveal] .pstep-seg-line {
+			transform: scaleX(0);
+		}
+
+		:global(.js-reveal) .process-steps[data-reveal].is-visible .pstep-seg-line {
+			animation: pseg-draw var(--pseg) linear both;
+			animation-delay: calc(var(--p0) + var(--i) * var(--pseg));
+		}
+
+		:global(.js-reveal) .process-steps[data-reveal].is-visible .pstep-seg-head {
+			animation: pseg-head-x var(--pseg) linear both;
+			animation-delay: calc(var(--p0) + var(--i) * var(--pseg));
+		}
+
+		@keyframes pseg-draw {
+			from {
+				transform: scaleX(0);
+			}
+			to {
+				transform: scaleX(1);
+			}
+		}
+
+		@keyframes pseg-head-x {
+			0% {
+				opacity: 1;
+				transform: translateX(-100%);
+			}
+			88% {
+				opacity: 1;
+			}
+			100% {
+				opacity: 0;
+				transform: translateX(0);
+			}
+		}
+
+		:global(.js-reveal) .process-steps[data-reveal] .pstep-body {
+			opacity: 0;
+			transform: translateY(10px);
+			transition:
+				opacity 0.6s var(--ease-smooth),
+				transform 0.6s var(--ease-smooth);
+			transition-delay: max(0s, calc(var(--p0) + var(--i) * var(--pseg) - 0.15s));
+		}
+
+		:global(.js-reveal) .process-steps[data-reveal].is-visible .pstep-body {
+			opacity: 1;
+			transform: none;
+		}
+
+		/* Giảm chuyển động: đường, node, nội dung, công cụ hiện đủ ngay; không vẽ,
+		   không vệt sáng logo. */
+		@media (prefers-reduced-motion: reduce) {
+			:global(.js-reveal) .process-steps[data-reveal] .pstep-node,
+			:global(.js-reveal) .process-steps[data-reveal] .pstep-body,
+			:global(.js-reveal) .process-steps[data-reveal] .pstep-seg-line,
+			:global(.js-reveal) .process-steps[data-reveal] .pstep-seg-head {
+				transition: none !important;
+				animation: none !important;
+				transition-delay: 0s !important;
+			}
+			:global(.js-reveal) .process-steps[data-reveal] .pstep-node {
+				transform: none;
+				background: var(--band-accent);
+				border-color: var(--band-accent);
+				box-shadow: 0 0 0 4px color-mix(in srgb, var(--band-accent) 22%, transparent);
+			}
+			:global(.js-reveal) .process-steps[data-reveal] .pstep-seg-line {
+				transform: none !important;
+			}
+			:global(.js-reveal) .process-steps[data-reveal] .pstep-body {
+				opacity: 1;
+				transform: none;
+			}
+			.band-logo .g {
+				animation: none;
+			}
+		}
+
+		/* Tablet ≤ 900px: lưới 2×2, DOM vẫn 01→04 nhưng 03 đặt DƯỚI 02 và 04 dưới 01
+		   để đường ziczac 01 → 02 ↓ 03 ← 04 liên tục: đoạn của 02 quay dọc xuống
+		   (dài = cao ô + gap; hai ô cùng hàng cao bằng nhau nên chạm đúng node 03),
+		   đoạn của 03 chạy NGƯỢC sang trái (gốc bên phải, đầu sáng ở mép trái). */
+		@media (max-width: 900px) {
+			.process-steps {
+				grid-template-columns: repeat(2, minmax(0, 1fr));
+			}
+			.pstep:nth-child(3) {
+				grid-column: 2;
+				grid-row: 2;
+			}
+			.pstep:nth-child(4) {
+				grid-column: 1;
+				grid-row: 2;
+			}
+
+			.pstep:nth-child(2) .pstep-seg {
+				top: 7px;
+				left: 0;
+				width: 14px;
+				height: calc(100% + var(--pgap));
+			}
+			.pstep:nth-child(2) .pstep-seg-line {
+				top: 0;
+				bottom: 0;
+				left: 6px;
+				right: auto;
+				width: 2px;
+				height: auto;
+				transform-origin: center top;
+			}
+			.pstep:nth-child(2) .pstep-seg-head {
+				background: radial-gradient(circle at center bottom, var(--band-accent) 0 3px, transparent 4px);
+			}
+			:global(.js-reveal) .process-steps[data-reveal] .pstep:nth-child(2) .pstep-seg-line {
+				transform: scaleY(0);
+			}
+			:global(.js-reveal) .process-steps[data-reveal].is-visible .pstep:nth-child(2) .pstep-seg-line {
+				animation-name: pseg-draw-y;
+			}
+			:global(.js-reveal) .process-steps[data-reveal].is-visible .pstep:nth-child(2) .pstep-seg-head {
+				animation-name: pseg-head-y;
+			}
+
+			.pstep:nth-child(3) .pstep-seg {
+				left: auto;
+				right: calc(100% - 7px);
+			}
+			.pstep:nth-child(3) .pstep-seg-line {
+				transform-origin: right center;
+			}
+			.pstep:nth-child(3) .pstep-seg-head {
+				background: radial-gradient(circle at left center, var(--band-accent) 0 3px, transparent 4px);
+			}
+			:global(.js-reveal) .process-steps[data-reveal].is-visible .pstep:nth-child(3) .pstep-seg-head {
+				animation-name: pseg-head-x-rev;
+			}
+
+			.band-logo {
+				right: -18%;
+				height: 46%;
+				max-height: 380px;
+			}
+		}
+
+		@keyframes pseg-draw-y {
+			from {
+				transform: scaleY(0);
+			}
+			to {
+				transform: scaleY(1);
+			}
+		}
+
+		@keyframes pseg-head-y {
+			0% {
+				opacity: 1;
+				transform: translateY(-100%);
+			}
+			88% {
+				opacity: 1;
+			}
+			100% {
+				opacity: 0;
+				transform: translateY(0);
+			}
+		}
+
+		@keyframes pseg-head-x-rev {
+			0% {
+				opacity: 1;
+				transform: translateX(100%);
+			}
+			88% {
+				opacity: 1;
+			}
+			100% {
+				opacity: 0;
+				transform: translateX(0);
+			}
+		}
+
+		/* Mobile ≤ 600px: timeline dọc, đường bên trái qua tâm node, nội dung lùi
+		   phải; mọi đoạn quay dọc (dài = cao ô + gap → chạm đúng node ô sau dù các
+		   ô cao khác nhau). Selector dùng :nth-child(n) để đủ specificity ghi đè
+		   các rule nth-child(2)/(3) của tablet (cùng match ở bề rộng này). */
+		@media (max-width: 600px) {
+			.process-steps {
+				grid-template-columns: 1fr;
+				--pgap: 1.75rem;
+			}
+			.pstep:nth-child(3),
+			.pstep:nth-child(4) {
+				grid-column: auto;
+				grid-row: auto;
+			}
+			.pstep {
+				padding-top: 0;
+				padding-left: 2.25rem;
+			}
+			.pstep-node {
+				top: 0.3rem;
+			}
+			.pstep:nth-child(n) .pstep-seg {
+				top: calc(0.3rem + 7px);
+				left: 0;
+				right: auto;
+				width: 14px;
+				height: calc(100% + var(--pgap));
+			}
+			.pstep:nth-child(n) .pstep-seg-line {
+				top: 0;
+				bottom: 0;
+				left: 6px;
+				right: auto;
+				width: 2px;
+				height: auto;
+				transform-origin: center top;
+			}
+			.pstep:nth-child(n) .pstep-seg-head {
+				background: radial-gradient(circle at center bottom, var(--band-accent) 0 3px, transparent 4px);
+			}
+			:global(.js-reveal) .process-steps[data-reveal] .pstep:nth-child(n) .pstep-seg-line {
+				transform: scaleY(0);
+			}
+			:global(.js-reveal) .process-steps[data-reveal].is-visible .pstep:nth-child(n) .pstep-seg-line {
+				animation-name: pseg-draw-y;
+			}
+			:global(.js-reveal) .process-steps[data-reveal].is-visible .pstep:nth-child(n) .pstep-seg-head {
+				animation-name: pseg-head-y;
+			}
+			.pstep-num {
+				font-size: 1.6rem;
+				margin-bottom: 0.6rem;
+			}
+			/* Logo nhỏ ở góc, chữ không đè lên (nội dung lùi trái, logo thò phải). */
+			.band-logo {
+				right: -30%;
+				height: 30%;
+				max-height: 260px;
+				opacity: 0.6;
+			}
+		}
+
+		/* ---- Công cụ hỗ trợ: section riêng (2026-09-20, tách khỏi mảng tối) ----
+		   Nền --bg-soft tràn hai mép = tông trung gian giữa --band-bg và --bg của
+		   Chuyên môn (light: #f6f7f6 giữa #121815 và #fff; dark: #161c19 giữa #090c0b
+		   và #0f1412). Card --surface + shadow-md (quy tắc Cards), 4 cột cùng cao
+		   (grid stretch) → 2×2 ≤900px → 1 cột ≤600px. Mặc định trung tính: tile
+		   bg-soft + icon ink-secondary; hover: card nâng 3px, tile accent-tint, icon
+		   nét sang accent, mark Figma/Photoshop tô màu hãng (Icon.astro,
+		   .brand-hover-host). Vào lần lượt trái→phải qua data-reveal (240ms + i×110);
+		   icon .icon-anim pop từng bộ phận cùng lúc card lộ ra (Icon.astro). */
+		.tools-section {
+			width: 100vw;
+			margin-left: calc(50% - 50vw);
+			padding: clamp(2rem, 5vw, 3rem) clamp(1.25rem, 5vw, 3rem);
+			/* Đổi nền với Chuyên môn (2026-09-20, yêu cầu): công cụ trên nền trang
+			   --bg, Chuyên môn mang nền --bg-soft tràn mép (xem .block-after-band). */
+			background: var(--bg);
+		}
+
+		.tools-inner {
+			max-width: calc(1160px - 2 * clamp(1.25rem, 5vw, 3rem));
+			margin-inline: auto;
+		}
+
+		.tools-grid {
+			list-style: none;
+			margin: 0;
+			padding: 0;
+			display: grid;
+			grid-template-columns: repeat(4, minmax(0, 1fr));
+			gap: 1.25rem;
+		}
+
+		.tool-card {
+			display: flex;
+			flex-direction: column;
+			padding: 1.6rem 1.4rem 1.5rem;
+			border-radius: var(--radius-lg);
+			background: var(--surface);
+			box-shadow: var(--shadow-md);
+			transition:
+				transform 0.3s var(--ease-smooth),
+				box-shadow 0.3s var(--ease-smooth);
+		}
+
+		.tool-card:hover {
+			transform: translateY(-3px);
+			box-shadow: var(--shadow-lg);
+		}
+
+		.tool-card .tool-icon {
+			margin-bottom: 1.1rem;
+			background: var(--bg-soft);
+			color: var(--ink-secondary);
+			transition:
+				color 0.3s var(--ease-smooth),
+				background-color 0.3s var(--ease-smooth);
+		}
+
+		.tool-card:hover .tool-icon {
+			background: var(--accent-tint);
+			color: var(--accent);
+		}
+
+		.tool-card h3 {
+			font-size: 1.15rem;
+			line-height: 1.3;
+			margin: 0 0 0.5rem;
+		}
+
+		.tool-card p {
+			margin: 0;
+			font-size: 0.92rem;
+			line-height: 1.6;
+			color: var(--ink-secondary);
+		}
+
+		:global(.js-reveal) .tool-card[data-reveal] {
+			transition-delay: calc(var(--i) * 110ms);
+		}
+
+		@media (max-width: 900px) {
+			.tools-grid {
+				grid-template-columns: repeat(2, minmax(0, 1fr));
+			}
+		}
+
+		@media (max-width: 600px) {
+			.tools-grid {
+				grid-template-columns: 1fr;
+			}
+		}
+
+		/* ---- Chuyên môn: 3 thẻ riêng, lưới 3 cột ----
+		   Thẻ trắng + shadow trên nền trắng (quy tắc Cards). Icon trong tile 64px
+		   có chuyển động (Icon.astro). */
+		.expertise-grid {
+			list-style: none;
+			margin: 0;
+			padding: 0;
+			display: grid;
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+			gap: 1.25rem;
+		}
+
+		.expertise-card {
+			padding: 1.75rem 1.5rem 1.6rem;
+			border-radius: var(--radius-lg);
+			background: var(--surface);
+			box-shadow: var(--shadow-md);
+			transition: box-shadow 0.3s var(--ease-smooth), transform 0.3s var(--ease-smooth);
+		}
+
+		.expertise-card:hover {
+			box-shadow: var(--shadow-lg);
+			transform: translateY(-3px);
+		}
+
+		:global(.js-reveal) .expertise-card[data-reveal],
+		:global(.js-reveal) .platform-card[data-reveal] {
+			transition-delay: calc(var(--i) * 90ms);
+		}
+
+		/* Icon tile: 48px chuẩn, biến thể -lg 64px. Bo md, nền accent-tint, icon
+		   accent-strong — xem DESIGN.md › Iconography. */
+		.icon-tile {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			flex-shrink: 0;
+			width: 48px;
+			height: 48px;
+			border-radius: var(--radius-md);
+			background: var(--accent-tint);
+			color: var(--accent-strong);
+		}
+
+		.icon-tile-lg {
+			width: 64px;
+			height: 64px;
+		}
+
+		.expertise-card .icon-tile {
+			margin-bottom: 1.1rem;
+		}
+
+		.expertise-card h3,
+		.platform-card h3 {
+			font-size: 1.3rem;
+			line-height: 1.25;
+			margin-bottom: 0.55rem;
+		}
+
+		.expertise-card p,
+		.platform-card p {
+			margin: 0;
+			color: var(--ink-secondary);
+			font-size: 0.95rem;
+		}
+
+		/* ---- Nền tảng: 2 hộp ngang nền soft, tách khỏi 3 thẻ chuyên môn ---- */
+		.platform-grid {
+			list-style: none;
+			margin: 0;
+			padding: 0;
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 1.25rem;
+		}
+
+		.platform-card {
+			display: flex;
+			gap: 1.25rem;
+			align-items: flex-start;
+			padding: 1.5rem;
+			border-radius: var(--radius-lg);
+			background: var(--bg-soft);
+			transition: background 0.3s var(--ease-smooth), transform 0.3s var(--ease-smooth), box-shadow 0.3s var(--ease-smooth);
+		}
+
+		.platform-card:hover {
+			background: var(--surface);
+			box-shadow: var(--shadow-md);
+			transform: translateY(-3px);
+		}
+
+		@media (max-width: 900px) {
+			.expertise-grid {
+				grid-template-columns: repeat(2, minmax(0, 1fr));
+			}
+		}
+
+		@media (max-width: 640px) {
+			.expertise-grid,
+			.platform-grid {
+				grid-template-columns: 1fr;
+			}
+		}
+
+		@media (max-width: 900px) {
+			.timeline-layout {
+				grid-template-columns: 1fr;
+			}
+			/* Panel là trang trí; ở màn hẹp nhường chỗ cho nội dung. */
+			.era-panel {
+				display: none;
+			}
+		}
+
+	</style>
+</BaseLayout>

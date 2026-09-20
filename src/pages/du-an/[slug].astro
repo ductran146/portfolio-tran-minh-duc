@@ -1,0 +1,592 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection, type CollectionEntry } from "astro:content";
+import { Image } from "astro:assets";
+import { localePath, resolveLocale } from "../../i18n/ui";
+
+export async function getStaticPaths() {
+	const allProjects = (await getCollection("projects")).sort(
+		(a, b) => a.data.order - b.data.order,
+	);
+	return allProjects.map((entry, index) => ({
+		params: { slug: entry.id },
+		props: {
+			entry,
+			index,
+			nextEntry: allProjects[(index + 1) % allProjects.length],
+		},
+	}));
+}
+
+interface Props {
+	entry: CollectionEntry<"projects">;
+	index: number;
+	nextEntry: CollectionEntry<"projects">;
+}
+
+const { entry, index, nextEntry } = Astro.props as Props;
+const project = entry.data;
+const l = (p: string) => localePath(resolveLocale(Astro.currentLocale), p);
+
+const metaItems = [
+	{ label: "Khách hàng", value: project.client },
+	{ label: project.real ? "Vai trò" : "Vai trò minh hoạ", value: project.role },
+	{
+		label: project.flows.length > 0 ? "Luồng nghiệp vụ" : "Lĩnh vực",
+		value: (project.flows.length > 0 ? project.flows : project.tags).join(" · "),
+	},
+	{ label: "Công cụ", value: project.tools.length > 0 ? project.tools.join(" · ") : "" },
+].filter((m) => m.value && m.value.trim().length > 0);
+---
+
+<BaseLayout
+	title={`${project.title} - Dự án - Trần Minh Đức`}
+	description={project.summary}
+>
+	<main>
+		<a class="back-link" href={l("/du-an")} data-reveal>← Tất cả dự án</a>
+
+		<header class="hero">
+			<div class="hero-copy">
+				<div class="project-tags" data-reveal>
+					<span class="plate-index tabular">{String(index + 1).padStart(2, "0")}</span>
+					{project.tags.map((t) => <span class="tag">{t}</span>)}
+					{!project.real && <span class="tag tag-demo">Minh hoạ</span>}
+				</div>
+				<h1 data-reveal>{project.title}</h1>
+				<p class="lede" data-reveal>{project.summary}</p>
+
+				{metaItems.length > 0 && (
+					<dl class="meta-strip" data-reveal>
+						{metaItems.map((m) => (
+							<div class="meta-item">
+								<dt>{m.label}</dt>
+								<dd>{m.value}</dd>
+							</div>
+						))}
+					</dl>
+				)}
+
+				<a class="btn btn-ghost" href={l("/lien-he")} data-reveal>Trao đổi dự án tương tự</a>
+			</div>
+
+			<div class="hero-plate-wrap" data-reveal>
+				<div class="hero-plate" transition:name={`project-plate-${entry.id}`}>
+					{project.cover ? (
+						<Image
+							src={project.cover}
+							alt={`Ảnh tổng quan dự án ${project.title}`}
+							widths={[720, 1080, 1440]}
+							sizes="(max-width: 900px) 100vw, 580px"
+							format="webp"
+							quality={82}
+							loading="eager"
+							fetchpriority="high"
+						/>
+					) : (
+						<span class="plate-label">{project.plateLabel ?? "Ảnh sẽ cập nhật"}</span>
+					)}
+				</div>
+			</div>
+		</header>
+
+		{project.context && project.context.trim().length > 0 && (
+			<section class="context-section" data-reveal>
+				<h2>Bối cảnh</h2>
+				<p>{project.context}</p>
+			</section>
+		)}
+
+		{project.flows.length > 0 && (
+			<section class="flow-section" data-reveal>
+				<p class="section-label">Bài toán nghiệp vụ</p>
+				<div class="flow-row">
+					{project.flows.map((f) => (
+						<span class="flow-chip">{f}</span>
+					))}
+				</div>
+				{project.flowHub && (
+					<>
+						<div class="flow-connector" aria-hidden="true"></div>
+						<div class="flow-hub">{project.flowHub}</div>
+					</>
+				)}
+			</section>
+		)}
+
+		{project.process.length > 0 && (
+			<section class="process-section" data-reveal>
+				<p class="section-label">Cách tiếp cận</p>
+				<ol class="process-list">
+					{project.process.map((step, i) => (
+						<li class="process-step" style={`--i: ${i}`}>
+							<span class="process-index tabular">{String(i + 1).padStart(2, "0")}</span>
+							<h3>{step.title}</h3>
+							<p>{step.body}</p>
+						</li>
+					))}
+				</ol>
+			</section>
+		)}
+
+		{project.gallery.length > 0 && (
+			<section class="gallery-section">
+				<p class="section-label" data-reveal>Màn hình & ghi chú</p>
+				<!-- Mỗi slide 2048×1280 đã có chữ giải thích bên trong; chú thích dưới
+				     ảnh là bản tóm lược để người đọc lướt nhanh và để screen reader đọc. -->
+				<ol class="gallery">
+					{project.gallery.map((g, i) => (
+						<li class="gallery-item" data-reveal>
+							<figure>
+								<Image
+									src={g.src}
+									alt={g.caption ?? `${project.title} - màn hình ${i + 1}`}
+									widths={[720, 1200, 1600]}
+									sizes="(max-width: 1160px) 100vw, 1064px"
+									format="webp"
+									quality={82}
+									loading="lazy"
+								/>
+								{g.caption && (
+									<figcaption>
+										<span class="gallery-index tabular" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
+										<span>{g.caption}</span>
+									</figcaption>
+								)}
+							</figure>
+						</li>
+					))}
+				</ol>
+			</section>
+		)}
+
+		{project.closing && project.closing.trim().length > 0 && (
+			<p class="closing-note" data-reveal>{project.closing}</p>
+		)}
+
+		<a class="next-project" href={l(`/du-an/${nextEntry.id}`)} data-reveal>
+			<span class="next-label">Dự án tiếp theo</span>
+			<span class="next-title">{nextEntry.data.title} →</span>
+		</a>
+
+		<section class="cta-band" data-reveal>
+			<h2>Có bài toán nghiệp vụ tương tự?</h2>
+			<a class="btn btn-primary btn-lg" href={l("/lien-he")}>Trao đổi dự án</a>
+		</section>
+	</main>
+
+	<style>
+		main {
+			max-width: 1160px;
+			margin-inline: auto;
+			padding: clamp(1.5rem, 4vw, 2.5rem) clamp(1.25rem, 5vw, 3rem) clamp(2rem, 6vw, 4.5rem);
+		}
+
+		.back-link {
+			display: inline-flex;
+			text-decoration: none;
+			color: var(--ink-faint);
+			font-size: 0.9rem;
+			font-weight: 600;
+			transition: color 0.25s var(--ease-smooth);
+		}
+
+		.back-link:hover {
+			color: var(--ink);
+		}
+
+		.hero {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: clamp(2rem, 5vw, 3.5rem);
+			align-items: center;
+			margin-top: clamp(1.5rem, 4vw, 2.5rem);
+			padding-block: clamp(1rem, 3vw, 2rem);
+		}
+
+		.project-tags {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			gap: 0.5rem;
+			margin-bottom: 1rem;
+		}
+
+		.plate-index {
+			font-size: 0.78rem;
+			font-weight: 600;
+			color: var(--ink-faint);
+			margin-right: 0.25rem;
+		}
+
+		.tag {
+			font-size: 0.78rem;
+			font-weight: 600;
+			padding: 0.3rem 0.7rem;
+			border-radius: 999px;
+			background: var(--accent-tint);
+			color: var(--accent-strong);
+		}
+
+		.tag-demo {
+			background: transparent;
+			border: 1px solid var(--ink-faint);
+			color: var(--ink-faint);
+		}
+
+		.hero-copy h1 {
+			font-size: clamp(2rem, 4.4vw, 3rem);
+			line-height: 1.08;
+			margin-bottom: 0.9rem;
+		}
+
+		.lede {
+			color: var(--ink-secondary);
+			max-width: var(--measure);
+			margin-bottom: 1.6rem;
+		}
+
+		.meta-strip {
+			display: grid;
+			/* 2-4 mục tuỳ dự án (khách hàng / vai trò / luồng / công cụ). */
+			grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+			gap: 1rem;
+			padding: 1.1rem 0;
+			margin: 0 0 1.8rem;
+			border-top: 1px solid var(--border);
+			border-bottom: 1px solid var(--border);
+		}
+
+		.meta-item dt {
+			font-size: 0.78rem;
+			font-weight: 600;
+			color: var(--ink-faint);
+			text-transform: uppercase;
+			letter-spacing: 0.06em;
+			margin-bottom: 0.35rem;
+		}
+
+		.meta-item dd {
+			margin: 0;
+			font-size: 0.92rem;
+			color: var(--ink);
+			font-weight: 500;
+		}
+
+		.btn {
+			display: inline-flex;
+			align-items: center;
+			font-weight: 600;
+			border-radius: var(--radius-md);
+			/* Chỉ đổi màu khi hover (2026-09-20): không dịch chuyển, không đổi bóng. */
+			transition: background 0.25s var(--ease-smooth), color 0.25s var(--ease-smooth);
+		}
+
+		.next-project,
+		.next-project *,
+		.btn,
+		.btn * {
+			text-decoration: none;
+		}
+
+		.btn-ghost {
+			background: var(--bg-soft);
+			color: var(--ink);
+			padding: 0.85rem 1.6rem;
+		}
+
+		.btn-ghost:hover {
+			background: var(--accent-tint);
+		}
+
+		.btn-primary {
+			background: var(--inverse-bg);
+			color: var(--inverse-ink);
+			box-shadow: var(--shadow-sm);
+		}
+
+		.btn-primary:hover {
+			background: var(--accent-strong);
+		}
+
+		.btn-lg {
+			padding: 1rem 2rem;
+			font-size: 1.05rem;
+		}
+
+		.hero-plate-wrap {
+			overflow: hidden;
+			border-radius: var(--radius-lg);
+		}
+
+		.hero-plate {
+			aspect-ratio: 16/10;
+			border-radius: var(--radius-lg);
+			background: var(--bg-soft);
+			box-shadow: var(--shadow-md);
+			display: flex;
+			align-items: flex-start;
+			justify-content: flex-end;
+			overflow: hidden;
+		}
+
+		.hero-plate:not(:has(img)) {
+			padding: 1rem;
+		}
+
+		.hero-plate img {
+			display: block;
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+
+		.plate-label {
+			font-size: 0.8rem;
+			font-weight: 600;
+			color: var(--ink-faint);
+			background: var(--surface);
+			padding: 0.35rem 0.75rem;
+			border-radius: 999px;
+			box-shadow: var(--shadow-sm);
+		}
+
+		.context-section {
+			max-width: var(--measure);
+			padding-block: clamp(2rem, 5vw, 3rem);
+			border-top: 1px solid var(--border);
+		}
+
+		.context-section h2,
+		.flow-section h2 {
+			font-size: 1.5rem;
+			margin-bottom: 0.9rem;
+		}
+
+		.context-section p {
+			color: var(--ink-secondary);
+		}
+
+		.section-label {
+			font-size: 0.85rem;
+			font-weight: 600;
+			color: var(--ink-faint);
+			text-transform: uppercase;
+			letter-spacing: 0.08em;
+			margin: 0 0 1.5rem;
+		}
+
+		.flow-section {
+			padding-block: clamp(1.5rem, 4vw, 2.5rem);
+			border-top: 1px solid var(--border);
+			text-align: center;
+		}
+
+		.flow-row {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+			gap: 0.85rem;
+		}
+
+		.flow-chip {
+			padding: 0.65rem 1.2rem;
+			border-radius: var(--radius-md);
+			background: var(--surface);
+			box-shadow: var(--shadow-sm);
+			font-weight: 600;
+			font-size: 0.94rem;
+		}
+
+		.flow-connector {
+			width: 1px;
+			height: 2rem;
+			background: var(--border);
+			margin: 0.25rem auto;
+		}
+
+		.flow-hub {
+			display: inline-block;
+			max-width: 30rem;
+			padding: 0.9rem 1.6rem;
+			border-radius: var(--radius-md);
+			background: var(--accent-tint);
+			color: var(--accent-strong);
+			font-weight: 600;
+		}
+
+		.process-section {
+			padding-block: clamp(2rem, 5vw, 3rem);
+			border-top: 1px solid var(--border);
+		}
+
+		.process-list {
+			list-style: none;
+			margin: 0;
+			padding: 0;
+			display: grid;
+			/* 2-4 bước tuỳ dự án; ≥900px vẫn một hàng. */
+			grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+			gap: 1.75rem;
+			counter-reset: process;
+		}
+
+		.process-step {
+			position: relative;
+			padding-top: 1.5rem;
+			border-top: 2px solid var(--border);
+		}
+
+		.process-index {
+			display: block;
+			font-family: var(--display);
+			font-size: 1.6rem;
+			color: var(--accent);
+			margin-bottom: 0.6rem;
+		}
+
+		.process-step h3 {
+			font-family: var(--sans);
+			font-size: 1.05rem;
+			font-weight: 600;
+			margin-bottom: 0.5rem;
+		}
+
+		.process-step p {
+			color: var(--ink-secondary);
+			font-size: 0.95rem;
+		}
+
+		:global(.js-reveal) .process-list .process-step[data-reveal],
+		:global(.js-reveal) .process-list .process-step {
+			transition-delay: calc(var(--i) * 120ms);
+		}
+
+		/* ---- Màn hình & ghi chú: ảnh khổ lớn xếp dọc, chú thích ngắn có số ----
+		   Ảnh là nhân vật chính (mode Experience trong case study); khoảng cách
+		   giữa các ảnh đủ rộng để mỗi slide đọc như một "cảnh". */
+		.gallery-section {
+			padding-block: clamp(2rem, 5vw, 3rem);
+			border-top: 1px solid var(--border);
+		}
+
+		.gallery {
+			list-style: none;
+			margin: 0;
+			padding: 0;
+			display: grid;
+			gap: clamp(2rem, 5vw, 3.25rem);
+		}
+
+		.gallery figure {
+			margin: 0;
+		}
+
+		.gallery img {
+			display: block;
+			width: 100%;
+			height: auto;
+			border-radius: var(--radius-lg);
+			box-shadow: var(--shadow-md);
+			background: var(--bg-soft);
+		}
+
+		.gallery figcaption {
+			display: flex;
+			gap: 0.85rem;
+			align-items: baseline;
+			max-width: var(--measure);
+			margin-top: 1rem;
+			font-size: 0.95rem;
+			line-height: 1.6;
+			color: var(--ink-secondary);
+		}
+
+		.gallery-index {
+			flex: none;
+			font-family: var(--display);
+			font-size: 1.1rem;
+			color: var(--accent);
+		}
+
+		.closing-note {
+			max-width: var(--measure);
+			padding-block: clamp(1.5rem, 4vw, 2rem);
+			color: var(--ink-faint);
+			font-size: 0.9rem;
+			font-style: italic;
+			border-top: 1px solid var(--border);
+		}
+
+		.next-project {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: baseline;
+			justify-content: space-between;
+			gap: 0.5rem;
+			padding: 1.5rem 0;
+			border-top: 1px solid var(--border);
+			border-bottom: 1px solid var(--border);
+			margin-bottom: clamp(2rem, 5vw, 3rem);
+			transition: opacity 0.25s var(--ease-smooth);
+		}
+
+		.next-project:hover {
+			opacity: 0.7;
+		}
+
+		.next-label {
+			font-size: 0.85rem;
+			font-weight: 600;
+			color: var(--ink-faint);
+			text-transform: uppercase;
+			letter-spacing: 0.08em;
+		}
+
+		.next-title {
+			font-family: var(--display);
+			font-size: 1.4rem;
+			color: var(--ink);
+		}
+
+		.cta-band {
+			padding: clamp(2.5rem, 7vw, 4rem) clamp(1.5rem, 5vw, 3rem);
+			border-radius: var(--radius-lg);
+			background: var(--bg-soft);
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			justify-content: space-between;
+			gap: 1.5rem;
+		}
+
+		.cta-band h2 {
+			font-size: clamp(1.5rem, 3vw, 2rem);
+			max-width: 20ch;
+		}
+
+		@media (max-width: 900px) {
+			.hero {
+				grid-template-columns: 1fr;
+			}
+
+			.hero-plate-wrap {
+				order: -1;
+			}
+
+			.process-list {
+				grid-template-columns: 1fr;
+			}
+
+			.gallery figcaption {
+				margin-top: 0.75rem;
+			}
+		}
+
+		@media (max-width: 640px) {
+			.meta-strip {
+				grid-template-columns: 1fr;
+			}
+		}
+	</style>
+</BaseLayout>

@@ -1,0 +1,8 @@
+---
+// Trang chi tiết EN dùng lại getStaticPaths + component của bản VI; props
+// (entry, index, nextEntry) truyền nguyên sang.
+import Page, { getStaticPaths } from "../../du-an/[slug].astro";
+export { getStaticPaths };
+---
+
+<Page {...Astro.props} />

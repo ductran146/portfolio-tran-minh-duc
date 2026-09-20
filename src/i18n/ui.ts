@@ -1,0 +1,85 @@
+// Hạ tầng đa ngôn ngữ (2026-09-18). Quyết định của người dùng: "tạo sẵn chức
+// năng, khi web hoàn thiện dịch sau" — nên ở đây CHỈ có chuỗi của khung trang
+// (menu, footer, nút, thông báo). Nội dung từng trang vẫn tiếng Việt; trang
+// /en/* render lại cùng component và hiện dải thông báo "English version in
+// progress" cho tới khi trang đó truyền `translated` cho BaseLayout.
+//
+// Routing: Astro i18n, defaultLocale "vi" không prefix (/du-an), "en" có prefix
+// (/en/du-an). Cấu hình ở astro.config.mjs; trang EN nằm ở src/pages/en/.
+//
+// Khi dịch thật: thêm key vào `ui.en`, dùng `t(locale, key)` trong trang, và
+// truyền `translated` cho BaseLayout để tắt dải thông báo.
+
+export const locales = ["vi", "en"] as const;
+export type Locale = (typeof locales)[number];
+export const defaultLocale: Locale = "vi";
+
+export const ui = {
+	vi: {
+		"nav.home": "Trang chủ",
+		"nav.projects": "Dự án",
+		"nav.experience": "Kinh nghiệm",
+		"nav.contact": "Liên hệ",
+		"nav.aria": "Điều hướng chính",
+		"lang.aria": "Ngôn ngữ",
+		"lang.vi": "Tiếng Việt",
+		"lang.en": "English",
+		"theme.toDark": "Chuyển sang giao diện tối",
+		"theme.toLight": "Chuyển sang giao diện sáng",
+		"footer.text": "Case study đầy đủ tại",
+		"notice.inProgress": "",
+	},
+	en: {
+		"nav.home": "Home",
+		"nav.projects": "Work",
+		"nav.experience": "Experience",
+		"nav.contact": "Contact",
+		"nav.aria": "Main navigation",
+		"lang.aria": "Language",
+		"lang.vi": "Tiếng Việt",
+		"lang.en": "English",
+		"theme.toDark": "Switch to dark theme",
+		"theme.toLight": "Switch to light theme",
+		"footer.text": "Full case studies on",
+		"notice.inProgress":
+			"The English version is in progress - page content is shown in Vietnamese for now.",
+	},
+} as const satisfies Record<Locale, Record<string, string>>;
+
+export type UiKey = keyof (typeof ui)["vi"];
+
+export function isLocale(value: unknown): value is Locale {
+	return typeof value === "string" && (locales as readonly string[]).includes(value);
+}
+
+/** Chuẩn hoá giá trị Astro.currentLocale (có thể undefined ở trang không thuộc locale nào). */
+export function resolveLocale(value: string | undefined): Locale {
+	return isLocale(value) ? value : defaultLocale;
+}
+
+export function t(locale: Locale, key: UiKey): string {
+	return ui[locale][key] ?? ui[defaultLocale][key];
+}
+
+/** Đường dẫn nội bộ theo locale: "/du-an#x" → "/en/du-an#x" khi en; vi giữ nguyên. */
+export function localePath(locale: Locale, path: string): string {
+	if (locale === defaultLocale) return path;
+	if (path === "/") return `/${locale}`;
+	return `/${locale}${path}`;
+}
+
+/** Tách prefix locale khỏi pathname hiện tại → { locale, path gốc }. */
+export function splitLocale(pathname: string): { locale: Locale; path: string } {
+	for (const l of locales) {
+		if (l === defaultLocale) continue;
+		if (pathname === `/${l}`) return { locale: l, path: "/" };
+		if (pathname.startsWith(`/${l}/`)) return { locale: l, path: pathname.slice(l.length + 1) };
+	}
+	return { locale: defaultLocale, path: pathname };
+}
+
+/** Cùng trang, đổi ngôn ngữ (dùng cho nút VI | EN trong header). */
+export function switchLocalePath(pathname: string, target: Locale): string {
+	const { path } = splitLocale(pathname);
+	return localePath(target, path);
+}
