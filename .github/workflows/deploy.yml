@@ -1,7 +1,11 @@
 # Build Astro và phát thư mục dist/ lên GitHub Pages mỗi khi push lên main.
-# Yêu cầu: repo Public (Pages miễn phí chỉ cho repo public), Settings → Pages →
-# Source = "GitHub Actions". Repo tên `ductran146.github.io` thì site ở gốc
-# https://ductran146.github.io/ (mọi link tuyệt đối /... trong code giữ nguyên).
+# Yêu cầu: repo Public, Settings → Pages → Source = "GitHub Actions" (KHÔNG chọn
+# "Deploy from a branch": Pages sẽ chạy Jekyll trên mã nguồn Astro và báo lỗi).
+# Repo tên `ductran146.github.io` thì site ở gốc https://ductran146.github.io/
+# (mọi link tuyệt đối /... trong code giữ nguyên, không cần `base`).
+#
+# Các bước viết tường minh (thay withastro/action, 2026-09-20 — bản đó không
+# truyền SKIP_KEYSTATIC vào build → lỗi NoAdapterInstalled) để log rõ ràng.
 name: Deploy to GitHub Pages
 
 on:
@@ -22,11 +26,29 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: withastro/action@v3
+      - name: Lấy mã nguồn
+        uses: actions/checkout@v4
+
+      - name: Cài Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Cài thư viện
+        run: npm ci
+
+      - name: Build Astro
+        # Không đưa giao diện quản trị Keystatic (local, không đăng nhập) lên site.
+        # astro.config.mjs cũng tự bỏ Keystatic khi CI=true (GitHub Actions đặt sẵn).
         env:
-          # Không đưa giao diện quản trị Keystatic (local, không đăng nhập) lên site.
           SKIP_KEYSTATIC: "1"
+        run: npm run build
+
+      - name: Đóng gói dist/
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
 
   deploy:
     needs: build

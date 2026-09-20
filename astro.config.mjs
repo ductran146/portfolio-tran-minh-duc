@@ -25,7 +25,11 @@ export default defineConfig({
 	// chế độ "local", chỉ dùng khi phát triển trên máy). SKIP_KEYSTATIC cho
 	// phép loại bỏ hẳn route /keystatic khỏi bản build khi triển khai lên
 	// hosting sau này, để không lộ giao diện chỉnh sửa không có xác thực.
-	integrations: [react(), markdoc(), ...(process.env.SKIP_KEYSTATIC ? [] : [keystatic()])],
+	// Keystatic chỉ có ở `astro dev` trên máy. Bỏ khi SKIP_KEYSTATIC=1 HOẶC khi chạy
+	// trên CI (GitHub Actions đặt sẵn CI=true) — lớp bảo hiểm thứ hai: build trên
+	// GitHub từng lỗi NoAdapterInstalled vì workflow không truyền được biến
+	// SKIP_KEYSTATIC (2026-09-20).
+	integrations: [react(), markdoc(), ...(process.env.SKIP_KEYSTATIC || process.env.CI ? [] : [keystatic()])],
 	// Tắt dev toolbar (2026-09-19): toolbar quét các <img> lúc dev khiến Safari/
 	// WebKit tải lại ảnh SVG lần hai và ĐÓNG BĂNG CSS animation bên trong SVG
 	// (cây ở trang Kinh nghiệm chỉ vẽ một đoạn ngắn rồi dừng). Chỉ ảnh hưởng
