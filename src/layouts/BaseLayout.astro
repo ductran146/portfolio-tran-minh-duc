@@ -22,12 +22,14 @@ const {
 const locale: Locale = resolveLocale(Astro.currentLocale);
 const l = (path: string) => localePath(locale, path);
 
+// `icon` dùng cho bottom nav trên mobile (2026-09-20) — nav ngang trong header
+// chỉ hiện chữ.
 const navItems = [
-  { href: l("/"), label: t(locale, "nav.home"), home: true },
-  { href: l("/du-an"), label: t(locale, "nav.projects") },
-  { href: l("/kinh-nghiem"), label: t(locale, "nav.experience") },
-  { href: l("/lien-he"), label: t(locale, "nav.contact") },
-];
+  { href: l("/"), label: t(locale, "nav.home"), home: true, icon: "home" },
+  { href: l("/du-an"), label: t(locale, "nav.projects"), icon: "briefcase" },
+  { href: l("/kinh-nghiem"), label: t(locale, "nav.experience"), icon: "user" },
+  { href: l("/lien-he"), label: t(locale, "nav.contact"), icon: "mail" },
+] as const;
 
 const currentPath = Astro.url.pathname;
 const showLangNotice = locale !== "vi" && !translated;
@@ -158,9 +160,9 @@ const showLangNotice = locale !== "vi" && !translated;
 				// ClientRouter, DOM này KHÔNG render lại — `aria-current` gắn lúc
 				// server-render lần đầu sẽ đứng yên mãi ở trang đó. Phải tự cập nhật
 				// theo `location.pathname` mỗi lần `astro:page-load`.
-				function updateNavActive() {
-					const nav = document.querySelector<HTMLElement>(".site-nav");
-					if (!nav) return;
+				// Đánh dấu mục đang mở trong một <nav> (header ngang hoặc bottom nav
+				// mobile — cả hai persist nên đều phải cập nhật tay). Trả về <a> active.
+				function markActive(nav: HTMLElement): HTMLAnchorElement | null {
 					const path = window.location.pathname;
 					let active: HTMLAnchorElement | null = null;
 					nav.querySelectorAll<HTMLAnchorElement>("a").forEach((a) => {
@@ -177,7 +179,15 @@ const showLangNotice = locale !== "vi" && !translated;
 							a.removeAttribute("aria-current");
 						}
 					});
-					positionNavIndicator(nav, active);
+					return active;
+				}
+
+				function updateNavActive() {
+					const bottom = document.querySelector<HTMLElement>(".bottom-nav");
+					if (bottom) markActive(bottom);
+					const nav = document.querySelector<HTMLElement>(".site-nav");
+					if (!nav) return;
+					positionNavIndicator(nav, markActive(nav));
 				}
 
 				// Vạch active: chỉ transform (translateX + scaleX trên bề rộng gốc 100px),
@@ -362,6 +372,22 @@ const showLangNotice = locale !== "vi" && !translated;
 				<a href="https://behance.net/tranducdesign" target="_blank" rel="noopener noreferrer">Behance</a>.
 			</p>
 		</footer>
+
+		<!-- Bottom nav cho mobile (2026-09-20, theo yêu cầu: ≤720px nav ngang trong
+		     header bị ẩn nên không chọn được mục). Kiểu tab bar app: 4 mục icon +
+		     nhãn, cố định đáy, chừa safe-area. Cùng navItems với header; aria-current
+		     do updateNavActive() cập nhật vì cũng transition:persist (id mang locale
+		     như header). Desktop ẩn hoàn toàn. -->
+		<nav class="bottom-nav" aria-label={t(locale, "nav.aria")} transition:persist={`bottom-nav-${locale}`}>
+			{
+				navItems.map((item) => (
+					<a href={item.href} data-home={item.home ? "" : undefined} aria-current={currentPath === item.href ? "page" : undefined}>
+						<Icon name={item.icon} size={22} />
+						<span>{item.label}</span>
+					</a>
+				))
+			}
+		</nav>
 
 		<style>
 			.site-header {
@@ -552,9 +578,65 @@ const showLangNotice = locale !== "vi" && !translated;
 				color: inherit;
 			}
 
+			/* ---- Bottom nav (mobile): tab bar kiểu app, chỉ hiện ≤720px khi nav ngang
+			   trong header bị ẩn. Cố định đáy, nền cùng header (mờ + blur), viền trên
+			   hairline, chừa safe-area iPhone. Mục active: màu accent, chữ đậm hơn;
+			   không dịch chuyển khi bấm (chỉ đổi màu — quy tắc nút của site).
+			   view-transition-name riêng + rule đứng yên trong global.css để không bị
+			   mờ/trượt cùng nội dung khi chuyển trang (như header). ---- */
+			.bottom-nav {
+				display: none;
+			}
+
 			@media (max-width: 720px) {
 				.site-nav {
 					display: none;
+				}
+
+				.bottom-nav {
+					view-transition-name: bottom-nav;
+					position: fixed;
+					left: 0;
+					right: 0;
+					bottom: 0;
+					z-index: 20;
+					display: grid;
+					grid-template-columns: repeat(4, minmax(0, 1fr));
+					padding: 0.35rem 0.5rem calc(0.35rem + env(safe-area-inset-bottom, 0px));
+					background: var(--header-bg);
+					backdrop-filter: blur(10px);
+					-webkit-backdrop-filter: blur(10px);
+					border-top: 1px solid var(--border);
+				}
+
+				.bottom-nav a {
+					display: flex;
+					flex-direction: column;
+					align-items: center;
+					gap: 0.2rem;
+					padding: 0.4rem 0.25rem 0.3rem;
+					border-radius: var(--radius-sm);
+					text-decoration: none;
+					color: var(--ink-faint);
+					font-size: 0.68rem;
+					font-weight: 500;
+					letter-spacing: 0.01em;
+					line-height: 1.2;
+					transition: color 0.25s var(--ease-smooth);
+				}
+
+				.bottom-nav a :global(.icon) {
+					display: block;
+				}
+
+				.bottom-nav a[aria-current="page"] {
+					color: var(--accent);
+					font-weight: 600;
+				}
+
+				/* Chừa chỗ cho tab bar để footer/CTA cuối trang không bị che. */
+				:global(body) {
+					padding-bottom: calc(66px + env(safe-area-inset-bottom, 0px));
 				}
 			}
 

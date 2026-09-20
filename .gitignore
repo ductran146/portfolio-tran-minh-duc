@@ -26,9 +26,11 @@ pnpm-debug.log*
 # ---- riêng cho dự án này (2026-09-20) ----
 # Tư liệu gốc do người dùng cung cấp — site chỉ dùng bản copy trong src/assets
 # và public/, nên không cần đưa lên repo (tổng ~62MB).
-images/
-project/
-logo/
+# Dấu / ở đầu = CHỈ thư mục ở gốc dự án; `images/` trần từng bỏ nhầm cả
+# public/images/ (SVG cây) → site trên GitHub Pages mất ảnh (2026-09-20).
+/images/
+/project/
+/logo/
 # Script chụp màn hình thử nghiệm cũ
 .render*.mjs
 # Cấu hình công cụ cá nhân trên máy

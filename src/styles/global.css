@@ -249,7 +249,7 @@ a {
   animation-timing-function: var(--ease-page);
 }
 
-/* Header: group riêng, đứng yên tuyệt đối — lớp "matched". Tên do
+/* Header (và bottom nav mobile, 2026-09-20 — cùng cách): group riêng, đứng yên tuyệt đối — lớp "matched". Tên do
    `.site-header { view-transition-name }` trong BaseLayout đặt theo class, KHÔNG
    dùng transition:name, vì header transition:persist là DOM cũ được mang sang
    trang mới trong khi rule của Astro bám theo data-astro-transition-scope sinh
@@ -261,19 +261,25 @@ a {
    ảnh này, tự morph theo nhịp ::view-transition-group(*). */
 ::view-transition-group(site-header),
 ::view-transition-old(site-header),
-::view-transition-new(site-header) {
+::view-transition-new(site-header),
+::view-transition-group(bottom-nav),
+::view-transition-old(bottom-nav),
+::view-transition-new(bottom-nav) {
   animation: none;
 }
 
-::view-transition-old(site-header) {
+::view-transition-old(site-header),
+::view-transition-old(bottom-nav) {
   display: none;
 }
 
-::view-transition-new(site-header) {
+::view-transition-new(site-header),
+::view-transition-new(bottom-nav) {
   mix-blend-mode: normal;
 }
 
-::view-transition-image-pair(site-header) {
+::view-transition-image-pair(site-header),
+::view-transition-image-pair(bottom-nav) {
   isolation: auto;
 }
 
