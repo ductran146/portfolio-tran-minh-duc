@@ -4,7 +4,7 @@ import HeroMockBrowser from "../components/HeroMockBrowser.astro";
 import HeroMockResponsive from "../components/HeroMockResponsive.astro";
 import Icon from "../components/Icon.astro";
 import { getEntry } from "astro:content";
-import { localePath, resolveLocale } from "../i18n/ui";
+import { localePath, resolveLocale, withBase } from "../i18n/ui";
 import { Image } from "astro:assets";
 import { dtOutlinePaths, glintLayers } from "../data/dt-glint";
 
@@ -310,7 +310,7 @@ const clientLogos = clientGroups.flatMap((g) => g.clients).filter((c): c is { na
 					clientLogos.map((c) => (
 						<li class="client-item">
 							<span class="client-logo-chip">
-								<img class="client-logo" src={c.logo} alt={c.name} loading="lazy" />
+								<img class="client-logo" src={withBase(c.logo)} alt={c.name} loading="lazy" />
 							</span>
 						</li>
 					))

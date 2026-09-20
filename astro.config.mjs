@@ -11,6 +11,12 @@ export default defineConfig({
 	// thì BaseLayout mới phát thẻ hreflang tuyệt đối. Đổi domain riêng sau này
 	// = đổi đúng dòng này.
 	site: "https://ductran146.github.io",
+	// Site nằm trong thư mục con (người dùng muốn giữ link
+	// https://ductran146.github.io/portfolio-tran-minh-duc/, 2026-09-20). Mọi
+	// đường dẫn nội bộ/asset public PHẢI đi qua withBase()/localePath() trong
+	// src/i18n/ui.ts (import.meta.env.BASE_URL); asset qua astro:assets tự có base.
+	// Dev server vì thế cũng chạy ở http://localhost:4321/portfolio-tran-minh-duc/.
+	base: "/portfolio-tran-minh-duc",
 	// Đa ngôn ngữ (2026-09-18): tiếng Việt là mặc định, KHÔNG prefix (/du-an);
 	// tiếng Anh có prefix (/en/du-an), trang nằm ở src/pages/en/. Nội dung EN
 	// dịch sau — hiện các trang /en/* render lại cùng component tiếng Việt kèm

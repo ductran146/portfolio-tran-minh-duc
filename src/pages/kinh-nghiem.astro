@@ -4,6 +4,7 @@ import Icon from "../components/Icon.astro";
 import Testimonials from "../components/Testimonials.astro";
 import ProcessStack from "../components/ProcessStack.astro";
 import { dtOutlinePaths, glintLayers } from "../data/dt-glint";
+import { withBase } from "../i18n/ui";
 
 // `era` KHÔNG còn dùng để chọn cảnh minh hoạ (2026-09-18: panel bên phải đổi
 // sang minh hoạ "cây" cố định — từ 2026-09-19 là <img> trỏ thẳng tới
@@ -261,10 +262,10 @@ const supportTools = [
 				     <aside> KHÔNG aria-hidden. -->
 				<aside class="era-panel">
 					<picture>
-						<source media="(prefers-reduced-motion: reduce)" srcset="/images/tree-stroke-8.svg" type="image/svg+xml" />
+						<source media="(prefers-reduced-motion: reduce)" srcset={withBase("/images/tree-stroke-8.svg")} type="image/svg+xml" />
 						<img
 							class="tree-figure"
-							src="/images/tree-stroke-8-animated.svg"
+							src={withBase("/images/tree-stroke-8-animated.svg")}
 							width="585"
 							height="586"
 							alt=""

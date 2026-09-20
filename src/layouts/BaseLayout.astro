@@ -1,7 +1,7 @@
 ---
 import { ClientRouter } from "astro:transitions";
 import Icon from "../components/Icon.astro";
-import { locales, localePath, resolveLocale, switchLocalePath, t, type Locale } from "../i18n/ui";
+import { locales, localePath, resolveLocale, switchLocalePath, t, withBase, type Locale } from "../i18n/ui";
 import "../styles/global.css";
 
 interface Props {
@@ -36,7 +36,7 @@ const showLangNotice = locale !== "vi" && !translated;
 <html lang={locale}>
 	<head>
 		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="icon" type="image/svg+xml" href={withBase("/favicon.svg")} />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="generator" content={Astro.generator} />
 		<meta name="description" content={description} />
@@ -78,7 +78,7 @@ const showLangNotice = locale !== "vi" && !translated;
 		     đo 2026-09-18). Cùng locale vẫn persist như cũ. -->
 		<header class="site-header" transition:persist={`site-header-${locale}`}>
 			<a class="brand" href={l("/")}>
-				<img class="brand-mark" src="/logo-dt-green.svg" width="377" height="434" alt="" />
+				<img class="brand-mark" src={withBase("/logo-dt-green.svg")} width="377" height="434" alt="" />
 				<span>Trần Minh Đức</span>
 			</a>
 			<nav class="site-nav" aria-label={t(locale, "nav.aria")}>
@@ -291,13 +291,17 @@ const showLangNotice = locale !== "vi" && !translated;
 
 				// ---- Nút ngôn ngữ: header persist nên href phải bám theo trang hiện tại.
 				// Quy ước prefix: "en" có /en, "vi" không prefix (khớp src/i18n/ui.ts).
+				// Site nằm trong thư mục con (base, 2026-09-20): location.pathname có
+				// base ở đầu → bỏ base trước khi xét prefix locale, thêm lại khi đặt href.
+				const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
 				function updateLangLinks() {
-					const path = window.location.pathname;
+					const full = window.location.pathname;
+					const path = BASE && (full === BASE || full.startsWith(BASE + "/")) ? full.slice(BASE.length) || "/" : full;
 					const stripped = path === "/en" ? "/" : path.startsWith("/en/") ? path.slice(3) : path;
 					document.querySelectorAll<HTMLAnchorElement>(".lang-switch a").forEach((a) => {
 						const lang = a.dataset.lang;
 						const href = lang === "vi" ? stripped : stripped === "/" ? "/en" : "/en" + stripped;
-						a.setAttribute("href", href + window.location.hash);
+						a.setAttribute("href", BASE + href + window.location.hash);
 						if ((lang === "en") === path.startsWith("/en")) a.setAttribute("aria-current", "true");
 						else a.removeAttribute("aria-current");
 					});

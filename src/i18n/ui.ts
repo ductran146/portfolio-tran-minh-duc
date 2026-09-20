@@ -61,15 +61,34 @@ export function t(locale: Locale, key: UiKey): string {
 	return ui[locale][key] ?? ui[defaultLocale][key];
 }
 
-/** Đường dẫn nội bộ theo locale: "/du-an#x" → "/en/du-an#x" khi en; vi giữ nguyên. */
-export function localePath(locale: Locale, path: string): string {
-	if (locale === defaultLocale) return path;
-	if (path === "/") return `/${locale}`;
-	return `/${locale}${path}`;
+/** Base path của site (astro.config `base`), không có "/" cuối; "" khi site ở gốc.
+ *  Site phát ở https://ductran146.github.io/portfolio-tran-minh-duc/ (2026-09-20)
+ *  nên MỌI đường dẫn tuyệt đối tự viết (link nội bộ, file trong public/) phải
+ *  đi qua withBase(); asset qua astro:assets thì Astro tự thêm base. Dùng được
+ *  cả phía server lẫn trong <script> client (Vite thay import.meta.env lúc build). */
+export const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+
+/** "/clients/bsc.svg" → "/portfolio-tran-minh-duc/clients/bsc.svg". */
+export function withBase(path: string): string {
+	return `${base}${path.startsWith("/") ? path : `/${path}`}`;
 }
 
-/** Tách prefix locale khỏi pathname hiện tại → { locale, path gốc }. */
-export function splitLocale(pathname: string): { locale: Locale; path: string } {
+/** Bỏ base khỏi pathname (location.pathname / Astro.url.pathname đều có base). */
+export function stripBase(pathname: string): string {
+	if (base && (pathname === base || pathname.startsWith(`${base}/`))) return pathname.slice(base.length) || "/";
+	return pathname;
+}
+
+/** Đường dẫn nội bộ theo locale, ĐÃ kèm base: "/du-an#x" → "/<base>/en/du-an#x" khi en. */
+export function localePath(locale: Locale, path: string): string {
+	if (locale === defaultLocale) return withBase(path);
+	if (path === "/") return withBase(`/${locale}`);
+	return withBase(`/${locale}${path}`);
+}
+
+/** Tách prefix locale khỏi pathname hiện tại (có hay không có base) → { locale, path gốc }. */
+export function splitLocale(rawPathname: string): { locale: Locale; path: string } {
+	const pathname = stripBase(rawPathname);
 	for (const l of locales) {
 		if (l === defaultLocale) continue;
 		if (pathname === `/${l}`) return { locale: l, path: "/" };
