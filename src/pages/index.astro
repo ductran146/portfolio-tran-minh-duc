@@ -195,14 +195,14 @@ const clientLogos = clientGroups.flatMap((g) => g.clients).filter((c): c is { na
 
 		<!-- 2. Vì sao chọn tôi: 4 luận điểm, 2 dòng × 2 thẻ -->
 		<section class="reasons">
-			<div class="reasons-head" data-reveal>
+			<div class="reasons-head stagger" data-reveal>
 				<h2>Vì sao chọn tôi</h2>
 				<p>Tôi kết hợp kinh nghiệm lâu năm, khả năng hiểu nghiệp vụ, tư duy hệ thống và cách làm việc chủ động để đưa thiết kế đến gần hơn với sản phẩm thực tế.</p>
 			</div>
 			<div class="reason-grid">
 				{
 					reasons.map((r, i) => (
-						<article class="reason" data-reveal style={`--i: ${i}`}>
+						<article class="reason stagger" data-reveal style={`--i: ${i}`}>
 							<h3>{r.title}</h3>
 							<p>{r.body}</p>
 						</article>
@@ -215,6 +215,12 @@ const clientLogos = clientGroups.flatMap((g) => g.clients).filter((c): c is { na
 		     Đưa lên TRƯỚC Dự án tiêu biểu + mảng tối tràn hai mép (2026-09-20, theo
 		     yêu cầu) — cùng ngôn ngữ với "Cách tôi làm việc" ở trang Kinh nghiệm
 		     (nền --band-bg, chữ --on-ink*, accent trên nền tối --band-accent). -->
+		<!-- .process-scope: khung bao CẢ .process LẪN .featured (2026-09-21, sửa lỗi
+		     ghim quá lâu/hở khoảng trắng — xem ghi chú CSS `.process-scope`). Phải
+		     có .featured ở trong thì containing block của sticky mới đủ "khoảng
+		     nổi" đúng bằng chiều cao thật của .featured — không thêm khoảng trống
+		     nhân tạo nào, layout tổng thể không đổi so với không có khung này. -->
+		<div class="process-scope">
 		<section class="process" aria-labelledby="process-title">
 			<!-- Logo DT dạng nét + vệt sáng chạy theo nét — cùng hiệu ứng với mảng tối
 			     "Cách tôi làm việc" ở Kinh nghiệm (2026-09-20, theo yêu cầu). Dữ liệu
@@ -243,14 +249,14 @@ const clientLogos = clientGroups.flatMap((g) => g.clients).filter((c): c is { na
 				}
 			</svg>
 			<div class="process-inner">
-			<div class="process-head" data-reveal>
+			<div class="process-head stagger" data-reveal>
 				<h2 id="process-title">Tôi có thể giúp doanh nghiệp</h2>
 				<p>Từ một bài toán chưa rõ ràng đến sản phẩm hoàn chỉnh trên web và mobile, tôi tham gia ở những phần thiết kế tạo ảnh hưởng trực tiếp đến trải nghiệm và khả năng phát triển.</p>
 			</div>
 			<ol class="steps">
 				{
 					steps.map((s, i) => (
-						<li class="step icon-hover-host" data-reveal style={`--i: ${i}`}>
+						<li class="step icon-hover-host stagger" data-reveal style={`--i: ${i}`}>
 							<div class="step-top">
 								<span class="icon-tile" aria-hidden="true">
 									<Icon name={s.icon} size={24} class="icon-anim" />
@@ -267,9 +273,13 @@ const clientLogos = clientGroups.flatMap((g) => g.clients).filter((c): c is { na
 		</section>
 
 		<!-- 4. Dự án tiêu biểu: kể theo bài toán → cách giải → giao lại gì (đứng sau
-		     mảng tối → khác nền → không kẻ trên). -->
+		     mảng tối → khác nền → không kẻ trên). NẰM TRONG .process-scope cùng
+		     .process (xem ghi chú CSS `.process-scope`) — containing block của dải
+		     sticky phải bao gồm cả khối theo sau nó thì mới nhả ghim ĐÚNG lúc khối
+		     đó cuộn lên che kín, không sớm hơn (hở khoảng trắng) không muộn hơn
+		     (ghim dư tới cuối trang). -->
 		<section class="featured">
-			<div class="featured-copy" data-reveal>
+			<div class="featured-copy stagger" data-reveal>
 				<p class="section-label">Dự án tiêu biểu</p>
 				<!-- Tên dự án + mô tả một dòng (đổi 2026-09-20 theo yêu cầu): tiêu đề
 				     "BSC - BIDV Securities JSC", dòng nhỏ SÁT dưới nói sản phẩm là gì. -->
@@ -301,6 +311,7 @@ const clientLogos = clientGroups.flatMap((g) => g.clients).filter((c): c is { na
 				)}
 			</a>
 		</section>
+		</div>
 
 		<!-- 5. Đã đồng hành cùng: một hàng logo, không nhãn lĩnh vực/tên chữ -->
 		<section class="clients" data-reveal>
@@ -319,21 +330,46 @@ const clientLogos = clientGroups.flatMap((g) => g.clients).filter((c): c is { na
 		</section>
 
 		<!-- 6. Kết: CTA cụ thể. "24 giờ" đã có ở trang Liên hệ, không phải cam kết mới. -->
-		<!-- Nội dung khối liên hệ đổi 2026-09-20 (người dùng cung cấp): tiêu đề hỏi
-		     thẳng bài toán, mô tả hạ rào cản "chưa cần brief", CTA chính, dòng phụ
-		     giữ nhóm tuyển dụng nhưng không lấn trọng tâm khách doanh nghiệp. -->
+		<!-- Nội dung khối liên hệ đổi 2026-09-21 (người dùng cung cấp): tiêu đề + mô
+		     tả viết lại gọn hơn, giữ đúng tinh thần "chưa cần brief hoàn chỉnh" của
+		     bản 2026-09-20. Đã bỏ dòng phụ tuyển dụng (2026-09-21, yêu cầu) — trọng
+		     tâm chỉ còn khách doanh nghiệp. Bố cục: THẺ BO GÓC nền --bg-soft, đúng
+		     kiểu ".cta-band" ở trang Dự án/chi tiết dự án (yêu cầu 2026-09-21 "để
+		     trong frame như ở trang dự án", sau khi thử dải tràn hai mép không đúng
+		     ý) — xem CSS để biết các trị số copy nguyên từ du-an.astro. -->
 		<section class="cta-band" data-reveal>
 			<div class="cta-copy">
-				<h2>Bạn đang có một sản phẩm cần làm rõ hoặc cải tiến?</h2>
+				<h2>Bạn có sản phẩm cần thiết kế hoặc cải tiến?</h2>
 				<p class="cta-desc">
-					Hãy gửi cho tôi bài toán hiện tại, loại sản phẩm và phạm vi bạn cần hỗ trợ. Chưa cần một brief hoàn
-					chỉnh — chúng ta có thể bắt đầu từ những thông tin bạn đang có.
+					Hãy chia sẻ bài toán và phạm vi bạn cần hỗ trợ. Chưa có brief hoàn chỉnh cũng không sao, chúng ta có
+					thể bắt đầu từ những thông tin hiện có.
 				</p>
-				<p class="cta-sub">Tôi nhận dự án thiết kế thuê ngoài và sẵn sàng trao đổi về những vị trí Senior phù hợp.</p>
 			</div>
 			<a class="btn btn-primary btn-lg" href={l("/lien-he")}>Trao đổi dự án →</a>
 		</section>
 	</main>
+
+	<script>
+		// Rèm che (2026-09-21): đo chiều cao dải "Tôi có thể giúp doanh nghiệp" →
+		// --process-h để CSS `.process` quyết định ghim theo mép trên hay mép dưới
+		// (xem `top: min(...)` trong <style>). Đặt thẳng lên .process (không cần
+		// đặt lên .process-scope nữa — từ 2026-09-21 lần 2, scope không dùng biến
+		// này để tính height nữa, height để auto). Cùng kỹ thuật với .process-band
+		// ở trang Kinh nghiệm. Guard data-process-bound để không gắn hai lần khi
+		// after-swap và page-load cùng gọi.
+		function initProcessPin() {
+			const band = document.querySelector<HTMLElement>(".process");
+			if (!band || band.dataset.processBound) return;
+			band.dataset.processBound = "1";
+			const publish = () => band.style.setProperty("--process-h", `${Math.ceil(band.offsetHeight)}px`);
+			publish();
+			if ("ResizeObserver" in window) new ResizeObserver(publish).observe(band);
+			else window.addEventListener("resize", publish);
+		}
+		document.addEventListener("astro:after-swap", initProcessPin);
+		document.addEventListener("astro:page-load", initProcessPin);
+		initProcessPin();
+	</script>
 
 	<style>
 		main {
@@ -620,11 +656,20 @@ const clientLogos = clientGroups.flatMap((g) => g.clients).filter((c): c is { na
 
 		.clients {
 			padding-block: clamp(2rem, 5vw, 3rem);
-			border-top: 1px solid var(--border);
 		}
 
+		/* Thẻ bo góc (2026-09-21, đổi lại từ dải tràn hai mép — yêu cầu "để trong
+		   frame như ở trang dự án"): trị số copy nguyên từ `.cta-band` ở
+		   du-an.astro/du-an/[slug].astro để đồng bộ giữa các trang — KHÔNG có
+		   position/isolation/z-index/::before riêng (khác bản thử ban đầu, xem
+		   ghi chú dài ở nhóm `.featured, .clients` phía dưới để hiểu lỗi đã gặp và
+		   vì sao bỏ hẳn cơ chế đó ở đây): thẻ này không cần "rèm che" vì dải sticky
+		   đã nhả ghim từ trước khi cuộn tới đây, và việc thêm rèm che từng khiến
+		   nền xám bị chính lớp che đó vẽ đè lên thành trắng — lỗi thật gây ra đúng
+		   hiện tượng "không thấy nền xám" mà người dùng chụp ảnh báo hai lần. */
 		.cta-band {
-			margin-top: clamp(2rem, 5vw, 3rem);
+			--cta-gap: clamp(2.5rem, 6vw, 4rem);
+			margin-top: var(--cta-gap);
 			padding: clamp(2.5rem, 7vw, 4rem) clamp(1.5rem, 5vw, 3rem);
 			border-radius: var(--radius-lg);
 			background: var(--bg-soft);
@@ -646,8 +691,6 @@ const clientLogos = clientGroups.flatMap((g) => g.clients).filter((c): c is { na
 			margin: 0;
 		}
 
-		/* Mô tả chính: cỡ thân, màu phụ; dòng phụ (tuyển dụng) nhỏ và nhạt hơn một
-		   bậc để không lấn trọng tâm khách doanh nghiệp. */
 		.cta-desc {
 			margin: 0.9rem 0 0;
 			color: var(--ink-secondary);
@@ -748,16 +791,110 @@ const clientLogos = clientGroups.flatMap((g) => g.clients).filter((c): c is { na
 		   ở cả hai theme), chữ --on-ink*, accent trên nền tối --band-accent. Thẻ
 		   bước = ô kính (ngoại lệ Cards "không viền", như dải công cụ cũ): nền
 		   ink-surface-faint + viền ink-surface. Tràn mép bằng margin âm theo 50vw. */
+		/* ⚠️ .process-scope — SỬA LỖI GHIM QUÁ LÂU (2026-09-21, người dùng phát hiện
+		   hai lần):
+		   Lần 1 — cuộn tới khi "Dự án tiêu biểu" đã sát mép header mà dải tối vẫn
+		   còn ghim. Nguyên nhân: containing block của `position: sticky` là
+		   ANCESTOR khối gần nhất (vốn là <main>, bao TOÀN BỘ section còn lại) —
+		   dải chỉ nhả ghim khi cuộn qua gần hết `<main>`, gần cuối trang, KHÔNG
+		   PHẢI ngay sau khi bị che kín. Rèm che (::before) vẫn phủ kín suốt quãng
+		   dư này nên không lộ ra, nhưng dải vẫn thực sự ghim/compositing một quãng
+		   cuộn dài không cần thiết.
+		   Lần 2 (sửa lần 1 sai) — thử bọc RIÊNG .process trong khung cao gấp đôi
+		   chính nó (`height: calc(2 * var(--process-h))`, kỹ thuật "sticky trong
+		   khung cao gấp đôi" chuẩn cho layout sidebar-cạnh-nội-dung) — sai vì đây
+		   là layout XẾP CHỒNG (không phải cạnh nhau): khoảng "nổi" nhân tạo đó
+		   không có nội dung nào lấp vào (không tự trượt lên như sidebar), lộ ra
+		   thành một khoảng TRẮNG lớn dưới dải tối trước khi "Dự án tiêu biểu" kịp
+		   xuất hiện — thấy rõ trên ảnh chụp.
+		   Cách sửa ĐÚNG: containing block phải bao gồm CẢ khối theo sau (.featured)
+		   — không cần height nhân tạo, height auto = process + featured cộng dồn
+		   bình thường (không thêm khoảng trống nào, layout giống hệt lúc chưa có
+		   khung này). Với containing block [process_top, process_top + process_h +
+		   featured_h], công thức nhả ghim chuẩn của sticky cho ra đúng: dải nhả
+		   ghim khi `scrollY = process_top + featured_h - header_h` — đúng lúc
+		   `.featured` (nối liền ngay sau .process, không khoảng cách) cuộn tới vừa
+		   chạm mép header. Đã verify bằng Playwright (xem lịch sử sửa trong
+		   DESIGN.md) — không còn khoảng trắng, dải nhả đúng lúc. */
+		.process-scope {
+			margin-top: clamp(1.5rem, 4vw, 2.5rem);
+		}
+
 		.process {
-			position: relative;
+			position: sticky;
+			top: min(var(--header-h), calc(100vh - var(--bnav-h, 0px) - var(--process-h, 9999px)));
+			top: min(var(--header-h), calc(100dvh - var(--bnav-h, 0px) - var(--process-h, 9999px)));
+			z-index: 0;
 			isolation: isolate;
 			overflow: hidden;
 			width: 100vw;
 			margin-left: calc(50% - 50vw);
-			margin-top: clamp(1.5rem, 4vw, 2.5rem);
 			padding: clamp(3rem, 6vw, 4.5rem) clamp(1.25rem, 5vw, 3rem);
 			background: var(--band-bg);
 			color: var(--on-ink);
+		}
+
+		@media (max-width: 720px) {
+			.process {
+				--bnav-h: calc(66px + env(safe-area-inset-bottom, 0px));
+			}
+		}
+
+		/* Hai khối đứng sau dải phải (1) nằm trên dải trong thứ tự xếp lớp và (2) có
+		   nền tràn hai mép mới che kín được — dải rộng 100vw, khối trong cột 1160px
+		   của main không đủ che hai bên. ::before cấp nền --bg (nền trang) tràn mép,
+		   z-index: -1 để không đè lên nội dung thật của từng khối (ảnh dự án…) —
+		   chỉ lấp khoảng trống xung quanh. Mép trên kéo lên thêm 1px (2026-09-21,
+		   sửa lần 2 — xem ghi chú dưới) để không còn hở hàng pixel do bo tròn
+		   dưới-pixel.
+		   ⚠️ .cta-band KHÔNG còn trong nhóm này (2026-09-21, sửa lần 3 — lỗi nghiêm
+		   trọng hơn phát hiện qua ảnh chụp người dùng: nền xám "biến mất" dù CSS
+		   đúng). Nguyên nhân: `.cta-band` có `background: var(--bg-soft)` NGAY TRÊN
+		   CHÍNH BOX (khác `.featured`/`.clients` vốn không có nền riêng, chỉ dựa
+		   vào các con bên trong). Trong MỘT stacking context (`isolation: isolate`
+		   + `z-index` không phải `auto` tự tạo context), thứ tự vẽ theo chuẩn CSS
+		   là: (1) nền/viền CHÍNH box trước, RỒI MỚI (2) các con có z-index ÂM. Vì
+		   vậy `::before` (z-index: -1, nền `--bg` trắng, rộng 100vw phủ hết cả
+		   chiều ngang kể cả đúng chỗ thẻ bo góc đang nằm) vẽ ĐÈ LÊN TRÊN nền xám
+		   của chính `.cta-band`, không phải nằm dưới như tưởng — thẻ nhìn thành
+		   trắng dù `getComputedStyle` báo đúng `--bg-soft` (giá trị CSS đúng,
+		   PIXEL thực tế bị che). `.featured`/`.clients` không bị vì nội dung nhìn
+		   thấy của chúng (ảnh, chip logo) là CON nằm trong luồng bình thường, vẽ
+		   SAU (nghĩa là TRÊN) `::before` theo đúng thứ tự — không xung đột.
+		   Cách sửa: bỏ hẳn `.cta-band` khỏi cơ chế rèm che — cũng không thực sự
+		   CẦN nữa: `.process` đã nhả ghim từ trước khi cuộn tới `.clients` (đo
+		   được ở bản sửa `.process-scope`), nên `.cta-band` không bao giờ phải che
+		   dải sticky nào phía sau nó nữa. */
+		.featured,
+		.clients {
+			position: relative;
+			isolation: isolate;
+			z-index: 1;
+		}
+
+		.featured::before,
+		.clients::before {
+			content: "";
+			position: absolute;
+			/* Mép trên kéo lên 3px (2026-09-21, sửa lần 4 — xem ghi chú dưới): đủ biên
+			   an toàn để hấp thụ lệch dưới-pixel ở màn Retina DPR lẻ mà không cần vẽ
+			   đường kẻ NGAY TRONG lớp phủ 100vw này nữa (bản sửa lần 3 khiến đường kẻ
+			   phân cách kéo dài hết chiều ngang MÀN HÌNH thay vì chỉ trong khung nội
+			   dung 1160px như mọi đường kẻ khác của site — người dùng phát hiện, yêu
+			   cầu trả lại đúng khung ban đầu). */
+			inset: -3px auto 0 calc(50% - 50vw);
+			width: 100vw;
+			z-index: -1;
+			background: var(--bg);
+		}
+
+		/* Đường kẻ phân cách quay lại đúng box .clients (khung nội dung 1160px,
+		   KHÔNG còn kéo dài hết màn hình — 2026-09-21, sửa lần 4, xem ghi chú ở
+		   .featured::before/.clients::before phía trên). Lớp phủ ::before phía sau
+		   chỉ còn nhiệm vụ duy nhất: che dải sticky ở hai mép ngoài khung nội dung,
+		   không còn vẽ đường kẻ. */
+		.clients {
+			border-top: 1px solid var(--border);
 		}
 
 		.process-inner {
@@ -971,13 +1108,6 @@ const clientLogos = clientGroups.flatMap((g) => g.clients).filter((c): c is { na
 
 		.client-item:hover .client-logo {
 			filter: none;
-		}
-
-		/* ---- 6. CTA ---- */
-		.cta-sub {
-			margin: 0.9rem 0 0;
-			color: var(--ink-faint);
-			font-size: 0.88rem;
 		}
 
 		@media (max-width: 900px) {

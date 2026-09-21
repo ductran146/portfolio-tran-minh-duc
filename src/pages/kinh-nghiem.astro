@@ -238,8 +238,8 @@ const supportTools = [
 										{job.current && <span class="pill">Hiện tại</span>}
 									</h3>
 									<ul>
-										{job.lines.map((line) => (
-											<li>{line}</li>
+										{job.lines.map((line, k) => (
+											<li style={`--k: ${k}`}>{line}</li>
 										))}
 									</ul>
 								</div>
@@ -301,14 +301,18 @@ const supportTools = [
 			</div>
 		</section>
 
-		<!-- "Cách tôi làm việc" (2026-09-20, THAY dải công cụ): vẫn là mảng tối tràn
-		     hai mép, nhưng KHÔNG còn sticky + rèm che — section giờ cao hơn một
-		     màn hình ở tablet/mobile, sticky sẽ ghim phần trên và phần dưới không
-		     bao giờ lộ. Logo DT nét + vệt sáng giữ lại làm nền trang trí góc
+		<!-- "Cách tôi làm việc" (2026-09-20, THAY dải công cụ): mảng tối tràn hai
+		     mép. Có sticky + rèm che (đưa lại 2026-09-21) — xem ghi chú CSS
+		     `.process-band`. Logo DT nét + vệt sáng giữ lại làm nền trang trí góc
 		     dưới-phải, mờ hơn. Nội dung: intro → 4 bước nối bằng một đường vẽ dần
 		     → hàng công cụ phụ. Không JS vẫn hiện đủ: mọi trạng thái ẩn chỉ áp
 		     khi html.js-reveal, mở khoá theo .is-visible của <ol> (cơ chế
 		     data-reveal chung). Thứ tự DOM = thứ tự đọc 01→04 ở mọi breakpoint. -->
+		<!-- .process-scope: khung bao CẢ .process-band LẪN .tools-section
+		     (2026-09-21, đồng bộ với trang chủ — xem ghi chú CSS `.process-scope`
+		     ở index.astro để hiểu đầy đủ lý do: containing block của sticky phải
+		     bao gồm khối theo sau thì mới nhả ghim đúng lúc, không sớm/muộn). -->
+		<div class="process-scope">
 		<section class="process-band" aria-labelledby="process-title">
 			<!-- Logo DT dạng nét, khổ lớn, cạnh sáng + vệt sáng chạy theo nét (T8).
 			     Path lấy từ public/logo-dt-green.svg, bỏ fill; pathLength="1000" chuẩn
@@ -340,7 +344,11 @@ const supportTools = [
 			<div class="process-inner">
 				<div class="process-intro">
 					<p class="section-label" data-reveal>Cách tôi làm việc</p>
-					<h2 id="process-title" data-reveal>Cách tôi đưa thiết kế đến gần sản phẩm</h2>
+					<!-- Ngắt dòng cố định + vế sau màu accent (yêu cầu 2026-09-21). -->
+					<h2 id="process-title" data-reveal>
+						<span class="process-title-line">Cách tôi đưa thiết kế</span>
+						<span class="process-title-line process-title-accent">đến gần sản phẩm</span>
+					</h2>
 					<p class="process-lede" data-reveal>
 						Tôi kết nối nghiệp vụ, trải nghiệm người dùng và khả năng triển khai để giải pháp không chỉ
 						đẹp trên bản thiết kế mà còn vận hành rõ ràng trong sản phẩm thực tế.
@@ -388,7 +396,7 @@ const supportTools = [
 				<ul class="tools-grid">
 					{
 						supportTools.map((t, i) => (
-							<li class="tool-card brand-hover-host" data-reveal style={`--i: ${i}`}>
+							<li class="tool-card brand-hover-host stagger" data-reveal style={`--i: ${i}`}>
 								<span class="icon-tile icon-tile-lg tool-icon" aria-hidden="true">
 									<Icon name={t.icon} size={28} class="icon-anim" />
 								</span>
@@ -400,6 +408,7 @@ const supportTools = [
 				</ul>
 			</div>
 		</section>
+		</div>
 
 		<section class="block block-after-band">
 			<h2 data-reveal>Chuyên môn</h2>
@@ -407,7 +416,7 @@ const supportTools = [
 			<ul class="expertise-grid">
 				{
 					expertise.map((e, i) => (
-						<li class="expertise-card icon-hover-host" data-reveal style={`--i: ${i}`}>
+						<li class="expertise-card icon-hover-host stagger" data-reveal style={`--i: ${i}`}>
 							<span class="icon-tile icon-tile-lg" aria-hidden="true">
 								<Icon name={e.icon} size={28} class="icon-anim" />
 							</span>
@@ -421,14 +430,16 @@ const supportTools = [
 
 		<!-- Nền tảng đứng sau Chuyên môn (nền --bg-soft) → khác nền → không kẻ
 		     (quy tắc 2026-09-20: chỉ kẻ giữa hai khối CÙNG nền). -->
-		<section class="block block-flush">
+		<!-- .cover-band: nền --bg tràn mép + z-index để che được dải sticky phía trên
+		     (xem ghi chú CSS "Rèm che"). -->
+		<section class="block block-flush cover-band">
 			<h2 data-reveal>Nền tảng</h2>
 			<!-- Hai hộp ngang, nền soft — cố ý khác dáng với 3 thẻ chuyên môn ở trên
 			     để hai nhóm không đọc nhầm thành một. -->
 			<ul class="platform-grid">
 				{
 					platforms.map((p, i) => (
-						<li class="platform-card icon-hover-host" data-reveal style={`--i: ${i}`}>
+						<li class="platform-card icon-hover-host stagger" data-reveal style={`--i: ${i}`}>
 							<span class="icon-tile icon-tile-lg" aria-hidden="true">
 								<Icon name={p.icon} size={28} class="icon-anim" />
 							</span>
@@ -442,7 +453,7 @@ const supportTools = [
 			</ul>
 		</section>
 
-		<section class="block" id="danh-gia">
+		<section class="block cover-band" id="danh-gia">
 			<Testimonials />
 		</section>
 	</main>
@@ -503,6 +514,23 @@ const supportTools = [
 		document.addEventListener("astro:after-swap", initTimeline);
 		document.addEventListener("astro:page-load", initTimeline);
 		initTimeline();
+
+		// Rèm che (2026-09-21): đo chiều cao dải "Cách tôi làm việc" → --band-h để
+		// CSS quyết định ghim theo mép trên hay mép dưới (xem .process-band). RO
+		// theo dõi đổi font/độ rộng; guard data-band-bound để không gắn hai lần khi
+		// after-swap và page-load cùng gọi.
+		function initBandPin() {
+			const band = document.querySelector<HTMLElement>(".process-band");
+			if (!band || band.dataset.bandBound) return;
+			band.dataset.bandBound = "1";
+			const publish = () => band.style.setProperty("--band-h", `${Math.ceil(band.offsetHeight)}px`);
+			publish();
+			if ("ResizeObserver" in window) new ResizeObserver(publish).observe(band);
+			else window.addEventListener("resize", publish);
+		}
+		document.addEventListener("astro:after-swap", initBandPin);
+		document.addEventListener("astro:page-load", initBandPin);
+		initBandPin();
 	</script>
 
 	<style>
@@ -584,9 +612,7 @@ const supportTools = [
 			border-top: 0;
 		}
 
-		/* Rèm che (sticky band + .curtain) đã bỏ 2026-09-20 cùng với dải công cụ —
-		   section "Cách tôi làm việc" cao hơn một màn hình nên không ghim được.
-		   Khối ngay sau mảng tối không cần đường kẻ: mép mảng đã là ranh giới. */
+		/* Khối ngay sau mảng tối không cần đường kẻ: mép mảng đã là ranh giới. */
 		.block-after-band {
 			border-top: 0;
 			/* Nền --bg-soft tràn hai mép bằng pseudo-element (nội dung vẫn nằm trong
@@ -596,10 +622,52 @@ const supportTools = [
 			isolation: isolate;
 		}
 
+		/* Rèm che (2026-09-21, yêu cầu): dải "Cách tôi làm việc" ghim (sticky) ngay
+		   dưới header, các khối phía sau trượt lên che dần nó. Muốn che được, mọi
+		   khối sau dải phải (1) là positioned với z-index cao hơn dải và (2) có nền
+		   TRÀN HAI MÉP — vì dải rộng 100vw còn .block chỉ rộng cột 1160px; không có
+		   nền tràn mép thì dải lộ ra hai bên. .tools-section và .block-after-band đã
+		   có nền tràn mép sẵn; .cover-band cấp nền --bg tràn mép cho hai khối còn lại
+		   (Nền tảng, Đánh giá) theo đúng cách của .block-after-band. Dải được nhả ra
+		   khi main kết thúc — lúc đó nó đã bị che kín (tổng chiều cao các khối sau
+		   lớn hơn chiều cao dải). */
+		.tools-section,
+		.block-after-band,
+		.cover-band {
+			position: relative;
+			z-index: 1;
+		}
+
+		.cover-band {
+			isolation: isolate;
+		}
+
+		.cover-band::before {
+			content: "";
+			position: absolute;
+			/* Mép trên kéo lên 3px (2026-09-21, sửa lần 4 — thay cho bản "vẽ đường kẻ
+			   ngay trong ::before" trước đó): bản trước khiến đường kẻ phân cách Nền
+			   tảng → Đánh giá kéo dài hết chiều ngang MÀN HÌNH (::before rộng 100vw)
+			   thay vì chỉ trong khung nội dung 1160px như mọi đường kẻ khác của site
+			   — người dùng phát hiện, yêu cầu trả lại đúng khung ban đầu. Biên -3px
+			   đủ hấp thụ lệch dưới-pixel ở màn Retina DPR lẻ (nguyên nhân hở 1px lần
+			   trước) mà không cần đường kẻ nằm trong lớp phủ full-width nữa. */
+			inset: -3px auto 0 calc(50% - 50vw);
+			width: 100vw;
+			z-index: -1;
+			background: var(--bg);
+		}
+
+		/* Đường kẻ Nền tảng → Đánh giá (hai khối cùng nền, quy tắc 2026-09-20) quay
+		   lại đúng box #danh-gia (khung nội dung 1160px, KHÔNG còn kéo dài hết màn
+		   hình — 2026-09-21, sửa lần 4). .block đã có border-top: 1px mặc định;
+		   Nền tảng là .block-flush nên tự bỏ (border-top: 0), Đánh giá dùng
+		   .block trần nên giữ nguyên — không cần khai báo gì thêm ở đây. */
+
 		.block-after-band::before {
 			content: "";
 			position: absolute;
-			inset: 0 auto 0 calc(50% - 50vw);
+			inset: -1px auto 0 calc(50% - 50vw);
 			width: 100vw;
 			z-index: -1;
 			background: var(--bg-soft);
@@ -691,15 +759,43 @@ const supportTools = [
 			box-shadow: 0 0 0 4px var(--accent-tint);
 		}
 
-		/* Nội dung mốc: ẩn cho tới khi cuộn tới. Chỉ dưới .js-reveal để không JS
-		   vẫn đọc được đầy đủ. */
-		:global(.js-reveal) .timeline-content {
+		/* Nội dung mốc: ẩn cho tới khi cuộn tới, và vào theo TỪNG LỚP (2026-09-21):
+		   khoảng thời gian (0ms, 0.5s) → tiêu đề (90ms, 0.6s) → từng dòng gạch đầu
+		   (220ms + k×110ms, 0.7s) — không hiện cả cụm một lần. Chỉ dưới .js-reveal
+		   để không JS vẫn đọc được đầy đủ. Khối .timeline-content tự nó không fade. */
+		:global(.js-reveal) .timeline-content > *,
+		:global(.js-reveal) .timeline-content li {
 			opacity: 0;
-			transform: translateY(14px);
-			transition: opacity 0.6s var(--ease-smooth), transform 0.6s var(--ease-smooth);
+			transform: translateY(10px);
+			transition:
+				opacity var(--ld, 0.6s) var(--ease-smooth) var(--lt, 0ms),
+				transform var(--ld, 0.6s) var(--ease-smooth) var(--lt, 0ms);
 		}
 
-		:global(.js-reveal) .timeline-item.is-reached .timeline-content {
+		:global(.js-reveal) .timeline-content > ul {
+			/* <ul> chỉ là hộp chứa; từng <li> mới là lớp. */
+			opacity: 1;
+			transform: none;
+			transition: none;
+		}
+
+		:global(.js-reveal) .timeline-range {
+			--lt: 0ms;
+			--ld: 0.5s;
+		}
+
+		:global(.js-reveal) .timeline-content h3 {
+			--lt: 90ms;
+			--ld: 0.6s;
+		}
+
+		:global(.js-reveal) .timeline-content li {
+			--lt: calc(220ms + var(--k, 0) * 110ms);
+			--ld: 0.7s;
+		}
+
+		:global(.js-reveal) .timeline-item.is-reached .timeline-content > *,
+		:global(.js-reveal) .timeline-item.is-reached .timeline-content li {
 			opacity: 1;
 			transform: none;
 		}
@@ -1028,15 +1124,39 @@ const supportTools = [
 		   Nền --band-bg (luôn tối ở cả hai theme), chữ --on-ink*, accent trên nền
 		   tối = --band-accent (token mới, xem global.css). Logo DT nét + vệt sáng
 		   (T8) giữ lại ở góc dưới-phải, nhỏ và mờ hơn: chỉ là kết cấu nền, không
-		   tranh với nội dung. Không còn sticky/rèm (xem ghi chú ở markup). Tràn mép
-		   bằng margin âm theo 50vw; html/body đã overflow-x: clip. */
+		   tranh với nội dung. Tràn mép bằng margin âm theo 50vw; html/body đã
+		   overflow-x: clip (clip KHÔNG tạo scroll container nên sticky vẫn chạy). */
+		/* ⚠️ .process-scope — bao CẢ .process-band lẫn .tools-section (2026-09-21,
+		   đồng bộ với trang chủ, xem ghi chú đầy đủ ở `.process-scope` trong
+		   index.astro): containing block của position: sticky mặc định là ancestor
+		   khối gần nhất — nếu chỉ để `<main>` bao thì dải chỉ nhả ghim khi cuộn qua
+		   gần hết trang (rèm che vẫn phủ kín nên không lộ, nhưng ghim/compositing dư
+		   một quãng dài không cần thiết). Bọc đúng [process-band + tools-section]
+		   (không thêm height nhân tạo, auto = tổng hai khối cộng dồn bình thường)
+		   để dải nhả ghim ĐÚNG lúc .tools-section (nối liền ngay sau, không khoảng
+		   cách) cuộn lên chạm mép header — không sớm hơn (hở khoảng trắng, đã gặp
+		   và sửa ở bản thử đầu tại trang chủ) không muộn hơn. */
+		.process-scope {
+			margin-top: clamp(1.5rem, 4vw, 2.5rem);
+		}
+
 		.process-band {
-			position: relative;
+			/* Ghim dưới header (2026-09-21, yêu cầu): mép trên dải chạm đáy header thì
+			   đứng lại, khối sau (.tools-section, trong cùng .process-scope) trượt lên
+			   che dần. Nếu dải CAO HƠN phần viewport còn lại (tablet 2×2, mobile dọc)
+			   thì ghim theo mép dưới thay vì mép trên: top âm = 100dvh − chiều cao dải
+			   (− bottom nav trên mobile), để người đọc luôn cuộn hết bước 04 rồi dải
+			   mới đứng lại và bị che — không có phần nào bị che trước khi đọc.
+			   --band-h do script đo (ResizeObserver); không JS → mặc định 9999px →
+			   top rất âm → dải không bao giờ ghim, cuộn như thường. */
+			position: sticky;
+			top: min(var(--header-h), calc(100vh - var(--bnav-h, 0px) - var(--band-h, 9999px)));
+			top: min(var(--header-h), calc(100dvh - var(--bnav-h, 0px) - var(--band-h, 9999px)));
+			z-index: 0;
 			isolation: isolate;
 			overflow: hidden;
 			width: 100vw;
 			margin-left: calc(50% - 50vw);
-			margin-block: clamp(1.5rem, 4vw, 2.5rem) 0;
 			/* Đáy ngắn hơn đỉnh (2026-09-20): box kết thúc ngay sau nội dung bước 04. */
 			padding: clamp(3rem, 6vw, 4.5rem) clamp(1.25rem, 5vw, 3rem) clamp(2.5rem, 5vw, 3.5rem);
 			background: var(--band-bg);
@@ -1047,6 +1167,14 @@ const supportTools = [
 			--p0: 0.5s;
 			--pseg: 0.9s;
 			--pgap: 2rem;
+		}
+
+		/* Mobile có bottom nav cố định (BaseLayout, 66px + safe-area) che mép dưới
+		   viewport → trừ vào mốc ghim theo mép dưới để bước 04 không nằm dưới nav. */
+		@media (max-width: 720px) {
+			.process-band {
+				--bnav-h: calc(66px + env(safe-area-inset-bottom, 0px));
+			}
 		}
 
 		.process-inner {
@@ -1119,6 +1247,16 @@ const supportTools = [
 			line-height: 1.15;
 			margin: 0 0 1rem;
 			color: var(--on-ink);
+		}
+
+		/* Hai vế xếp hai dòng cố định; vế "đến gần sản phẩm" màu accent trên nền
+		   tối (--band-accent, đủ tương phản ở cả hai theme). */
+		.process-title-line {
+			display: block;
+		}
+
+		.process-title-accent {
+			color: var(--band-accent);
 		}
 
 		.process-lede {
@@ -1315,25 +1453,56 @@ const supportTools = [
 			}
 		}
 
-		:global(.js-reveal) .process-steps[data-reveal] .pstep-body {
+		/* Nội dung bước vào theo TỪNG LỚP (2026-09-21): số → icon → tiêu đề → mô tả,
+		   lệch nhau 80–100ms, thời lượng tăng dần 0.5 → 0.75s, tất cả bắt đầu từ mốc
+		   của bước (--pb = mốc node trừ 0.15s). .pstep-body tự nó không fade. */
+		:global(.js-reveal) .process-steps[data-reveal] .pstep {
+			--pb: max(0s, calc(var(--p0) + var(--i) * var(--pseg) - 0.15s));
+		}
+
+		:global(.js-reveal) .process-steps[data-reveal] .pstep-body > * {
 			opacity: 0;
 			transform: translateY(10px);
 			transition:
-				opacity 0.6s var(--ease-smooth),
-				transform 0.6s var(--ease-smooth);
-			transition-delay: max(0s, calc(var(--p0) + var(--i) * var(--pseg) - 0.15s));
+				opacity var(--ld, 0.6s) var(--ease-smooth) calc(var(--pb) + var(--lt, 0ms)),
+				transform var(--ld, 0.6s) var(--ease-smooth) calc(var(--pb) + var(--lt, 0ms));
 		}
 
-		:global(.js-reveal) .process-steps[data-reveal].is-visible .pstep-body {
+		:global(.js-reveal) .process-steps[data-reveal] .pstep-num {
+			--lt: 0ms;
+			--ld: 0.5s;
+		}
+
+		:global(.js-reveal) .process-steps[data-reveal] .pstep-icon {
+			--lt: 80ms;
+			--ld: 0.55s;
+		}
+
+		:global(.js-reveal) .process-steps[data-reveal] .pstep-body h3 {
+			--lt: 170ms;
+			--ld: 0.62s;
+		}
+
+		:global(.js-reveal) .process-steps[data-reveal] .pstep-body p {
+			--lt: 270ms;
+			--ld: 0.75s;
+		}
+
+		:global(.js-reveal) .process-steps[data-reveal].is-visible .pstep-body > * {
 			opacity: 1;
 			transform: none;
+		}
+
+		/* Số thứ tự đích là 16%, không phải 1. */
+		:global(.js-reveal) .process-steps[data-reveal].is-visible .pstep-num {
+			opacity: 0.16;
 		}
 
 		/* Giảm chuyển động: đường, node, nội dung, công cụ hiện đủ ngay; không vẽ,
 		   không vệt sáng logo. */
 		@media (prefers-reduced-motion: reduce) {
 			:global(.js-reveal) .process-steps[data-reveal] .pstep-node,
-			:global(.js-reveal) .process-steps[data-reveal] .pstep-body,
+			:global(.js-reveal) .process-steps[data-reveal] .pstep-body > *,
 			:global(.js-reveal) .process-steps[data-reveal] .pstep-seg-line,
 			:global(.js-reveal) .process-steps[data-reveal] .pstep-seg-head {
 				transition: none !important;
@@ -1349,9 +1518,12 @@ const supportTools = [
 			:global(.js-reveal) .process-steps[data-reveal] .pstep-seg-line {
 				transform: none !important;
 			}
-			:global(.js-reveal) .process-steps[data-reveal] .pstep-body {
+			:global(.js-reveal) .process-steps[data-reveal] .pstep-body > * {
 				opacity: 1;
 				transform: none;
+			}
+			:global(.js-reveal) .process-steps[data-reveal] .pstep-num {
+				opacity: 0.16;
 			}
 			.band-logo .g {
 				animation: none;

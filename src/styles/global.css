@@ -308,8 +308,35 @@ a {
   transform: translateY(0);
 }
 
+/* Khối có class .stagger: các phần tử con (dòng/đoạn) là từng LỚP riêng, vào
+   lệch nhau 90ms và thời lượng tăng dần (0.5 → 0.8s) sau khi khối lộ ra — không
+   hiện cả cụm một lần (yêu cầu 2026-09-21). Trễ cộng thêm var(--i) của khối
+   (thẻ so le trong lưới) để con không vào trước cha. Tối đa 6 con; con thứ 7+
+   dùng mốc của con thứ 6. Chỉ dưới .js-reveal — không JS vẫn đọc đủ. */
+.js-reveal [data-reveal].stagger > * {
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity var(--sd, 0.55s) var(--ease-smooth),
+    transform var(--sd, 0.55s) var(--ease-smooth);
+  transition-delay: calc(var(--i, 0) * 100ms + 120ms + var(--sk, 0) * 90ms);
+}
+
+.js-reveal [data-reveal].stagger.is-visible > * {
+  opacity: 1;
+  transform: none;
+}
+
+.js-reveal [data-reveal].stagger > :nth-child(1) { --sk: 0; --sd: 0.5s; }
+.js-reveal [data-reveal].stagger > :nth-child(2) { --sk: 1; --sd: 0.58s; }
+.js-reveal [data-reveal].stagger > :nth-child(3) { --sk: 2; --sd: 0.66s; }
+.js-reveal [data-reveal].stagger > :nth-child(4) { --sk: 3; --sd: 0.72s; }
+.js-reveal [data-reveal].stagger > :nth-child(5) { --sk: 4; --sd: 0.78s; }
+.js-reveal [data-reveal].stagger > :nth-child(n + 6) { --sk: 5; --sd: 0.82s; }
+
 @media (prefers-reduced-motion: reduce) {
-  .js-reveal [data-reveal] {
+  .js-reveal [data-reveal],
+  .js-reveal [data-reveal].stagger > * {
     opacity: 1;
     transform: none;
     transition: none;
