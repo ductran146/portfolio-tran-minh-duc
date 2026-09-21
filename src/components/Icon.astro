@@ -1,18 +1,29 @@
 ---
-// Bộ icon nội bộ của site — hai họ (xem DESIGN.md › Iconography):
+// Bộ icon nội bộ của site — ba họ (xem DESIGN.md › Iconography):
 //
-//   "stroke" — icon KHÁI NIỆM tự vẽ: lưới 24×24, nét 1.5 currentColor, đầu nét
-//              tròn, tối đa MỘT mảng tô đặc làm điểm nhấn. Từng bộ phận mang class
-//              .p .p1 .p2… để animation (global style bên dưới) chạy theo bộ phận.
-//   "mark"   — BRAND MARK đơn sắc của công cụ thật sự dùng (Figma, Photoshop,
-//              ChatGPT, Claude). Path lấy từ Simple Icons v16.31.0 (CC0-1.0),
-//              luôn tô currentColor một màu — không bao giờ dùng màu gốc của
-//              hãng. Nhãn hiệu thuộc chủ sở hữu; chỉ dùng để chỉ đúng công cụ
-//              (nominative use), không dùng cho mục khác.
+//   "stroke"  — icon KHÁI NIỆM tự vẽ: lưới 24×24, nét 1.5 currentColor, đầu nét
+//               tròn, tối đa MỘT mảng tô đặc làm điểm nhấn. Từng bộ phận mang class
+//               .p .p1 .p2… để animation (global style bên dưới) chạy theo bộ phận.
+//   "mark"    — BRAND MARK đơn sắc của công cụ thật sự dùng (Figma, Photoshop,
+//               ChatGPT, Claude). Path lấy từ Simple Icons v16.31.0 (CC0-1.0),
+//               luôn tô currentColor một màu — không bao giờ dùng màu gốc của
+//               hãng. Nhãn hiệu thuộc chủ sở hữu; chỉ dùng để chỉ đúng công cụ
+//               (nominative use), không dùng cho mục khác.
+//   "duotone" — bộ icon THẬT (không tự vẽ) cho bottom nav mobile (2026-09-21,
+//               theo yêu cầu, nguồn https://icones.netlify.app/collection/solar,
+//               variant Duotone — lấy qua Iconify API `solar.json`, cùng dữ
+//               liệu trang đó hiển thị, giấy phép MIT). Mỗi icon 2 lớp tô
+//               currentColor cùng màu: lớp nền `opacity=".5"` (nhạt) + lớp
+//               chính đầy màu — tạo hiệu ứng hai sắc độ. Khác "stroke": không
+//               viền, tô đặc; không có class .p/.pN nên không chạy animation
+//               pop-theo-phần (bottom nav vốn cũng không gắn class icon-anim).
+//               Đổi nền theo currentColor tự nhiên khi mục đang active
+//               (.bottom-nav a[aria-current="page"] đổi color) — không cần
+//               sửa gì thêm ở BaseLayout.
 //
 // Thêm icon = thêm một key vào ICONS. Tên key theo khái niệm/tên công cụ, không
 // theo nơi dùng (không đặt "expertise-1").
-type IconDef = { kind: "stroke" | "mark"; body: string };
+type IconDef = { kind: "stroke" | "mark" | "duotone"; body: string };
 
 const ICONS = {
   // Design system / token: lưới 4 ô, ô cuối tô đặc = token đã chuẩn hoá
@@ -96,27 +107,24 @@ const ICONS = {
     kind: "stroke",
     body: `<path class="p p1" d="M3.5 12.5L12 17l8.5-4.5"/><path class="p p2" d="M3.5 16.5L12 21l8.5-4.5"/><path class="p p3" d="M12 3l8.5 4.5L12 12 3.5 7.5z" fill="currentColor" stroke="none"/>`,
   },
-  // ---- Thêm 2026-09-20 cho bottom nav mobile (4 mục menu) — cùng họ nét 1.5,
-  //      điểm nhấn tô đặc nhỏ ----
-  // Trang chủ: mái nhà + cửa tô đặc
+  // ---- Bottom nav mobile (4 mục menu) — bộ Solar Duotone thật, xem ghi chú
+  //      "duotone" ở IconDef phía trên. Icon gốc: home-2 · case · user ·
+  //      letter (đều hậu tố -bold-duotone trong bộ Solar). ----
   home: {
-    kind: "stroke",
-    body: `<path class="p p1" d="M3.5 11.5L12 4l8.5 7.5"/><path class="p p2" d="M5.5 10v10h13V10"/><rect class="p p3" x="10" y="14" width="4" height="6" rx="1" fill="currentColor" stroke="none"/>`,
+    kind: "duotone",
+    body: `<path opacity=".5" d="M2 12.2039C2 9.91549 2 8.77128 2.5192 7.82274C3.0384 6.87421 3.98695 6.28551 5.88403 5.10813L7.88403 3.86687C9.88939 2.62229 10.8921 2 12 2C13.1079 2 14.1106 2.62229 16.116 3.86687L18.116 5.10812C20.0131 6.28551 20.9616 6.87421 21.4808 7.82274C22 8.77128 22 9.91549 22 12.2039V13.725C22 17.6258 22 19.5763 20.8284 20.7881C19.6569 22 17.7712 22 14 22H10C6.22876 22 4.34315 22 3.17157 20.7881C2 19.5763 2 17.6258 2 13.725V12.2039Z"/><path d="M11.25 18C11.25 18.4142 11.5858 18.75 12 18.75C12.4142 18.75 12.75 18.4142 12.75 18V15C12.75 14.5858 12.4142 14.25 12 14.25C11.5858 14.25 11.25 14.5858 11.25 15V18Z"/>`,
   },
-  // Dự án: cặp tài liệu, tay cầm tô đặc
   briefcase: {
-    kind: "stroke",
-    body: `<rect class="p p1" x="3" y="7.5" width="18" height="12.5" rx="2"/><path class="p p2" d="M3 12.5h18"/><rect class="p p3" x="9" y="4" width="6" height="3.5" rx="1" fill="currentColor" stroke="none"/>`,
+    kind: "duotone",
+    body: `<path opacity=".5" d="M10.5613 2.25C10.4478 2.24998 10.3595 2.24997 10.2759 2.25503C9.21545 2.31926 8.28686 2.98855 7.89059 3.97425C7.85866 4.05369 7.83027 4.13863 7.79232 4.25251C7.70897 4.47684 7.51771 4.73199 7.24986 4.93586C7.22004 4.95855 7.1901 4.97999 7.16016 5.00017L9.10215 5C9.13102 4.94044 9.15763 4.87988 9.18178 4.81842L9.18332 4.81492L9.18749 4.80502L9.19237 4.7929L9.19695 4.78093L9.20059 4.77098L9.20237 4.76597L9.20661 4.75373L9.21044 4.74244L9.21253 4.73617L9.21526 4.72783L9.2175 4.72079L9.21929 4.71502C9.25812 4.59872 9.2708 4.56246 9.28234 4.53375C9.46246 4.08571 9.88455 3.78148 10.3666 3.75229C10.3988 3.75034 10.4384 3.75 10.5817 3.75H13.4195C13.5629 3.75 13.6024 3.75034 13.6347 3.75229C14.1167 3.78148 14.5388 4.08571 14.7189 4.53375C14.7303 4.56204 14.7423 4.59698 14.7817 4.71499L14.7835 4.72071L14.7857 4.72778L14.7885 4.73614L14.7905 4.74239L14.7944 4.75366L14.7986 4.76588L14.8004 4.77089L14.804 4.78081L14.8086 4.79271L14.8134 4.80471L14.8175 4.81449L14.8191 4.81811C14.8433 4.87968 14.8699 4.94034 14.8988 5L16.8407 5.00017C16.8108 4.98 16.7809 4.95858 16.7511 4.93589C16.4833 4.73205 16.2921 4.47692 16.2087 4.25254L16.2057 4.24347C16.1698 4.13581 16.1419 4.05194 16.1106 3.97426C15.7144 2.98855 14.7858 2.31926 13.7253 2.25503C13.6418 2.24997 13.5534 2.24998 13.4399 2.25H10.5613Z"/><path fill-rule="evenodd" clip-rule="evenodd" d="M17.1923 5H6.80765C5.12027 5 4.27658 5 3.63268 5.32971C3.07242 5.61659 2.61659 6.07242 2.32971 6.63268C2 7.27658 2 8.12027 2 9.80765C2 10.2366 2 10.4511 2.07336 10.6319C2.13743 10.7898 2.24079 10.9288 2.37363 11.0355C2.52574 11.1577 2.73118 11.2194 3.14206 11.3426L8.5 12.95V14.1627C8.5 14.9283 8.95939 15.6341 9.68682 15.9296L10.2469 16.1572C11.3719 16.6143 12.6281 16.6143 13.7531 16.1572L14.3132 15.9296C15.0406 15.6341 15.5 14.9283 15.5 14.1627V12.95L20.8579 11.3426C21.2688 11.2194 21.4743 11.1577 21.6264 11.0355C21.7592 10.9288 21.8626 10.7898 21.9266 10.6319C22 10.4511 22 10.2366 22 9.80765C22 8.12027 22 7.27658 21.6703 6.63268C21.3834 6.07242 20.9276 5.61659 20.3673 5.32971C19.7234 5 18.8797 5 17.1923 5ZM13.6 12H10.4C10.1791 12 10 12.1819 10 12.4063V14.1627C10 14.3288 10.0996 14.4782 10.2514 14.54L10.8116 14.7675C11.5745 15.0775 12.4255 15.0775 13.1885 14.7675L13.7486 14.54C13.9004 14.4782 14 14.3288 14 14.1627V12.4063C14 12.1819 13.8209 12 13.6 12Z"/><path opacity=".5" d="M3 11.2998C3.04446 11.3133 3.09172 11.3275 3.14206 11.3426L8.5 12.9499V14.1627C8.5 14.9283 8.95939 15.634 9.68682 15.9296L10.2469 16.1571C11.3719 16.6142 12.6281 16.6142 13.7531 16.1571L14.3132 15.9296C15.0406 15.634 15.5 14.9283 15.5 14.1627V12.9499L20.8579 11.3426C20.9083 11.3275 20.9555 11.3133 21 11.2998V12.2999C20.9991 15.9752 20.9651 19.6879 19.682 20.8284C18.3639 22 16.2426 22 12 22C7.75733 22 5.63601 22 4.318 20.8284C3.03489 19.6879 3.0009 15.9752 3 12.2999V11.2998Z"/>`,
   },
-  // Kinh nghiệm: người, đầu tô đặc
   user: {
-    kind: "stroke",
-    body: `<path class="p p1" d="M4.5 20.5c0-3.9 3.4-6.5 7.5-6.5s7.5 2.6 7.5 6.5"/><circle class="p p2" cx="12" cy="8" r="4" fill="currentColor" stroke="none"/>`,
+    kind: "duotone",
+    body: `<circle cx="12" cy="6" r="4"/><path opacity=".5" d="M20 17.5C20 19.9853 20 22 12 22C4 22 4 19.9853 4 17.5C4 15.0147 7.58172 13 12 13C16.4183 13 20 15.0147 20 17.5Z"/>`,
   },
-  // Liên hệ: phong bì, nắp tô đặc
   mail: {
-    kind: "stroke",
-    body: `<rect class="p p1" x="3" y="5.5" width="18" height="13" rx="2"/><path class="p p2" d="M3.5 7l8.5 6 8.5-6" fill="currentColor" stroke="none" opacity="0.35"/><path class="p p3" d="M3.5 7l8.5 6 8.5-6"/>`,
+    kind: "duotone",
+    body: `<path opacity=".5" d="M14.2 3H9.8C5.65164 3 3.57746 3 2.28873 4.31802C1 5.63604 1 7.75736 1 12C1 16.2426 1 18.364 2.28873 19.682C3.57746 21 5.65164 21 9.8 21H14.2C18.3484 21 20.4225 21 21.7113 19.682C23 18.364 23 16.2426 23 12C23 7.75736 23 5.63604 21.7113 4.31802C20.4225 3 18.3484 3 14.2 3Z"/><path d="M19.1284 8.03302C19.4784 7.74133 19.5257 7.22112 19.234 6.87109C18.9423 6.52106 18.4221 6.47377 18.0721 6.76546L15.6973 8.74444C14.671 9.59966 13.9585 10.1915 13.357 10.5784C12.7747 10.9529 12.3798 11.0786 12.0002 11.0786C11.6206 11.0786 11.2258 10.9529 10.6435 10.5784C10.0419 10.1915 9.32941 9.59966 8.30315 8.74444L5.92837 6.76546C5.57834 6.47377 5.05812 6.52106 4.76643 6.87109C4.47474 7.22112 4.52204 7.74133 4.87206 8.03302L7.28821 10.0465C8.2632 10.859 9.05344 11.5176 9.75091 11.9661C10.4775 12.4334 11.185 12.7286 12.0002 12.7286C12.8154 12.7286 13.523 12.4334 14.2495 11.9661C14.947 11.5176 15.7372 10.859 16.7122 10.0465L19.1284 8.03302Z"/>`,
   },
 
   // ---- Brand marks ----
@@ -161,7 +169,9 @@ interface Props {
 
 const { name, size = 24, class: className, label } = Astro.props;
 const def = ICONS[name];
-const isMark = def.kind === "mark";
+// "mark" (brand) và "duotone" (Solar) đều là icon tô đặc currentColor, không
+// viền — chỉ "stroke" mới vẽ bằng nét.
+const isFilled = def.kind !== "stroke";
 ---
 
 <svg
@@ -170,11 +180,11 @@ const isMark = def.kind === "mark";
   width={size}
   height={size}
   viewBox="0 0 24 24"
-  fill={isMark ? "currentColor" : "none"}
-  stroke={isMark ? undefined : "currentColor"}
-  stroke-width={isMark ? undefined : "1.5"}
-  stroke-linecap={isMark ? undefined : "round"}
-  stroke-linejoin={isMark ? undefined : "round"}
+  fill={isFilled ? "currentColor" : "none"}
+  stroke={isFilled ? undefined : "currentColor"}
+  stroke-width={isFilled ? undefined : "1.5"}
+  stroke-linecap={isFilled ? undefined : "round"}
+  stroke-linejoin={isFilled ? undefined : "round"}
   role={label ? "img" : undefined}
   aria-hidden={label ? undefined : "true"}
   focusable="false"

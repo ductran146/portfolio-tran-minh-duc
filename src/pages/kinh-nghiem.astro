@@ -1897,9 +1897,17 @@ const supportTools = [
 			.timeline-layout {
 				grid-template-columns: 1fr;
 			}
-			/* Panel là trang trí; ở màn hẹp nhường chỗ cho nội dung. */
+			/* Trước đây ẩn hẳn ở màn hẹp ("panel là trang trí, nhường chỗ cho nội
+			   dung") — nhưng từ khi panel chỉ còn cây + câu trích dẫn của người dùng
+			   (không còn mốc năm/cảnh khác), ẩn đi là mất luôn nội dung đó trên
+			   mobile, không phải mất phần trang trí thuần tuý. Đã sửa (2026-09-21,
+			   người dùng phát hiện): hiện lại, xếp dưới timeline trong cùng một cột;
+			   bỏ sticky (position: sticky không còn ý nghĩa khi panel đã nằm dưới
+			   cùng một cột thay vì đứng cạnh timeline đang cuộn) và thêm khoảng cách
+			   trên để tách khỏi mốc kinh nghiệm cuối cùng. */
 			.era-panel {
-				display: none;
+				position: static;
+				margin-top: clamp(2rem, 6vw, 3rem);
 			}
 		}
 

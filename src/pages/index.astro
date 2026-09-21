@@ -147,8 +147,14 @@ const clientLogos = clientGroups.flatMap((g) => g.clients).filter((c): c is { na
 
 <BaseLayout title="Trần Minh Đức - Senior UX/UI Designer">
 	<main>
-		<section class="hero">
-			<div class="hero-copy" style={`--n: ${titleCharCount}`}>
+		<!-- Bố cục hero dùng CSS Grid Areas (2026-09-21, tách .hero-actions khỏi
+		     .hero-copy để đổi được THỨ TỰ trên mobile độc lập với desktop): desktop
+		     giữ nguyên 2 cột (chữ+nút bên trái, minh hoạ bên phải, minh hoạ canh
+		     giữa theo chiều dọc cả khối copy+actions); mobile xếp dọc theo thứ tự
+		     copy → visual → actions, tức khung minh hoạ nằm GIỮA tiêu đề và hai nút
+		     (yêu cầu "hiển thị trên 2 button") — xem area map trong <style>. -->
+		<section class="hero" style={`--n: ${titleCharCount}`}>
+			<div class="hero-copy">
 				<!-- Tên + việc làm cho ai (thay chức danh: chức danh phục vụ nhà tuyển
 				     dụng — đối tượng phụ; khách doanh nghiệp cần biết "làm gì cho tôi").
 				     2026-09-20: đổi khung từ NGÀNH ("tài chính & vận hành") sang NỀN
@@ -179,16 +185,17 @@ const clientLogos = clientGroups.flatMap((g) => g.clients).filter((c): c is { na
 				</h1>
 				<!-- Lede "15 năm..." chuyển sang trang Kinh nghiệm (dưới h1, 2026-09-18) -
 				     tránh trùng nội dung, hero trang chủ giữ ngắn gọn hơn. -->
-				<div class="hero-actions" data-reveal>
-					<a class="btn btn-primary" href={l("/lien-he")}>Trao đổi dự án</a>
-					<a class="btn btn-ghost" href={l("/du-an")}>Xem dự án →</a>
-				</div>
 			</div>
 
 			<div class="hero-visual" aria-hidden="true">
 				<div class="hero-visual-inner" data-reveal>
 					{heroVariant === "browser" ? <HeroMockBrowser /> : <HeroMockResponsive />}
 				</div>
+			</div>
+
+			<div class="hero-actions" data-reveal>
+				<a class="btn btn-primary" href={l("/lien-he")}>Trao đổi dự án</a>
+				<a class="btn btn-ghost" href={l("/du-an")}>Xem dự án →</a>
 			</div>
 		</section>
 
@@ -378,28 +385,62 @@ const clientLogos = clientGroups.flatMap((g) => g.clients).filter((c): c is { na
 			padding: clamp(1.5rem, 4vw, 2.5rem) clamp(1.25rem, 5vw, 3rem) clamp(2rem, 6vw, 4.5rem);
 		}
 
+		/* Grid areas (2026-09-21, xem ghi chú ở markup): desktop 2 cột — "copy" và
+		   "actions" cùng cột trái (xếp dọc), "visual" chiếm cả cột phải, canh giữa
+		   theo chiều cao của HAI hàng đó nhờ area trải trên 2 dòng. Mobile 1 cột,
+		   3 hàng theo đúng thứ tự copy → visual → actions. */
 		.hero {
 			position: relative;
 			display: grid;
 			grid-template-columns: 1.3fr 1fr;
-			gap: clamp(2rem, 5vw, 3.5rem);
+			grid-template-areas: "copy visual" "actions visual";
+			gap: clamp(2rem, 5vw, 3.5rem) clamp(2rem, 5vw, 3.5rem);
 			align-items: center;
 			padding-block: clamp(1rem, 3vw, 2.25rem) clamp(2rem, 6vw, 4rem);
+			/* --n/--type-* chuyển lên đây từ .hero-copy (2026-09-21): .hero-actions
+			   giờ là grid item RIÊNG (không còn nằm trong .hero-copy — xem ghi chú ở
+			   markup), nên mốc "gõ xong tiêu đề" phải đặt ở ancestor CHUNG của cả
+			   .hero-copy lẫn .hero-actions để cả hai cùng kế thừa được, thay vì chỉ
+			   .hero-copy tự dùng cho riêng nó như trước. */
+			--type-base: 140ms;
+			--type-step: 102ms;
+			--type-blur: 1.35s;
+			--type-end: calc(var(--type-base) + var(--n) * var(--type-step));
 		}
 
-		/* Từ khi bỏ dải KPI, cột trái chỉ còn eyebrow → tiêu đề → lede → nút, nên
-		   `align-items: center` mặc định của grid đã canh đúng tâm khung ảnh với
-		   khối chữ — không cần dịch tay như lúc còn KPI nữa. */
+		.hero-copy {
+			grid-area: copy;
+		}
+
 		.hero-visual {
+			grid-area: visual;
 			position: relative;
+		}
+
+		.hero-actions {
+			grid-area: actions;
 		}
 
 		@media (max-width: 900px) {
 			.hero {
 				grid-template-columns: 1fr;
+				grid-template-areas: "copy" "visual" "actions";
+				row-gap: clamp(1.5rem, 5vw, 2rem);
 			}
+
+			/* Khung minh hoạ thu nhỏ lại trên mobile (2026-09-21, yêu cầu — trước đó
+			   rộng bằng hết cột, chiếm quá nhiều chỗ khi đứng dọc giữa tiêu đề và
+			   nút): `width` CỐ ĐỊNH (không phải max-width) — grid item có margin
+			   inline auto sẽ KHÔNG stretch nữa (auto margin tắt stretch theo spec),
+			   nên nếu chỉ đặt max-width mà để width mặc định auto, item co về đúng
+			   kích thước NỘI DUNG tối thiểu của .mk (gần như rỗng vì .mk chỉ có
+			   aspect-ratio, không có kích thước nội tại) → co gần về 0 (đã gặp, đo
+			   được 2px). Đặt width tường minh loại bỏ phụ thuộc đó; `.mk` bên trong
+			   tự co theo vì không có width riêng (aspect-ratio: 1/1.3 tính lại chiều
+			   cao). Dùng clamp để vẫn co giãn nhẹ theo màn hình thay vì một số cứng. */
 			.hero-visual {
-				order: -1;
+				width: clamp(160px, 55vw, 220px);
+				margin-inline: auto;
 			}
 		}
 
@@ -426,14 +467,6 @@ const clientLogos = clientGroups.flatMap((g) => g.clients).filter((c): c is { na
 		   Tiêu đề vẫn mang `data-reveal` để nhận `.is-visible`, nhưng tự nó không
 		   fade — chỉ các ký tự chạy. An toàn khi JS lỗi: không có `.js-reveal` thì
 		   mọi ký tự đứng nguyên, đọc được đầy đủ. */
-		.hero-copy {
-			--type-base: 140ms;
-			--type-step: 102ms;
-			--type-blur: 1.35s;
-			/* Mốc gõ xong ký tự cuối; lede/nút/KPI nối tiếp sau mốc này. */
-			--type-end: calc(var(--type-base) + var(--n) * var(--type-step));
-		}
-
 		.line {
 			display: block;
 		}
@@ -529,7 +562,10 @@ const clientLogos = clientGroups.flatMap((g) => g.clients).filter((c): c is { na
 			display: flex;
 			flex-wrap: wrap;
 			gap: 1rem;
-			margin-top: 2.5rem;
+			/* Không còn margin-top riêng (2026-09-21): .hero-actions giờ là grid item
+			   ngang hàng với .hero-copy/.hero-visual, khoảng cách với khối phía trên
+			   đã do `gap` của .hero lo — thêm margin-top ở đây sẽ cộng dồn thành hở
+			   đôi. */
 		}
 
 		.btn {
