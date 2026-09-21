@@ -597,13 +597,14 @@
 		}
 	}
 
+	/* Address bar/domain trên mobile (2026-09-21, yêu cầu): trước đây ẩn hẳn chữ
+	   domain + co pill địa chỉ còn 60px ở mọi viewport ≤560px — tức LUÔN ẩn trên
+	   điện thoại bất kể khung `.mk` to hay nhỏ, vì breakpoint này tính theo
+	   VIEWPORT chứ không theo kích thước khung thật. Từ khi `.hero-visual` trên
+	   mobile lớn hơn hẳn (calc(100vw - 40px), ~350px ở điện thoại thường — xem
+	   index.astro), khung đủ rộng để hiện domain như bản desktop, không cần ẩn
+	   nữa — bỏ hẳn quy tắc ẩn `.mk-url`/co `.mk-address`. */
 	@media (max-width: 560px) {
-		.mk-url {
-			display: none;
-		}
-		.mk-address {
-			max-width: 60px;
-		}
 		.mk-btn {
 			font-size: 0.5rem;
 		}

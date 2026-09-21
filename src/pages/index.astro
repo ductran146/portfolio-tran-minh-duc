@@ -428,18 +428,19 @@ const clientLogos = clientGroups.flatMap((g) => g.clients).filter((c): c is { na
 				row-gap: clamp(1.5rem, 5vw, 2rem);
 			}
 
-			/* Khung minh hoạ thu nhỏ lại trên mobile (2026-09-21, yêu cầu — trước đó
-			   rộng bằng hết cột, chiếm quá nhiều chỗ khi đứng dọc giữa tiêu đề và
-			   nút): `width` CỐ ĐỊNH (không phải max-width) — grid item có margin
-			   inline auto sẽ KHÔNG stretch nữa (auto margin tắt stretch theo spec),
-			   nên nếu chỉ đặt max-width mà để width mặc định auto, item co về đúng
-			   kích thước NỘI DUNG tối thiểu của .mk (gần như rỗng vì .mk chỉ có
-			   aspect-ratio, không có kích thước nội tại) → co gần về 0 (đã gặp, đo
-			   được 2px). Đặt width tường minh loại bỏ phụ thuộc đó; `.mk` bên trong
-			   tự co theo vì không có width riêng (aspect-ratio: 1/1.3 tính lại chiều
-			   cao). Dùng clamp để vẫn co giãn nhẹ theo màn hình thay vì một số cứng. */
+			/* Khung minh hoạ trên mobile (2026-09-21, đổi kích thước theo yêu cầu mới:
+			   "width = width thiết bị - 40px, padding mỗi bên 20px" — lớn hơn bản
+			   trước đó clamp(160px,55vw,220px)). `width` CỐ ĐỊNH (không phải
+			   max-width) — grid item có margin inline auto sẽ KHÔNG stretch nữa
+			   (auto margin tắt stretch theo spec), nên nếu chỉ đặt max-width mà để
+			   width mặc định auto, item co về đúng kích thước NỘI DUNG tối thiểu của
+			   .mk (gần như rỗng vì .mk chỉ có aspect-ratio, không có kích thước nội
+			   tại) → co gần về 0 (đã gặp, đo được 2px — xem lịch sử). Đặt width
+			   tường minh bằng đúng công thức `calc(100vw - 40px)` loại bỏ phụ thuộc
+			   đó; `.mk` bên trong tự co theo vì không có width riêng (aspect-ratio:
+			   1/1.3 tính lại chiều cao). */
 			.hero-visual {
-				width: clamp(160px, 55vw, 220px);
+				width: calc(100vw - 40px);
 				margin-inline: auto;
 			}
 		}
