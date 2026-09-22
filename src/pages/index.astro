@@ -3,6 +3,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import HeroMockBrowser from "../components/HeroMockBrowser.astro";
 import HeroMockResponsive from "../components/HeroMockResponsive.astro";
 import Icon from "../components/Icon.astro";
+import CtaBand from "../components/CtaBand.astro";
 import { getEntry } from "astro:content";
 import { localePath, resolveLocale, withBase } from "../i18n/ui";
 import { Image } from "astro:assets";
@@ -335,34 +336,12 @@ const clientLogos = clientGroups.flatMap((g) => g.clients).filter((c): c is { na
 			</ul>
 		</section>
 
-		<!-- 6. Kết: CTA cụ thể. "24 giờ" đã có ở trang Liên hệ, không phải cam kết mới. -->
-		<!-- Nội dung khối liên hệ đổi 2026-09-21 (người dùng cung cấp): tiêu đề + mô
-		     tả viết lại gọn hơn, giữ đúng tinh thần "chưa cần brief hoàn chỉnh" của
-		     bản 2026-09-20. Đã bỏ dòng phụ tuyển dụng (2026-09-21, yêu cầu) — trọng
-		     tâm chỉ còn khách doanh nghiệp. Bố cục: THẺ BO GÓC nền --bg-soft, đúng
-		     kiểu ".cta-band" ở trang Dự án/chi tiết dự án (yêu cầu 2026-09-21 "để
-		     trong frame như ở trang dự án", sau khi thử dải tràn hai mép không đúng
-		     ý) — xem CSS để biết các trị số copy nguyên từ du-an.astro. -->
-		<section class="cta-band" data-reveal>
-			<div class="cta-character" aria-hidden="true">
-				<img
-					src={withBase("/images/home-cta-character-wireframe-3d.png")}
-					alt=""
-					width="1086"
-					height="1448"
-					loading="lazy"
-					decoding="async"
-				/>
-			</div>
-			<div class="cta-copy">
-				<h2>Bạn có sản phẩm cần thiết kế hoặc cải tiến?</h2>
-				<p class="cta-desc">
-					Hãy chia sẻ bài toán và phạm vi bạn cần hỗ trợ. Chưa có brief hoàn chỉnh cũng không sao, chúng ta có
-					thể bắt đầu từ những thông tin hiện có.
-				</p>
-			</div>
-			<a class="btn btn-primary btn-lg" href={l("/lien-he")}>Liên hệ<span class="arrow">→</span></a>
-		</section>
+		<!-- 6. Kết: CTA cụ thể. "24 giờ" đã có ở trang Liên hệ, không phải cam kết mới.
+		     Component dùng chung CtaBand.astro (2026-09-22, tách ra để trang Dự án/
+		     chi tiết dự án dùng lại nguyên bản có minh hoạ nhân vật) - nội dung mặc
+		     định của component đã đúng bản đã duyệt 2026-09-21 nên không cần truyền
+		     prop nào ngoài `large` (khoảng cách hở hơn, xem CtaBand.astro). -->
+		<CtaBand large />
 	</main>
 
 	<script>
@@ -618,11 +597,6 @@ const clientLogos = clientGroups.flatMap((g) => g.clients).filter((c): c is { na
 			transform: translateX(12px);
 		}
 
-		.btn-lg {
-			padding: 1rem 2rem;
-			font-size: 1.05rem;
-		}
-
 		.featured {
 			display: grid;
 			grid-template-columns: 1fr 1.15fr;
@@ -711,84 +685,6 @@ const clientLogos = clientGroups.flatMap((g) => g.clients).filter((c): c is { na
 
 		.clients {
 			padding-block: clamp(2rem, 5vw, 3rem);
-		}
-
-		/* Thẻ bo góc (2026-09-21, đổi lại từ dải tràn hai mép — yêu cầu "để trong
-		   frame như ở trang dự án"): trị số copy nguyên từ `.cta-band` ở
-		   du-an.astro/du-an/[slug].astro để đồng bộ giữa các trang — KHÔNG có
-		   position/isolation/z-index/::before riêng (khác bản thử ban đầu, xem
-		   ghi chú dài ở nhóm `.featured, .clients` phía dưới để hiểu lỗi đã gặp và
-		   vì sao bỏ hẳn cơ chế đó ở đây): thẻ này không cần "rèm che" vì dải sticky
-		   đã nhả ghim từ trước khi cuộn tới đây, và việc thêm rèm che từng khiến
-		   nền xám bị chính lớp che đó vẽ đè lên thành trắng — lỗi thật gây ra đúng
-		   hiện tượng "không thấy nền xám" mà người dùng chụp ảnh báo hai lần. */
-		.cta-band {
-			--cta-gap: clamp(5rem, 9vw, 7rem);
-			margin-top: var(--cta-gap);
-			padding: 2rem clamp(1.5rem, 5vw, 3rem) 0;
-			border-radius: var(--radius-lg);
-			background: var(--bg-soft);
-			display: grid;
-			grid-template-columns: minmax(240px, 280px) minmax(0, 1fr) auto;
-			align-items: center;
-			gap: clamp(1rem, 2.5vw, 2rem);
-		}
-
-		.cta-copy {
-			max-width: 58ch;
-		}
-
-		.cta-band h2 {
-			font-size: clamp(1.5rem, 3vw, 2rem);
-			line-height: 1.2;
-			max-width: 24ch;
-			margin: 0;
-		}
-
-		.cta-desc {
-			margin: 0.9rem 0 0;
-			color: var(--ink-secondary);
-			font-size: 1rem;
-			line-height: 1.6;
-		}
-
-		.cta-character {
-			position: relative;
-			height: 260px;
-			align-self: end;
-		}
-
-		.cta-character img {
-			display: block;
-			position: absolute;
-			bottom: 0;
-			width: 100%;
-			height: auto;
-		}
-
-		.cta-band > .btn {
-			white-space: nowrap;
-		}
-
-		@media (max-width: 950px) {
-			.cta-band {
-				--cta-gap: clamp(2.5rem, 6vw, 4rem);
-				grid-template-columns: minmax(0, 1fr) auto;
-				padding-top: clamp(2.5rem, 7vw, 4rem);
-				padding-bottom: clamp(2.5rem, 7vw, 4rem);
-			}
-			.cta-character {
-				display: none;
-			}
-		}
-
-		@media (max-width: 600px) {
-			.cta-band {
-				grid-template-columns: 1fr;
-			}
-			.cta-band > .btn {
-				justify-self: start;
-			}
 		}
 
 		@media (max-width: 780px) {

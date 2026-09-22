@@ -26,7 +26,6 @@ export const ui = {
 		"lang.en": "English",
 		"theme.toDark": "Chuyển sang giao diện tối",
 		"theme.toLight": "Chuyển sang giao diện sáng",
-		"footer.text": "Case study đầy đủ tại",
 		"notice.inProgress": "",
 	},
 	en: {
@@ -40,7 +39,6 @@ export const ui = {
 		"lang.en": "English",
 		"theme.toDark": "Switch to dark theme",
 		"theme.toLight": "Switch to light theme",
-		"footer.text": "Full case studies on",
 		"notice.inProgress":
 			"The English version is in progress - page content is shown in Vietnamese for now.",
 	},

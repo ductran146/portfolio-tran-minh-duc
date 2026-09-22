@@ -1,0 +1,189 @@
+---
+// Khối CTA cuối trang - tách thành component dùng chung (2026-09-22, theo yêu
+// cầu "dùng form box này ở cuối trang chủ làm component, áp dụng cho các
+// trang khác sử dụng form tương tự"). Trước đó mỗi trang (trang chủ, Dự án,
+// chi tiết dự án) tự lặp lại y hệt markup + CSS trong <style> scope riêng của
+// mình (ghi chú "đồng bộ nội dung" ở DESIGN.md) - giờ chỉ còn một nguồn, ba
+// trang cùng dùng lại minh hoạ nhân vật của bản trang chủ thay vì bản đơn
+// giản không minh hoạ trước đây ở trang Dự án/chi tiết dự án.
+import { localePath, resolveLocale, withBase } from "../i18n/ui";
+
+interface Props {
+	heading?: string;
+	description?: string;
+	buttonLabel?: string;
+	/** Href nút CTA - mặc định trỏ tới trang Liên hệ đúng locale hiện tại. */
+	href?: string;
+	/** Khoảng cách với khối phía trên lớn hơn mức mặc định - trang chủ cần hở
+	 * hơn (sau hàng logo khách hàng) so với trang Dự án/chi tiết (ngay sau
+	 * danh sách/nút, dùng mặc định). Cả hai đều thu về cùng một mức nhỏ hơn
+	 * dưới 950px (xem CSS `.cta-band` trong @media). */
+	large?: boolean;
+}
+
+const {
+	heading = "Bạn có sản phẩm cần thiết kế hoặc cải tiến?",
+	description = "Hãy chia sẻ bài toán và phạm vi bạn cần hỗ trợ. Chưa có brief hoàn chỉnh cũng không sao, chúng ta có thể bắt đầu từ những thông tin hiện có.",
+	buttonLabel = "Liên hệ",
+	href = localePath(resolveLocale(Astro.currentLocale), "/lien-he"),
+	large = false,
+} = Astro.props;
+---
+
+<section class:list={["cta-band", { "cta-band-lg-gap": large }]} data-reveal>
+	<div class="cta-character" aria-hidden="true">
+		<img
+			src={withBase("/images/home-cta-character-wireframe-3d.png")}
+			alt=""
+			width="1086"
+			height="1448"
+			loading="lazy"
+			decoding="async"
+		/>
+	</div>
+	<div class="cta-copy">
+		<h2>{heading}</h2>
+		<p class="cta-desc">{description}</p>
+	</div>
+	<a class="btn btn-primary btn-lg" href={href}>{buttonLabel}<span class="arrow">→</span></a>
+</section>
+
+<style>
+	/* Thẻ bo góc nền --bg-soft (2026-09-21, "để trong frame như ở trang dự
+	   án"): KHÔNG có position/isolation/z-index/::before riêng - không cần
+	   "rèm che" vì dải sticky (nếu trang có) đã nhả ghim từ trước khi cuộn tới
+	   đây; thêm rèm che từng khiến chính nền xám bị lớp che vẽ đè lên thành
+	   trắng (lỗi thật đã gặp ở trang chủ, xem lịch sử trong DESIGN.md). */
+	.cta-band {
+		--cta-gap: clamp(2.5rem, 6vw, 4rem);
+		margin-top: var(--cta-gap);
+		padding: 2rem clamp(1.5rem, 5vw, 3rem) 0;
+		border-radius: var(--radius-lg);
+		background: var(--bg-soft);
+		display: grid;
+		grid-template-columns: 224px minmax(0, 1fr) auto;
+		align-items: center;
+		gap: clamp(1rem, 2.5vw, 2rem);
+	}
+
+	/* Prop `large` (trang chủ): hở hơn hẳn mức mặc định trên desktop - thu về
+	   cùng mức nhỏ trong @media (max-width: 950px) bên dưới (rule đó nằm SAU
+	   nên thắng ở cùng độ đặc hiệu khi điều kiện khớp). */
+	.cta-band-lg-gap {
+		--cta-gap: clamp(5rem, 9vw, 7rem);
+	}
+
+	.cta-copy {
+		max-width: 58ch;
+	}
+
+	.cta-band h2 {
+		font-size: clamp(1.5rem, 3vw, 2rem);
+		line-height: 1.2;
+		max-width: 24ch;
+		margin: 0;
+	}
+
+	.cta-desc {
+		margin: 0.9rem 0 0;
+		color: var(--ink-secondary);
+		font-size: 1rem;
+		line-height: 1.6;
+	}
+
+	/* Nhân vật minh hoạ trồi lên khỏi mép trên hộp - HIỆU ỨNG CÓ CHỦ ĐÍCH
+	   (2026-09-22, "giảm chiều cao box để 1 phần nhân vật vượt ra ngoài box"):
+	   khung `.cta-character` cố tình thấp hơn chiều cao thật của ảnh, chân
+	   nhân vật vẫn chạm đúng cạnh dưới hộp (`align-self: end` + ảnh
+	   `position:absolute; bottom:0`), phần đầu/tóc tự nhiên trồi lên trên.
+	   Bề rộng cột đặt CỐ ĐỊNH `224px` (không phải `minmax`/`vw` co giãn) để độ
+	   trồi lên là một số px không đổi ở mọi kích thước màn hình (ảnh tỉ lệ
+	   1086:1448 = 3:4 đúng, nên 224px → cao thật 298.7px):
+	     298.7 (cao thật) − 230 (khung) = 68.7px trồi lên khỏi khung
+	     68.7 − 32 (padding-top .cta-band) ≈ 37px trồi lên khỏi MÉP HỘP
+	   37px này LUÔN nhỏ hơn `--cta-gap` (khoảng cách với nội dung phía trên) ở
+	   mọi trang - mức nhỏ nhất là 2.5rem = 40px (trang Dự án/chi tiết, xem
+	   `.cta-band`), mức `large` (trang chủ) còn rộng hơn nữa - nên phần trồi
+	   lên không bao giờ chạm vào nội dung phía trên, khác với lỗi trước đó
+	   (bản đầu dùng bề rộng co giãn `minmax(240px,280px)` khiến độ trồi lên
+	   cũng co giãn theo, có lúc vượt hẳn cả `--cta-gap` và đè lên dải kẻ "Dự
+	   án tiếp theo" - xem lịch sử Git commit trước nếu cần đối chiếu). */
+	.cta-character {
+		position: relative;
+		height: 230px;
+		align-self: end;
+	}
+
+	.cta-character img {
+		display: block;
+		position: absolute;
+		bottom: 0;
+		width: 100%;
+		height: auto;
+	}
+
+	.cta-band > .btn {
+		white-space: nowrap;
+	}
+
+	.btn {
+		display: inline-flex;
+		align-items: center;
+		text-decoration: none;
+		font-weight: 600;
+		font-size: 1rem;
+		padding: 0.85rem 1.6rem;
+		border-radius: var(--radius-md);
+		/* Chỉ đổi màu khi hover (2026-09-20): không dịch chuyển, không đổi bóng. */
+		transition: background 0.35s ease, color 0.35s ease;
+	}
+
+	.btn-primary {
+		background: var(--inverse-bg);
+		color: var(--inverse-ink);
+		box-shadow: var(--shadow-sm);
+	}
+
+	.btn-primary:hover {
+		background: var(--accent-strong);
+	}
+
+	.btn-lg {
+		padding: 1rem 2rem;
+		font-size: 1.05rem;
+	}
+
+	/* Mũi tên trượt sang phải 12px khi hover (2026-09-22) - chỉ mũi tên di
+	   chuyển, nút giữ nguyên vị trí; gap mặc định với label do margin-left lo,
+	   không dựa vào khoảng trắng trong text. */
+	.arrow {
+		display: inline-block;
+		margin-left: 0.5rem;
+		transition: transform 0.3s ease;
+	}
+
+	.btn:hover .arrow {
+		transform: translateX(12px);
+	}
+
+	@media (max-width: 950px) {
+		.cta-band {
+			--cta-gap: clamp(2.5rem, 6vw, 4rem);
+			grid-template-columns: minmax(0, 1fr) auto;
+			padding-top: clamp(2.5rem, 7vw, 4rem);
+			padding-bottom: clamp(2.5rem, 7vw, 4rem);
+		}
+		.cta-character {
+			display: none;
+		}
+	}
+
+	@media (max-width: 600px) {
+		.cta-band {
+			grid-template-columns: 1fr;
+		}
+		.cta-band > .btn {
+			justify-self: start;
+		}
+	}
+</style>

@@ -372,10 +372,7 @@ const showLangNotice = locale !== "vi" && !translated;
 		<slot />
 
 		<footer class="site-footer">
-			<p>
-				© {new Date().getFullYear()} Trần Minh Đức. {t(locale, "footer.text")}{" "}
-				<a href="https://behance.net/tranducdesign" target="_blank" rel="noopener noreferrer">Behance</a>.
-			</p>
+			<p>© {new Date().getFullYear()} Trần Minh Đức.</p>
 		</footer>
 
 		<!-- Bottom nav cho mobile (2026-09-20, theo yêu cầu: ≤720px nav ngang trong
@@ -578,10 +575,6 @@ const showLangNotice = locale !== "vi" && !translated;
 				padding: 2rem clamp(1.25rem, 5vw, 3rem) 3rem;
 				color: var(--ink-faint);
 				font-size: 0.85rem;
-			}
-
-			.site-footer a {
-				color: inherit;
 			}
 
 			/* ---- Bottom nav (mobile): tab bar kiểu app, chỉ hiện ≤720px khi nav ngang
