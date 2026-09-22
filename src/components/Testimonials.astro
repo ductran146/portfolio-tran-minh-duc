@@ -153,12 +153,21 @@ const { heading = "Đánh giá từ khách hàng", id = "testimonials" } = Astro
     color: var(--ink-faint);
   }
 
-  /* Dấu ngoặc kép khổ lớn, rất mờ, sau góc trên-trái khối chữ (mẫu). Cal Sans
-     có glyph này nên vẫn trong hệ font. */
+  /* Dấu ngoặc kép khổ lớn, rất mờ, canh giữa theo trục ngang của khối chữ
+     (2026-09-22, đổi từ "sau góc trên-trái" - bản cũ lệch hẳn khỏi quote khi
+     component đặt trong cột rộng 1160px của trang Kinh nghiệm vì công thức
+     `50% - 31ch` giả định container hẹp cỡ đúng khối chữ 62ch). `left: 50%` +
+     `translateX(-50%)` luôn đúng tâm bất kể bề rộng container - box `.tm-quote`
+     (max-width 62ch, margin auto) cũng tự canh giữa nên tâm hai bên trùng
+     nhau. Cal Sans có glyph này nên vẫn trong hệ font. */
   .tm-mark {
     position: absolute;
-    left: max(0px, calc(50% - 31ch - 1.25rem));
-    top: -0.35rem;
+    left: 50%;
+    /* Dịch thêm 20px lên trên (2026-09-22, yêu cầu) so với mốc gốc -0.35rem -
+       glyph "”" ở cỡ 8rem có phần thân nằm khá thấp trong khung chữ nên trước
+       đó ăn vào đúng dòng đầu của quote khi text dài 2+ dòng. */
+    top: calc(-0.35rem - 20px);
+    transform: translateX(-50%);
     z-index: 0;
     font-family: var(--display);
     font-size: 8rem;
@@ -245,7 +254,6 @@ const { heading = "Đánh giá từ khách hàng", id = "testimonials" } = Astro
     }
     .tm-mark {
       font-size: 6rem;
-      left: 0;
     }
   }
 </style>

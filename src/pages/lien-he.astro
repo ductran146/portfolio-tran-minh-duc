@@ -1,47 +1,91 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { withBase } from "../i18n/ui";
 ---
 
 <BaseLayout title="Liên hệ - Trần Minh Đức" description="Liên hệ Trần Minh Đức để trao đổi dự án thiết kế sản phẩm.">
 	<main>
-		<section class="hero">
-			<p class="section-label" data-reveal>Liên hệ</p>
-			<h1 data-reveal>Cùng trao đổi về sản phẩm bạn đang muốn xây dựng hoặc cải thiện.</h1>
-			<p class="lede" data-reveal>
-				Hãy chia sẻ ngắn gọn bài toán và điều bạn cần hỗ trợ.
-			</p>
-		</section>
+		<div class="contact-layout">
+			<div class="contact-content">
+				<section class="hero">
+					<p class="section-label" data-reveal>Liên hệ</p>
+					<h1 data-reveal>Cùng trao đổi về dự án của bạn.</h1>
+				</section>
 
-		<section class="contact-grid">
-			<a class="contact-card contact-card-primary" href="mailto:ducdesign.tm@gmail.com" data-reveal>
-				<span class="label">Email</span>
-				<span class="value">ducdesign.tm@gmail.com</span>
-				<span class="arrow">→</span>
-			</a>
-			<a class="contact-card" href="tel:+84902730488" data-reveal>
-				<span class="label">Điện thoại</span>
-				<span class="value">090 27 304 88</span>
-			</a>
-			<a class="contact-card" href="https://behance.net/tranducdesign" target="_blank" rel="noopener noreferrer" data-reveal>
-				<span class="label">Behance</span>
-				<span class="value">behance.net/tranducdesign</span>
-			</a>
-			<div class="contact-card" data-reveal>
-				<span class="label">Địa điểm</span>
-				<span class="value">Hà Nội, Việt Nam</span>
+				<section class="contact-grid">
+					<a class="contact-card contact-card-primary" href="mailto:ducdesign.tm@gmail.com" data-reveal>
+						<span class="label">Email</span>
+						<span class="value">ducdesign.tm@gmail.com</span>
+						<span class="arrow">→</span>
+					</a>
+					<a class="contact-card" href="tel:+84902730488" data-reveal>
+						<span class="label">Điện thoại</span>
+						<span class="value">090 27 304 88</span>
+					</a>
+					<a class="contact-card" href="https://behance.net/tranducdesign" target="_blank" rel="noopener noreferrer" data-reveal>
+						<span class="label">Behance</span>
+						<span class="value">behance.net/tranducdesign</span>
+					</a>
+					<div class="contact-card" data-reveal>
+						<span class="label">Địa điểm</span>
+						<span class="value">Hà Nội, Việt Nam</span>
+					</div>
+				</section>
 			</div>
-		</section>
+			<figure class="character-panel" data-reveal>
+				<img
+					src={withBase("/images/contact-character-3d-seated-transparent-v3.png")}
+					alt="Nhân vật 3D của Trần Minh Đức ngồi làm việc với máy tính trên đùi"
+					width="1312"
+					height="1199"
+					decoding="async"
+				/>
+			</figure>
+		</div>
 	</main>
 
 	<style>
+		/* Trang chỉ có thông tin liên hệ - không cần cuộn để thấy hết (yêu cầu
+		   2026-09-22 "nhìn thấy trong 1 screen"). main chiếm đúng phần còn lại
+		   của viewport dưới header rồi canh giữa nội dung theo chiều dọc, thay
+		   vì đổ padding lớn như các trang khác; footer trôi ngay dưới fold. */
 		main {
-			max-width: 900px;
+			max-width: 1160px;
 			margin-inline: auto;
-			padding: clamp(1.5rem, 4vw, 2.5rem) clamp(1.25rem, 5vw, 3rem) clamp(4rem, 8vw, 6rem);
+			min-height: calc(100dvh - var(--header-h));
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			padding: clamp(1.5rem, 4vw, 3rem) clamp(1.25rem, 5vw, 3rem);
+		}
+
+		.contact-layout {
+			display: grid;
+			grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+			gap: clamp(1.5rem, 3.5vw, 3rem);
+			align-items: center;
+		}
+
+		.contact-content {
+			min-width: 0;
+		}
+
+		.character-panel {
+			margin: 0;
+			aspect-ratio: 1312 / 1199;
+			max-height: min(620px, calc(100dvh - var(--header-h) - 5rem));
+			overflow: hidden;
+			background: transparent;
+		}
+
+		.character-panel img {
+			display: block;
+			width: 100%;
+			height: 100%;
+			object-fit: contain;
 		}
 
 		.hero {
-			padding-block: clamp(2rem, 6vw, 3.5rem);
 			max-width: 60ch;
 		}
 
@@ -51,32 +95,26 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 			color: var(--ink-faint);
 			text-transform: uppercase;
 			letter-spacing: 0.08em;
-			margin: 0 0 0.75rem;
+			margin: 0 0 0.6rem;
 		}
 
 		h1 {
-			font-size: clamp(2rem, 4.5vw, 3rem);
+			font-size: clamp(1.75rem, 4vw, 2.5rem);
 			line-height: 1.15;
-		}
-
-		.lede {
-			margin-top: 1.25rem;
-			font-size: 1.1rem;
-			color: var(--ink-secondary);
 		}
 
 		.contact-grid {
 			display: grid;
 			grid-template-columns: repeat(2, 1fr);
-			gap: 1.25rem;
-			margin-top: 2rem;
+			gap: 1rem;
+			margin-top: clamp(1.5rem, 4vw, 2rem);
 		}
 
 		.contact-card {
 			display: flex;
 			flex-direction: column;
 			gap: 0.4rem;
-			padding: 1.75rem;
+			padding: 1.4rem 1.6rem;
 			border-radius: var(--radius-lg);
 			background: var(--surface);
 			box-shadow: var(--shadow-sm);
@@ -95,7 +133,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 			grid-column: span 2;
 			background: var(--inverse-bg);
 			color: var(--inverse-ink);
-			padding: 2.25rem;
+			padding: 1.75rem 2rem;
 		}
 
 		.contact-card-primary .label {
@@ -103,7 +141,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 		}
 
 		.contact-card-primary .value {
-			font-size: 1.4rem;
+			font-size: 1.25rem;
 		}
 
 		.label {
@@ -122,7 +160,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
 		.arrow {
 			position: absolute;
-			top: 2rem;
+			top: 1.75rem;
 			right: 2rem;
 			font-size: 1.3rem;
 			transition: transform 0.3s ease;
@@ -131,6 +169,23 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 		/* Mũi tên trượt sang phải 12px khi hover (2026-09-22). */
 		a.contact-card:hover .arrow {
 			transform: translateX(12px);
+		}
+
+		@media (max-width: 1050px) {
+			.contact-layout {
+				grid-template-columns: 1fr;
+			}
+			.character-panel {
+				width: min(100%, 560px);
+				height: clamp(240px, 52vw, 340px);
+				max-height: none;
+				aspect-ratio: auto;
+				margin-inline: auto;
+			}
+			.character-panel img {
+				object-fit: cover;
+				object-position: 70% top;
+			}
 		}
 
 		@media (max-width: 640px) {

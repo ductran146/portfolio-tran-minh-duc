@@ -91,11 +91,15 @@ const showLangNotice = locale !== "vi" && !translated;
 						</a>
 					))
 				}
-				<!-- Một vạch active duy nhất, JS trượt nó tới mục đang mở (Smart Animate:
-				     lớp giống nhau đổi vị trí thì di chuyển, không tắt/bật). Header
-				     persist nên vạch trượt liền qua cả lúc chuyển trang. -->
-				<span class="nav-indicator" aria-hidden="true"></span>
 			</nav>
+			<!-- Vạch active: con trực tiếp của header (không phải .site-nav) để
+			     `bottom: 0` sát mép dưới header thật (2026-09-22, yêu cầu "sát mép
+			     dưới header") thay vì mép dưới của riêng khối nav (vốn thấp hơn
+			     header nhiều vì .site-nav canh giữa dọc theo brand). JS trượt nó tới
+			     mục đang mở (Smart Animate: lớp giống nhau đổi vị trí thì di chuyển,
+			     không tắt/bật). Header persist nên vạch trượt liền qua cả lúc chuyển
+			     trang. -->
+			<span class="nav-indicator" aria-hidden="true"></span>
 			<!-- Nút "Liên hệ" cũ bỏ (2026-09-18: trùng với mục menu Liên hệ). Thay bằng
 			     hai điều khiển: đổi ngôn ngữ VI | EN (link thật, đổi cùng trang) và
 			     đổi theme sáng/tối (button, lưu localStorage, mặc định sáng). Header
@@ -186,8 +190,9 @@ const showLangNotice = locale !== "vi" && !translated;
 					const bottom = document.querySelector<HTMLElement>(".bottom-nav");
 					if (bottom) markActive(bottom);
 					const nav = document.querySelector<HTMLElement>(".site-nav");
-					if (!nav) return;
-					positionNavIndicator(nav, markActive(nav));
+					const header = document.querySelector<HTMLElement>(".site-header");
+					if (!nav || !header) return;
+					positionNavIndicator(header, markActive(nav));
 				}
 
 				// Vạch active: chỉ transform (translateX + scaleX trên bề rộng gốc 100px),
@@ -200,17 +205,17 @@ const showLangNotice = locale !== "vi" && !translated;
 				// sống không ai thấy, và ảnh mới sẽ bị bắt giữa chừng → vạch nhảy nốt
 				// đoạn còn lại khi VT kết thúc. Chỉ trình duyệt không có VT mới bật
 				// transition CSS (sau lần đặt đầu, để không trượt từ góc trái khi tải).
-				function positionNavIndicator(nav: HTMLElement, active: HTMLAnchorElement | null) {
-					const bar = nav.querySelector<HTMLElement>(".nav-indicator");
+				function positionNavIndicator(header: HTMLElement, active: HTMLAnchorElement | null) {
+					const bar = header.querySelector<HTMLElement>(".nav-indicator");
 					if (!bar) return;
 					if (!active) {
 						bar.style.opacity = "0";
 						return;
 					}
-					const navRect = nav.getBoundingClientRect();
+					const headerRect = header.getBoundingClientRect();
 					const r = active.getBoundingClientRect();
 					bar.style.opacity = "1";
-					bar.style.transform = `translateX(${r.left - navRect.left}px) scaleX(${r.width / 100})`;
+					bar.style.transform = `translateX(${r.left - headerRect.left}px) scaleX(${r.width / 100})`;
 					if (!("startViewTransition" in document) && !bar.classList.contains("is-ready")) {
 						requestAnimationFrame(() => requestAnimationFrame(() => bar.classList.add("is-ready")));
 					}
@@ -448,7 +453,8 @@ const showLangNotice = locale !== "vi" && !translated;
 			}
 
 			.site-nav a[aria-current="page"] {
-				color: var(--ink);
+				color: var(--accent);
+				font-weight: 700;
 			}
 
 			/* Vạch active dùng chung, trượt giữa các mục. Bề rộng gốc 100px, JS đặt
@@ -590,6 +596,13 @@ const showLangNotice = locale !== "vi" && !translated;
 
 			@media (max-width: 720px) {
 				.site-nav {
+					display: none;
+				}
+
+				/* Vạch active giờ là con trực tiếp của header (không còn nằm trong
+				   .site-nav) nên phải tự ẩn cùng nav ở breakpoint này, thay vì tự
+				   động biến mất theo display:none của nav như trước. */
+				.nav-indicator {
 					display: none;
 				}
 
