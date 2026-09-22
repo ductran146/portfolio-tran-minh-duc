@@ -1,0 +1,50 @@
+---
+// Huy hiệu "Download on the App Store" - chỉ dùng khi dự án có app thật đã
+// phát hành (project.appStoreUrl). Vẽ lại hình dáng huy hiệu chính thức của
+// Apple (nền đen, logo táo, hai dòng chữ) bằng SVG tự vẽ - cùng tinh thần
+// "nominative use" với brand mark công cụ ở mục Iconography trong DESIGN.md:
+// chỉ dùng để chỉ đúng nơi tải app thật, không dùng để gợi ý hợp tác/chứng
+// nhận với Apple. Đây là ngoại lệ có chủ đích của "The Single Accent Rule" -
+// huy hiệu giữ nguyên màu đen/trắng chính thức vì đây là nhận diện đã chuẩn
+// hoá, không phải chi tiết trang trí tự do (2026-09-22).
+interface Props {
+	href: string;
+	label?: string;
+}
+
+const { href, label = "Tải trên App Store" } = Astro.props;
+---
+
+<a class="app-store-badge" href={href} target="_blank" rel="noopener noreferrer" aria-label={label} data-reveal>
+	<svg viewBox="0 0 120 40" width="120" height="40" role="img" aria-hidden="true">
+		<rect x="0.5" y="0.5" width="119" height="39" rx="7.5" fill="#000" stroke="rgba(255,255,255,.28)" />
+		<path
+			fill="#fff"
+			d="M25.6 20.94c-.03-2.75 2.25-4.07 2.35-4.13-1.28-1.87-3.28-2.13-3.99-2.16-1.7-.17-3.33 1-4.2 1-.87 0-2.2-.98-3.63-.95-1.86.03-3.58 1.08-4.54 2.74-1.94 3.36-.49 8.34 1.39 11.07.92 1.34 2.02 2.83 3.46 2.78 1.4-.06 1.92-.9 3.6-.9 1.68 0 2.15.9 3.62.87 1.5-.02 2.44-1.35 3.35-2.7 1.08-1.55 1.52-3.06 1.54-3.13-.03-.02-2.95-1.13-2.98-4.49z"
+		></path>
+		<path
+			fill="#fff"
+			d="M22.86 12.87c.76-.92 1.27-2.19 1.13-3.46-1.1.05-2.43.73-3.21 1.65-.7.81-1.32 2.12-1.15 3.36 1.22.09 2.47-.62 3.23-1.55z"
+		></path>
+		<text x="38" y="17" fill="#fff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="7.4" letter-spacing=".02em">Download on the</text>
+		<text x="37.5" y="30.5" fill="#fff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="15.5" font-weight="600">App Store</text>
+	</svg>
+</a>
+
+<style>
+	.app-store-badge {
+		display: inline-flex;
+		border-radius: 8px;
+		/* Nút chuẩn hoá của Apple: chỉ nổi nhẹ khi hover, không đổi hình dạng -
+		   cùng tinh thần "button chỉ đổi trạng thái nhẹ" với .btn trong hệ thống. */
+		transition: opacity 0.35s ease;
+	}
+
+	.app-store-badge:hover {
+		opacity: 0.82;
+	}
+
+	.app-store-badge svg {
+		display: block;
+	}
+</style>

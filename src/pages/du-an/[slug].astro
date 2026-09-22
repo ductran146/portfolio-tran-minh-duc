@@ -3,6 +3,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getCollection, type CollectionEntry } from "astro:content";
 import { Image } from "astro:assets";
 import { localePath, resolveLocale } from "../../i18n/ui";
+import AppStoreBadge from "../../components/AppStoreBadge.astro";
 
 export async function getStaticPaths() {
 	const allProjects = (await getCollection("projects")).sort(
@@ -67,7 +68,11 @@ const metaItems = [
 					</dl>
 				)}
 
-				<a class="btn btn-ghost" href={l("/lien-he")} data-reveal>Trao đổi dự án tương tự</a>
+				{project.appStoreUrl && (
+					<div class="hero-actions" data-reveal>
+						<AppStoreBadge href={project.appStoreUrl} label={`Tải ${project.title} trên App Store`} />
+					</div>
+				)}
 			</div>
 
 			<div class="hero-plate-wrap" data-reveal>
@@ -179,7 +184,7 @@ const metaItems = [
 					thể bắt đầu từ những thông tin hiện có.
 				</p>
 			</div>
-			<a class="btn btn-primary btn-lg" href={l("/lien-he")}>Liên hệ →</a>
+			<a class="btn btn-primary btn-lg" href={l("/lien-he")}>Liên hệ<span class="arrow">→</span></a>
 		</section>
 	</main>
 
@@ -281,6 +286,13 @@ const metaItems = [
 			font-weight: 500;
 		}
 
+		.hero-actions {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			gap: 1rem;
+		}
+
 		.btn {
 			display: inline-flex;
 			align-items: center;
@@ -299,16 +311,6 @@ const metaItems = [
 			text-decoration: none;
 		}
 
-		.btn-ghost {
-			background: var(--bg-soft);
-			color: var(--ink);
-			padding: 0.85rem 1.6rem;
-		}
-
-		.btn-ghost:hover {
-			background: var(--accent-tint);
-		}
-
 		.btn-primary {
 			background: var(--inverse-bg);
 			color: var(--inverse-ink);
@@ -317,6 +319,18 @@ const metaItems = [
 
 		.btn-primary:hover {
 			background: var(--accent-strong);
+		}
+
+		/* Mũi tên trượt sang phải 12px khi hover (2026-09-22) - chỉ mũi tên di
+		   chuyển, nút giữ nguyên vị trí. */
+		.arrow {
+			display: inline-block;
+			margin-left: 0.5rem;
+			transition: transform 0.3s ease;
+		}
+
+		.btn:hover .arrow {
+			transform: translateX(12px);
 		}
 
 		.btn-lg {

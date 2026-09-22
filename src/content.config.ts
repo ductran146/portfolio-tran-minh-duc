@@ -37,6 +37,8 @@ const projects = defineCollection({
 			tags: z.array(z.string()).default([]),
 			role: z.string().optional(),
 			tools: z.array(z.string()).default([]),
+			// Link tải app thật trên store - chỉ hiện nút khi có giá trị.
+			appStoreUrl: z.string().url().optional(),
 			flows: z.array(z.string()).default([]),
 			// Dòng "hội tụ" dưới sơ đồ luồng - chỉ hiện khi có flows.
 			flowHub: z.string().optional(),

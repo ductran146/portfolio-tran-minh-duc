@@ -125,6 +125,12 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 			top: 2rem;
 			right: 2rem;
 			font-size: 1.3rem;
+			transition: transform 0.3s ease;
+		}
+
+		/* Mũi tên trượt sang phải 12px khi hover (2026-09-22). */
+		a.contact-card:hover .arrow {
+			transform: translateX(12px);
 		}
 
 		@media (max-width: 640px) {

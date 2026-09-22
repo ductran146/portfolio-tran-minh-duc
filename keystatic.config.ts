@@ -76,6 +76,9 @@ export default config({
 					fields.text({ label: 'Công cụ' }),
 					{ label: 'Công cụ (để trống nếu không cần hiện)', itemLabel: (props) => props.value || '(chưa đặt tên)' },
 				),
+				appStoreUrl: fields.url({
+					label: 'Link App Store (để trống nếu app chưa phát hành)',
+				}),
 				flows: fields.array(
 					fields.text({ label: 'Luồng nghiệp vụ' }),
 					{

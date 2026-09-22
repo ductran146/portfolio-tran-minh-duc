@@ -2,6 +2,9 @@
 	"folders": [
 		{
 			"path": "."
+		},
+		{
+			"path": "../../../Users/tranduc/Library/Mobile Documents/com~apple~CloudDocs/Work/portfolio"
 		}
 	],
 	"settings": {}

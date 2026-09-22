@@ -28,7 +28,7 @@ const others = allProjects
 	<main>
 		<header class="page-head">
 			<p class="section-label" data-reveal>Dự án</p>
-			<h1 data-reveal>Sản phẩm doanh nghiệp, được thiết kế lại từ nghiệp vụ phức tạp.</h1>
+			<h1 data-reveal>Dự án gần đây</h1>
 		</header>
 
 		<article class="featured-project" data-reveal>
@@ -119,7 +119,7 @@ const others = allProjects
 					thể bắt đầu từ những thông tin hiện có.
 				</p>
 			</div>
-			<a class="btn btn-primary btn-lg" href={l("/lien-he")}>Liên hệ →</a>
+			<a class="btn btn-primary btn-lg" href={l("/lien-he")}>Liên hệ<span class="arrow">→</span></a>
 		</section>
 	</main>
 
@@ -411,6 +411,18 @@ const others = allProjects
 
 		.btn-primary:hover {
 			background: var(--accent-strong);
+		}
+
+		/* Mũi tên trượt sang phải 12px khi hover (2026-09-22) - chỉ mũi tên di
+		   chuyển, nút giữ nguyên vị trí. */
+		.arrow {
+			display: inline-block;
+			margin-left: 0.5rem;
+			transition: transform 0.3s ease;
+		}
+
+		.btn:hover .arrow {
+			transform: translateX(12px);
 		}
 
 		.btn-lg {

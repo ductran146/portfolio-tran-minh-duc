@@ -16,6 +16,7 @@
   "tools": [
     "Figma"
   ],
+  "appStoreUrl": "https://apps.apple.com/vn/app/nhsv-pro/id6474728389?l=vi",
   "context": "Nhà đầu tư cần đặt lệnh nhanh và theo dõi tài sản rõ ràng, nhưng ứng dụng còn phải phục vụ các tính năng cộng đồng (Challenge, Leaderboard, Copy Trading) và hỗ trợ kiến thức. Toàn bộ luồng - từ đăng ký eKYC, đăng nhập OTP/Face ID đến thị trường, đặt lệnh, tài sản - được vẽ thành một sơ đồ trước khi thiết kế màn hình.",
   "process": [
     {
