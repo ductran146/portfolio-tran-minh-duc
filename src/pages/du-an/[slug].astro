@@ -169,9 +169,17 @@ const metaItems = [
 			<span class="next-title">{nextEntry.data.title} →</span>
 		</a>
 
+		<!-- Nội dung đồng bộ với CTA cuối trang chủ (2026-09-22, theo yêu cầu "áp
+		     dụng phần thông tin này ở trang chủ cho trang dự án"). -->
 		<section class="cta-band" data-reveal>
-			<h2>Có bài toán nghiệp vụ tương tự?</h2>
-			<a class="btn btn-primary btn-lg" href={l("/lien-he")}>Trao đổi dự án</a>
+			<div class="cta-copy">
+				<h2>Bạn có sản phẩm cần thiết kế hoặc cải tiến?</h2>
+				<p class="cta-desc">
+					Hãy chia sẻ bài toán và phạm vi bạn cần hỗ trợ. Chưa có brief hoàn chỉnh cũng không sao, chúng ta có
+					thể bắt đầu từ những thông tin hiện có.
+				</p>
+			</div>
+			<a class="btn btn-primary btn-lg" href={l("/lien-he")}>Liên hệ →</a>
 		</section>
 	</main>
 
@@ -278,8 +286,10 @@ const metaItems = [
 			align-items: center;
 			font-weight: 600;
 			border-radius: var(--radius-md);
-			/* Chỉ đổi màu khi hover (2026-09-20): không dịch chuyển, không đổi bóng. */
-			transition: background 0.25s var(--ease-smooth), color 0.25s var(--ease-smooth);
+			/* Chỉ đổi màu khi hover (2026-09-20): không dịch chuyển, không đổi bóng.
+			   2026-09-22: easing đổi sang `ease` thường + 0.25s → 0.35s (đồng bộ với
+			   index.astro/du-an.astro) — xem ghi chú đầy đủ ở index.astro. */
+			transition: background 0.35s ease, color 0.35s ease;
 		}
 
 		.next-project,
@@ -560,9 +570,22 @@ const metaItems = [
 			gap: 1.5rem;
 		}
 
+		.cta-copy {
+			max-width: 58ch;
+		}
+
 		.cta-band h2 {
 			font-size: clamp(1.5rem, 3vw, 2rem);
-			max-width: 20ch;
+			line-height: 1.2;
+			max-width: 24ch;
+			margin: 0;
+		}
+
+		.cta-desc {
+			margin: 0.9rem 0 0;
+			color: var(--ink-secondary);
+			font-size: 1rem;
+			line-height: 1.6;
 		}
 
 		@media (max-width: 900px) {

@@ -162,7 +162,7 @@ const clientLogos = clientGroups.flatMap((g) => g.clients).filter((c): c is { na
 				     hơn một ngành (fintech, vận hành, EdTech, giáo dục), nên câu mở đầu
 				     không nên neo riêng vào tài chính/vận hành nữa. Người dùng dự định
 				     bổ sung 2-3 dự án ở lĩnh vực khác vào đây trong tương lai. -->
-				<p class="eyebrow" data-reveal>Trần Minh Đức - thiết kế mobile app và web responsive cho doanh nghiệp</p>
+				<p class="eyebrow" data-reveal>Trần Minh Đức - thiết kế mobile app và web responsive</p>
 				<h1 class="hero-title" data-reveal>
 					{
 						typedLines.map((line) => (
@@ -194,7 +194,7 @@ const clientLogos = clientGroups.flatMap((g) => g.clients).filter((c): c is { na
 			</div>
 
 			<div class="hero-actions" data-reveal>
-				<a class="btn btn-primary" href={l("/lien-he")}>Trao đổi dự án</a>
+				<a class="btn btn-primary" href={l("/lien-he")}>Liên hệ</a>
 				<a class="btn btn-ghost" href={l("/du-an")}>Xem dự án →</a>
 			</div>
 		</section>
@@ -352,7 +352,7 @@ const clientLogos = clientGroups.flatMap((g) => g.clients).filter((c): c is { na
 					thể bắt đầu từ những thông tin hiện có.
 				</p>
 			</div>
-			<a class="btn btn-primary btn-lg" href={l("/lien-he")}>Trao đổi dự án →</a>
+			<a class="btn btn-primary btn-lg" href={l("/lien-he")}>Liên hệ →</a>
 		</section>
 	</main>
 
@@ -577,8 +577,12 @@ const clientLogos = clientGroups.flatMap((g) => g.clients).filter((c): c is { na
 			font-size: 1rem;
 			padding: 0.85rem 1.6rem;
 			border-radius: var(--radius-md);
-			/* Chỉ đổi màu khi hover (2026-09-20): không dịch chuyển, không đổi bóng. */
-			transition: background 0.25s var(--ease-smooth), color 0.25s var(--ease-smooth);
+			/* Chỉ đổi màu khi hover (2026-09-20): không dịch chuyển, không đổi bóng.
+			   2026-09-22: đổi easing từ --ease-smooth (cong nhanh-rồi-chững, phần lớn
+			   độ đổi màu dồn vào ~100ms đầu — dễ bị nhìn thành "đổi phát một" dù có
+			   transition) sang `ease` thường + tăng thời lượng 0.25s → 0.35s, tốc độ
+			   đổi màu rải đều hơn suốt cả quá trình, nhìn rõ là đang chuyển dần. */
+			transition: background 0.35s ease, color 0.35s ease;
 		}
 
 		.btn-primary {
