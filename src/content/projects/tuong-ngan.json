@@ -12,33 +12,82 @@
     "Web app",
     "Design system"
   ],
-  "role": "Thiết kế UI/UX & tổ chức Design System",
+  "role": "Thiết kế UI/UX, phân tích user flow & tổ chức Design System",
   "tools": [
-    "Figma",
-    "HTML/CSS",
-    "AI hỗ trợ phân tích & prototype"
+    "AI đồng hành xuyên suốt"
   ],
+  "websiteUrl": "https://demo.tuongngan.vn/",
   "flows": [
-    "Bán hàng",
-    "Tồn kho",
-    "Công nợ"
+    {
+      "step": "Dữ liệu gốc",
+      "detail": "Khai báo sản phẩm, biến thể, đơn vị quy đổi và đối tác trước khi tạo được bất kỳ chứng từ nào."
+    },
+    {
+      "step": "Nhập hàng",
+      "detail": "Chọn nhà cung cấp, thêm dòng hàng, thanh toán trước rồi ghi sổ - tồn kho tăng và công nợ nhà cung cấp phát sinh ngay lúc đó."
+    },
+    {
+      "step": "Tồn kho",
+      "detail": "Theo dõi số lượng theo thời gian thực, điều chỉnh nhanh từng mã hàng hoặc kiểm kê định kỳ để đối chiếu với thực tế trong kho."
+    },
+    {
+      "step": "Bán hàng",
+      "detail": "Chọn khách hàng, thêm dòng hàng, thu trước rồi ghi sổ - tồn kho giảm, công nợ khách hàng phát sinh và in ngay phiếu giao hàng."
+    },
+    {
+      "step": "Công nợ & Thu/Chi",
+      "detail": "Theo dõi hạn thanh toán theo từng đối tác, thu tiền khách hàng hoặc chi trả nhà cung cấp, đối chiếu bằng sổ chi tiết."
+    },
+    {
+      "step": "Báo cáo",
+      "detail": "Tổng hợp doanh thu, tồn kho và lợi nhuận theo kỳ để người quản lý ra quyết định mà không cần cộng sổ tay."
+    }
   ],
-  "flowHub": "Một nền tảng · số liệu đối chiếu đúng theo từng vai trò",
-  "context": "Ba luồng nghiệp vụ - bán hàng, tồn kho, công nợ - vốn được đối chiếu thủ công qua nhiều vai trò khác nhau, dễ lệch số liệu khi thao tác chéo phòng ban. Bài toán đặt ra là gộp các luồng này vào một hệ thống duy nhất: từ sản phẩm, nhập hàng, bán hàng, tồn kho đến công nợ và báo cáo, mà mỗi vai trò vẫn thấy đúng phần việc của mình và không bị ngợp bởi dữ liệu của luồng khác.",
+  "flowHub": "Chỉ chứng từ đã Ghi sổ mới tác động tồn kho và công nợ",
+  "context": "Ba luồng nghiệp vụ - bán hàng, tồn kho, công nợ - vốn được đối chiếu thủ công qua nhiều vai trò khác nhau, dễ lệch số liệu khi thao tác chéo phòng ban. Bài toán đặt ra là gộp các luồng này vào một hệ thống duy nhất: từ sản phẩm, nhập hàng, bán hàng, tồn kho đến công nợ và báo cáo, mà mỗi vai trò vẫn thấy đúng phần việc của mình và không bị ngợp bởi dữ liệu của luồng khác. Toàn hệ thống có khoảng 25 màn hình phục vụ 6 vai trò (quản trị, quản lý, kế toán, bán hàng, mua hàng, kho) nên bài toán UX không chỉ là thiết kế màn hình mà còn là xác định rõ ai được làm gì, ở đâu và khi nào.",
   "process": [
     {
       "title": "Phân tích & khám phá phương án",
-      "body": "Dùng AI hỗ trợ làm rõ yêu cầu và luồng đối chiếu số liệu giữa bán hàng, tồn kho, công nợ - phân biệt phần chung và phần riêng của từng vai trò trước khi phác thảo wireframe."
+      "body": "Dùng AI hỗ trợ làm rõ yêu cầu và luồng đối chiếu số liệu giữa bán hàng, tồn kho, công nợ trước khi phác thảo wireframe."
     },
     {
       "title": "Thiết kế theo thứ tự thao tác thực tế",
-      "body": "Phiếu nhập, phiếu bán được xếp đúng trình tự người dùng làm việc: chọn đối tác, thêm sản phẩm, xác nhận giá, thanh toán, in. Thao tác nhanh đặt ngay trên danh sách để không phải mở từng bản ghi."
+      "body": "Phiếu nhập, phiếu bán xếp đúng trình tự người dùng làm việc - chọn đối tác, thêm sản phẩm, xác nhận giá, thanh toán, in; thao tác nhanh đặt ngay trên danh sách."
+    },
+    {
+      "title": "Vòng đời chứng từ rõ ràng theo từng trạng thái",
+      "body": "Mọi phiếu đi theo đúng một vòng đời Nháp → Ghi sổ → Huỷ; giao diện chỉ hiện đúng hành động hợp lệ với từng trạng thái để không thao tác nhầm lên chứng từ đã chốt."
+    },
+    {
+      "title": "Thiết kế trước cho các tình huống ngoại lệ",
+      "body": "Hơn 20 tình huống ngoại lệ - trùng mã hàng, ghi sổ hai lần, trả hàng vượt số lượng, huỷ khi đã thu tiền... - đều có thông báo và lối ra rõ ràng thay vì để người dùng bí đường."
     },
     {
       "title": "Prototype HTML/CSS & chuẩn hoá hệ thống",
-      "body": "Chuyển thiết kế thành prototype HTML/CSS (có AI hỗ trợ) để bấm thử luồng và trạng thái trước khi vào thiết kế chi tiết; đồng thời chuẩn hoá token, component và trạng thái dùng chung cho mọi màn hình."
+      "body": "Chuyển thiết kế thành prototype HTML/CSS để bấm thử luồng và trạng thái trước khi vào thiết kế chi tiết, đồng thời chuẩn hoá token, component và trạng thái dùng chung."
     }
   ],
+  "processExample": {
+    "heading": "Ví dụ cụ thể: import dữ liệu hàng loạt từ Excel",
+    "steps": [
+      {
+        "title": "Tải file lên",
+        "body": "Dùng file mẫu có sẵn để import sản phẩm hoặc đối tác hàng loạt, không cần định dạng lại thủ công."
+      },
+      {
+        "title": "Hệ thống tự kiểm tra",
+        "body": "Dữ liệu đưa vào vùng nháp, tự động sinh danh sách dòng lỗi và dòng cần lưu ý."
+      },
+      {
+        "title": "Xem lại trước khi lưu thật",
+        "body": "Phát hiện sai thì huỷ và tải lại file - không phải sửa từng dòng trực tiếp trên hệ thống."
+      },
+      {
+        "title": "Xác nhận",
+        "body": "Tạo sản phẩm, biến thể và đối tác thật vào hệ thống, sẵn sàng dùng ngay cho phiếu nhập/bán."
+      }
+    ]
+  },
   "gallery": [
     {
       "src": "../../assets/projects/tuong-ngan/02.jpg",

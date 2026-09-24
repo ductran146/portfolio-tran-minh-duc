@@ -79,11 +79,20 @@ export default config({
 				appStoreUrl: fields.url({
 					label: 'Link App Store (để trống nếu app chưa phát hành)',
 				}),
+				websiteUrl: fields.url({
+					label: 'Link website thật (để trống nếu dự án không phải website)',
+				}),
+				prototypeUrl: fields.url({
+					label: 'Link prototype/dashboard nhúng iframe (để trống nếu không có bản dựng để thử trực tiếp)',
+				}),
 				flows: fields.array(
-					fields.text({ label: 'Luồng nghiệp vụ' }),
+					fields.object({
+						step: fields.text({ label: 'Tên bước' }),
+						detail: fields.text({ label: 'Mô tả ngắn dưới tên bước (để trống nếu chỉ cần tên)', multiline: true }),
+					}),
 					{
 						label: 'Luồng nghiệp vụ - hiện sơ đồ hội tụ nếu có từ 2 mục trở lên (để trống nếu dự án không cần sơ đồ này)',
-						itemLabel: (props) => props.value || '(chưa đặt tên)',
+						itemLabel: (props) => props.fields.step.value || '(chưa đặt tên)',
 					},
 				),
 				flowHub: fields.text({
@@ -96,13 +105,26 @@ export default config({
 				process: fields.array(
 					fields.object({
 						title: fields.text({ label: 'Tên bước' }),
-						body: fields.text({ label: 'Mô tả bước', multiline: true }),
+						body: fields.text({ label: 'Mô tả bước - 1 câu ngắn gọn', multiline: true }),
 					}),
 					{
 						label: 'Quy trình tiếp cận - để trống nếu dự án chưa có quy trình cụ thể',
 						itemLabel: (props) => props.fields.title.value || '(chưa đặt tên bước)',
 					},
 				),
+				processExample: fields.object({
+					heading: fields.text({ label: 'Tiêu đề ví dụ (để trống nếu không cần khối ví dụ cụ thể)' }),
+					steps: fields.array(
+						fields.object({
+							title: fields.text({ label: 'Tên mini-step' }),
+							body: fields.text({ label: 'Mô tả mini-step', multiline: true }),
+						}),
+						{
+							label: 'Các bước của ví dụ',
+							itemLabel: (props) => props.fields.title.value || '(chưa đặt tên)',
+						},
+					),
+				}),
 				closing: fields.text({
 					label: 'Ghi chú cuối trang (để trống nếu không cần)',
 					multiline: true,

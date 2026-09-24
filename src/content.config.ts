@@ -39,10 +39,25 @@ const projects = defineCollection({
 			tools: z.array(z.string()).default([]),
 			// Link tải app thật trên store - chỉ hiện nút khi có giá trị.
 			appStoreUrl: z.string().url().optional(),
-			flows: z.array(z.string()).default([]),
+			// Link website thật đã lên (dự án dạng web, không phải app) - chỉ hiện
+			// link khi có giá trị.
+			websiteUrl: z.string().url().optional(),
+			// Link bản dựng thật (prototype/dashboard) nhúng dạng iframe để xem/thao
+			// tác trực tiếp trên trang - chỉ hiện khối khi có giá trị. Nguồn phải
+			// cho phép nhúng iframe (không có header X-Frame-Options/CSP chặn).
+			prototypeUrl: z.string().url().optional(),
+			// Mỗi bước là tên ngắn (string, dự án đơn giản) hoặc { step, detail }
+			// khi cần thêm một câu giải thích ngay dưới tên bước (dự án nhiều bước,
+			// nghiệp vụ phức tạp - ví dụ Tường Ngân). Union giữ tương thích ngược:
+			// dự án cũ chỉ có mảng string vẫn chạy nguyên, không cần sửa lại.
+			flows: z
+				.array(z.union([z.string(), z.object({ step: z.string(), detail: z.string().optional() })]))
+				.default([]),
 			// Dòng "hội tụ" dưới sơ đồ luồng - chỉ hiện khi có flows.
 			flowHub: z.string().optional(),
 			context: z.string().optional(),
+			// Mỗi phần tử là MỘT nguyên tắc ngắn (1 câu) - hiện dạng lưới thẻ gọn,
+			// không phải nơi kể chi tiết một luồng cụ thể (xem `processExample`).
 			process: z
 				.array(
 					z.object({
@@ -51,6 +66,20 @@ const projects = defineCollection({
 					}),
 				)
 				.default([]),
+			// Ví dụ cụ thể minh hoạ cho "Cách tiếp cận" (optional) - tách khỏi lưới
+			// nguyên tắc để lưới giữ được gọn/đều nhau; ví dụ có thể dài hơn nhiều
+			// (nhiều mini-step) mà không làm lệch layout của các nguyên tắc khác.
+			processExample: z
+				.object({
+					heading: z.string(),
+					steps: z.array(
+						z.object({
+							title: z.string(),
+							body: z.string(),
+						}),
+					),
+				})
+				.optional(),
 			closing: z.string().optional(),
 		}),
 });

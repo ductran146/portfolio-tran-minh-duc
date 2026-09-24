@@ -2,9 +2,10 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getCollection, type CollectionEntry } from "astro:content";
 import { Image } from "astro:assets";
-import { localePath, resolveLocale } from "../../i18n/ui";
+import { localePath, resolveLocale, withBase } from "../../i18n/ui";
 import AppStoreBadge from "../../components/AppStoreBadge.astro";
 import CtaBand from "../../components/CtaBand.astro";
+import InfoCard from "../../components/InfoCard.astro";
 
 export async function getStaticPaths() {
 	const allProjects = (await getCollection("projects")).sort(
@@ -14,7 +15,6 @@ export async function getStaticPaths() {
 		params: { slug: entry.id },
 		props: {
 			entry,
-			index,
 			nextEntry: allProjects[(index + 1) % allProjects.length],
 		},
 	}));
@@ -22,20 +22,25 @@ export async function getStaticPaths() {
 
 interface Props {
 	entry: CollectionEntry<"projects">;
-	index: number;
 	nextEntry: CollectionEntry<"projects">;
 }
 
-const { entry, index, nextEntry } = Astro.props as Props;
+const { entry, nextEntry } = Astro.props as Props;
 const project = entry.data;
 const l = (p: string) => localePath(resolveLocale(Astro.currentLocale), p);
+
+// Mỗi bước trong `flows` là string (dự án đơn giản) hoặc { step, detail }
+// (dự án cần thêm một câu giải thích dưới tên bước) - chuẩn hoá về cùng một
+// dạng object ngay từ đầu để phần còn lại của trang không phải tự kiểm tra
+// kiểu dữ liệu ở nhiều chỗ.
+const flowItems = project.flows.map((f) => (typeof f === "string" ? { step: f, detail: undefined } : f));
 
 const metaItems = [
 	{ label: "Khách hàng", value: project.client },
 	{ label: project.real ? "Vai trò" : "Vai trò minh hoạ", value: project.role },
 	{
-		label: project.flows.length > 0 ? "Luồng nghiệp vụ" : "Lĩnh vực",
-		value: (project.flows.length > 0 ? project.flows : project.tags).join(" · "),
+		label: flowItems.length > 0 ? "Luồng nghiệp vụ" : "Lĩnh vực",
+		value: (flowItems.length > 0 ? flowItems.map((f) => f.step) : project.tags).join(" · "),
 	},
 	{ label: "Công cụ", value: project.tools.length > 0 ? project.tools.join(" · ") : "" },
 ].filter((m) => m.value && m.value.trim().length > 0);
@@ -49,29 +54,25 @@ const metaItems = [
 		<a class="back-link" href={l("/du-an")} data-reveal>← Tất cả dự án</a>
 
 		<header class="hero">
-			<div class="hero-copy">
-				<div class="project-tags" data-reveal>
-					<span class="plate-index tabular">{String(index + 1).padStart(2, "0")}</span>
-					{project.tags.map((t) => <span class="tag">{t}</span>)}
-					{!project.real && <span class="tag tag-demo">Minh hoạ</span>}
-				</div>
+			<div class="hero-intro">
 				<h1 data-reveal>{project.title}</h1>
 				<p class="lede" data-reveal>{project.summary}</p>
 
-				{metaItems.length > 0 && (
-					<dl class="meta-strip" data-reveal>
-						{metaItems.map((m) => (
-							<div class="meta-item">
-								<dt>{m.label}</dt>
-								<dd>{m.value}</dd>
-							</div>
-						))}
-					</dl>
-				)}
+				<div class="project-tags" data-reveal>
+					{project.tags.map((t) => <span class="tag">{t}</span>)}
+					{!project.real && <span class="tag tag-demo">Minh hoạ</span>}
+				</div>
 
-				{project.appStoreUrl && (
+				{(project.appStoreUrl || project.websiteUrl) && (
 					<div class="hero-actions" data-reveal>
-						<AppStoreBadge href={project.appStoreUrl} label={`Tải ${project.title} trên App Store`} />
+						{project.appStoreUrl && (
+							<AppStoreBadge href={project.appStoreUrl} label={`Tải ${project.title} trên App Store`} />
+						)}
+						{project.websiteUrl && (
+							<a class="site-link" href={project.websiteUrl} target="_blank" rel="noopener noreferrer">
+								Xem trực tiếp<span class="arrow">→</span>
+							</a>
+						)}
 					</div>
 				)}
 			</div>
@@ -94,21 +95,46 @@ const metaItems = [
 					)}
 				</div>
 			</div>
+
+			{metaItems.length > 0 && (
+				<dl class="meta-strip" data-reveal>
+					{metaItems.map((m) => (
+						<div class="meta-item">
+							<dt>{m.label}</dt>
+							<dd>{m.value}</dd>
+						</div>
+					))}
+				</dl>
+			)}
 		</header>
 
 		{project.context && project.context.trim().length > 0 && (
 			<section class="context-section" data-reveal>
-				<h2>Bối cảnh</h2>
-				<p>{project.context}</p>
+				<div class="context-copy">
+					<h2>Bối cảnh</h2>
+					<p>{project.context}</p>
+				</div>
+				<div class="context-character" aria-hidden="true">
+					<img
+						src={withBase("/images/project-context-character-seated-left-watch-3d.png")}
+						alt=""
+						width="1254"
+						height="1254"
+						loading="lazy"
+						decoding="async"
+					/>
+				</div>
 			</section>
 		)}
 
-		{project.flows.length > 0 && (
+		{flowItems.length > 0 && (
 			<section class="flow-section" data-reveal>
-				<p class="section-label">Bài toán nghiệp vụ</p>
+				<h2>Bài toán nghiệp vụ</h2>
 				<div class="flow-row">
-					{project.flows.map((f) => (
-						<span class="flow-chip">{f}</span>
+					{flowItems.map((f, i) => (
+						<InfoCard index={String(i + 1).padStart(2, "0")} title={f.step} as="span">
+							{f.detail && <p>{f.detail}</p>}
+						</InfoCard>
 					))}
 				</div>
 				{project.flowHub && (
@@ -122,22 +148,43 @@ const metaItems = [
 
 		{project.process.length > 0 && (
 			<section class="process-section" data-reveal>
-				<p class="section-label">Cách tiếp cận</p>
+				<h2>Cách tiếp cận</h2>
 				<ol class="process-list">
 					{project.process.map((step, i) => (
-						<li class="process-step" style={`--i: ${i}`}>
-							<span class="process-index tabular">{String(i + 1).padStart(2, "0")}</span>
-							<h3>{step.title}</h3>
+						<InfoCard
+							rootAs="li"
+							class="process-step"
+							style={`--i: ${i}`}
+							index={String(i + 1).padStart(2, "0")}
+							title={step.title}
+						>
 							<p>{step.body}</p>
-						</li>
+						</InfoCard>
 					))}
 				</ol>
+
+				{project.processExample && (
+					<div class="process-example">
+						<p class="process-example-heading">{project.processExample.heading}</p>
+						<ol class="mini-flow">
+							{project.processExample.steps.map((s) => (
+								<li class="mini-flow-step">
+									<span class="mini-flow-dot" aria-hidden="true"></span>
+									<div>
+										<p class="mini-flow-title">{s.title}</p>
+										<p class="mini-flow-body">{s.body}</p>
+									</div>
+								</li>
+							))}
+						</ol>
+					</div>
+				)}
 			</section>
 		)}
 
 		{project.gallery.length > 0 && (
 			<section class="gallery-section">
-				<p class="section-label" data-reveal>Màn hình & ghi chú</p>
+				<h2 data-reveal>Màn hình & ghi chú</h2>
 				<!-- Mỗi slide 2048×1280 đã có chữ giải thích bên trong; chú thích dưới
 				     ảnh là bản tóm lược để người đọc lướt nhanh và để screen reader đọc. -->
 				<ol class="gallery">
@@ -163,6 +210,24 @@ const metaItems = [
 						</li>
 					))}
 				</ol>
+			</section>
+		)}
+
+		{project.prototypeUrl && (
+			<section class="prototype-section" data-reveal>
+				<p class="section-label">Dashboard</p>
+				<p class="prototype-lede">
+					Xem và thao tác trực tiếp trên bản dựng thật ngay bên dưới, hoặc
+					{" "}
+					<a href={project.prototypeUrl} target="_blank" rel="noopener noreferrer">mở toàn màn hình ↗</a>.
+				</p>
+				<div class="prototype-frame">
+					<iframe
+						src={project.prototypeUrl}
+						title={`Prototype tương tác - ${project.title}`}
+						loading="lazy"
+					></iframe>
+				</div>
 			</section>
 		)}
 
@@ -203,25 +268,27 @@ const metaItems = [
 		.hero {
 			display: grid;
 			grid-template-columns: 1fr 1fr;
-			gap: clamp(2rem, 5vw, 3.5rem);
+			/* column-gap tách riêng row-gap (2026-09-24): giờ .hero có 2 hàng
+			   (intro+ảnh, rồi meta-strip trải full-width bên dưới) - dùng chung
+			   `gap` sẽ khiến khoảng cách GIỮA 2 HÀNG đó cũng to như khoảng cách
+			   giữa 2 cột intro/ảnh (clamp 2-3.5rem), quá rộng cho khối nhỏ phía
+			   dưới. */
+			column-gap: clamp(2rem, 5vw, 3.5rem);
+			row-gap: 1.5rem;
 			align-items: center;
 			margin-top: clamp(1.5rem, 4vw, 2.5rem);
 			padding-block: clamp(1rem, 3vw, 2rem);
 		}
 
+		/* Chuyển vào trong .hero-intro, ngay dưới lede (2026-09-24, cùng yêu cầu
+		   với .hero-actions) - không còn là hàng full-width riêng của .hero
+		   nữa nên bỏ `grid-column: 1 / -1`. */
 		.project-tags {
 			display: flex;
 			flex-wrap: wrap;
 			align-items: center;
 			gap: 0.5rem;
-			margin-bottom: 1rem;
-		}
-
-		.plate-index {
-			font-size: 0.78rem;
-			font-weight: 600;
-			color: var(--ink-faint);
-			margin-right: 0.25rem;
+			margin-top: 1rem;
 		}
 
 		.tag {
@@ -239,7 +306,7 @@ const metaItems = [
 			color: var(--ink-faint);
 		}
 
-		.hero-copy h1 {
+		.hero-intro h1 {
 			font-size: clamp(2rem, 4.4vw, 3rem);
 			line-height: 1.08;
 			margin-bottom: 0.9rem;
@@ -248,18 +315,25 @@ const metaItems = [
 		.lede {
 			color: var(--ink-secondary);
 			max-width: var(--measure);
-			margin-bottom: 1.6rem;
 		}
 
+		/* Ảnh nằm ngang hàng với riêng tiêu đề + mô tả (2026-09-24, yêu cầu) -
+		   .hero-intro/.hero-plate-wrap là 2 cột của HÀNG ĐẦU trong .hero. Tag
+		   và nút "Xem trực tiếp"/App Store đều nằm TRONG `.hero-intro` (ngay
+		   dưới lede - sửa tiếp cùng ngày, yêu cầu đưa cả hai lên sát mô tả) nên
+		   tính vào chiều cao căn giữa với ảnh; chỉ còn `meta-strip` trải
+		   full-width thành hàng riêng bên dưới bằng `grid-column: 1 / -1`. */
+		/* Bỏ nốt border-top (2026-09-24, "giảm cảm giác phân mảnh") - trang chi
+		   tiết dự án đã có khá nhiều đường kẻ phân cách section (context, flow,
+		   process...); dòng kẻ riêng của meta-strip là thừa vì row-gap của
+		   .hero (1.5rem) đã đủ tách nó khỏi hàng intro+ảnh phía trên bằng
+		   khoảng trắng, không cần thêm đường kẻ. */
 		.meta-strip {
+			grid-column: 1 / -1;
 			display: grid;
 			/* 2-4 mục tuỳ dự án (khách hàng / vai trò / luồng / công cụ). */
 			grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
 			gap: 1rem;
-			padding: 1.1rem 0;
-			margin: 0 0 1.8rem;
-			border-top: 1px solid var(--border);
-			border-bottom: 1px solid var(--border);
 		}
 
 		.meta-item dt {
@@ -271,18 +345,62 @@ const metaItems = [
 			margin-bottom: 0.35rem;
 		}
 
+		/* Đổi từ --ink (đậm) sang --ink-secondary (2026-09-24, "màu đậm hơn quy
+		   định") - đây là nội dung giá trị/mô tả, không phải tiêu đề, nên phải
+		   dùng cùng cấp màu với các đoạn body khác trên trang (cùng quy tắc
+		   InfoCard.astro dùng cho phần nội dung bên trong mỗi thẻ). */
 		.meta-item dd {
 			margin: 0;
 			font-size: 0.92rem;
-			color: var(--ink);
-			font-weight: 500;
+			color: var(--ink-secondary);
 		}
 
+		/* Chuyển vào trong .hero-intro, ngay dưới lede (2026-09-24, yêu cầu) -
+		   không còn là hàng full-width riêng của .hero nữa nên bỏ
+		   `grid-column: 1 / -1`; margin-top thay cho row-gap của .hero (vốn chỉ
+		   áp dụng giữa các item trực tiếp của .hero, .hero-actions giờ nằm
+		   trong .hero-intro nên không được row-gap đó lo nữa). */
 		.hero-actions {
 			display: flex;
 			flex-wrap: wrap;
 			align-items: center;
 			gap: 1rem;
+			margin-top: 1.25rem;
+		}
+
+		/* Link "Xem trực tiếp" (2026-09-24, đổi nhãn từ "Xem website trực tiếp"
+		   khi thêm Tường Ngân - link demo.tuongngan.vn là demo ứng dụng, không
+		   phải website marketing như USTH/PMW nên nhãn cần trung tính hơn) -
+		   dùng cho dự án có site/demo thật đã lên, cạnh huy hiệu App Store cho
+		   dự án dạng app khi cả hai cùng xuất hiện trong .hero-actions. Kiểu
+		   ghost nhẹ, không cạnh tranh thị giác với huy hiệu App Store. */
+		.site-link {
+			display: inline-flex;
+			align-items: center;
+			font-weight: 600;
+			font-size: 0.95rem;
+			color: var(--ink);
+			background: var(--bg-soft);
+			padding: 0.7rem 1.3rem;
+			border-radius: var(--radius-md);
+			text-decoration: none;
+			transition: background 0.35s ease;
+		}
+
+		.site-link:hover {
+			background: var(--accent-tint);
+		}
+
+		/* Mũi tên trượt sang phải 12px khi hover (đồng bộ với mọi link/nút có
+		   mũi tên khác trên site - xem index.astro). */
+		.site-link .arrow {
+			display: inline-block;
+			margin-left: 0.5rem;
+			transition: transform 0.3s ease;
+		}
+
+		.site-link:hover .arrow {
+			transform: translateX(12px);
 		}
 
 		.next-project,
@@ -327,14 +445,52 @@ const metaItems = [
 			box-shadow: var(--shadow-sm);
 		}
 
+		/* Nhân vật minh hoạ bên phải nội dung Bối cảnh (2026-09-24) - hai cột:
+		   .context-copy giữ nguyên bề rộng đọc thoải mái (--measure, không đổi
+		   theo bề rộng ảnh), .context-character neo bên phải, chiều cao cố
+		   định ~260px (ảnh vuông 1254×1254, width tự suy ra theo tỉ lệ). Ẩn
+		   hẳn dưới 900px (cùng breakpoint với .hero) - cùng cách xử lý nhân vật
+		   minh hoạ trang trí khác trên site (ví dụ .cta-character), tránh chật
+		   chội trên màn hẹp thay vì cố nhồi cả hai cột. */
 		.context-section {
-			max-width: var(--measure);
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: clamp(1.5rem, 4vw, 3rem);
 			padding-block: clamp(2rem, 5vw, 3rem);
 			border-top: 1px solid var(--border);
 		}
 
+		.context-copy {
+			max-width: var(--measure);
+		}
+
+		.context-character {
+			flex: none;
+		}
+
+		.context-character img {
+			display: block;
+			height: 260px;
+			width: auto;
+		}
+
+		@media (max-width: 900px) {
+			.context-character {
+				display: none;
+			}
+		}
+
+		/* "Bài toán nghiệp vụ", "Cách tiếp cận", "Màn hình & ghi chú" đổi từ
+		   `.section-label` (nhãn nhỏ viết hoa, kiểu eyebrow dùng chung toàn site
+		   - xem DESIGN.md Typography) sang cùng style tiêu đề `h2` với "Bối
+		   cảnh" (2026-09-24, yêu cầu đồng bộ) - CHỈ áp dụng trong trang chi tiết
+		   dự án, không đụng tới `.section-label` ở các trang khác (đó vẫn là
+		   pattern eyebrow chuẩn của site, ví dụ "Dự án"/"Liên hệ" đầu mỗi trang). */
 		.context-section h2,
-		.flow-section h2 {
+		.flow-section h2,
+		.process-section h2,
+		.gallery-section h2 {
 			font-size: 1.5rem;
 			margin-bottom: 0.9rem;
 		}
@@ -358,21 +514,26 @@ const metaItems = [
 			text-align: center;
 		}
 
+		/* Mỗi bước là một thẻ nhỏ thay vì chip trần (2026-09-24, "quá sơ sài, cần
+		   chi tiết hơn") - vẫn giữ tinh thần "xem nhanh" của sơ đồ luồng (số thứ
+		   tự + tên bước đọc được ngay), nhưng có chỗ cho một câu mô tả khi dự án
+		   cần giải thích thêm (field `detail` optional trong flows). Cột CỐ ĐỊNH
+		   3 (2026-09-24, "không để cả nội dung trên 1 hàng") thay vì
+		   `auto-fit`: ở cột nội dung 1160px, `auto-fit` với minmax đủ nhỏ để mỗi
+		   thẻ đọc được sẽ luôn dồn hết 5-6 thẻ vào một hàng vì mỗi thẻ vẫn còn
+		   dư chỗ - dồn nhiều thẻ có mô tả vào 1 hàng làm chữ chật, khó đọc. Ép 3
+		   cột/hàng (6 bước = 2 hàng) cho mỗi thẻ đủ rộng để mô tả xuống dòng tự
+		   nhiên; giảm dần 2 rồi 1 cột ở màn hẹp (xem @media bên dưới). */
 		.flow-row {
-			display: flex;
-			flex-wrap: wrap;
-			justify-content: center;
-			gap: 0.85rem;
+			display: grid;
+			grid-template-columns: repeat(3, 1fr);
+			gap: 1rem;
+			text-align: left;
 		}
 
-		.flow-chip {
-			padding: 0.65rem 1.2rem;
-			border-radius: var(--radius-md);
-			background: var(--surface);
-			box-shadow: var(--shadow-sm);
-			font-weight: 600;
-			font-size: 0.94rem;
-		}
+		/* Style thẻ (nền/bo góc/tiêu đề/mô tả) giờ do component dùng chung
+		   InfoCard.astro đảm nhiệm (2026-09-24) - không viết lại CSS ở đây nữa,
+		   xem DESIGN.md để biết lịch sử các lần lệch style trước khi gộp. */
 
 		.flow-connector {
 			width: 1px;
@@ -381,14 +542,18 @@ const metaItems = [
 			margin: 0.25rem auto;
 		}
 
+		/* Giữ 1 dòng, không xuống dòng (2026-09-24) - bỏ max-width cố định
+		   30rem từng khiến câu dài bị ngắt dòng giữa chừng. Cho phép wrap lại
+		   ở màn hẹp (xem @media 640px bên dưới) để không tràn ngang trên
+		   mobile. */
 		.flow-hub {
 			display: inline-block;
-			max-width: 30rem;
 			padding: 0.9rem 1.6rem;
 			border-radius: var(--radius-md);
 			background: var(--accent-tint);
 			color: var(--accent-strong);
 			font-weight: 600;
+			white-space: nowrap;
 		}
 
 		.process-section {
@@ -396,41 +561,121 @@ const metaItems = [
 			border-top: 1px solid var(--border);
 		}
 
+		/* Lưới thẻ gọn (2026-09-24, tái cấu trúc lần 2 - "gọn gàng, dễ nắm bắt
+		   hơn"): quay lại dạng lưới sau khi tách ví dụ minh hoạ dài (mini-flow)
+		   ra khỏi danh sách nguyên tắc (xem `.process-example` bên dưới) - mỗi
+		   nguyên tắc giờ chỉ 1 câu ngắn, cao đều nhau nên lưới không còn bị lệch
+		   hàng như bản trước đó (khi một bước còn mang cả sub-flow bên trong).
+		   `auto-fit` + `minmax(17.5rem, 1fr)` (đổi từ cột cố định `repeat(3,
+		   1fr)`, sửa tiếp cùng ngày, "PMW chỉ 2 bước cần dàn đều hết bề rộng
+		   trang"): 17.5rem được tính để ở bề rộng cột nội dung thật (~1064px
+		   sau padding của `main`) vừa đúng 3 cột - dự án nhiều bước (Tường
+		   Ngân, 5 bước) vẫn ra 3+2 y hệt bản cột cố định trước đó. Điểm khác
+		   biệt: khi dự án chỉ có 2-3 bước (không đủ lấp 3 cột), `auto-fit` co
+		   cột thừa về 0 và giãn các cột có nội dung để LẤP HẾT bề rộng còn lại
+		   - PMW (2 bước) nhờ vậy tự dàn đều 50/50 hết chiều ngang thay vì lọt
+		   thỏm trong 2/3 bề rộng lưới 3 cột như trước. Đây KHÔNG phải trường
+		   hợp đã gặp lỗi với `.flow-row` (auto-fit dồn hết vào 1 hàng khi
+		   container dư chỗ) vì ngưỡng `17.5rem` được tính riêng để luôn ra tối
+		   đa 3 cột ở bề rộng trang hiện tại, không phải một số nhỏ tuỳ ý. */
 		.process-list {
 			list-style: none;
 			margin: 0;
 			padding: 0;
 			display: grid;
-			/* 2-4 bước tuỳ dự án; ≥900px vẫn một hàng. */
-			grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+			grid-template-columns: repeat(auto-fit, minmax(17.5rem, 1fr));
 			gap: 1.75rem;
 			counter-reset: process;
 		}
 
-		.process-step {
-			position: relative;
-			padding-top: 1.5rem;
-			border-top: 2px solid var(--border);
+		/* Style thẻ (nền/bo góc/tiêu đề/mô tả) giờ do component dùng chung
+		   InfoCard.astro đảm nhiệm (2026-09-24) - không viết lại CSS ở đây nữa,
+		   xem DESIGN.md để biết lịch sử các lần lệch style trước khi gộp. */
+
+		/* Ví dụ cụ thể - tách khỏi lưới nguyên tắc ở trên (2026-09-24) để lưới
+		   giữ được gọn/đều nhau dù ví dụ có nhiều mini-step hơn. Thẻ nền
+		   bg-soft bo góc, tự phân biệt với lưới nguyên tắc phía trên bằng nền
+		   thay vì đường kẻ - đọc như một "hộp minh hoạ" tách bạch, không phải
+		   nguyên tắc thứ 6 trong danh sách. */
+		.process-example {
+			margin-top: clamp(2rem, 4vw, 2.5rem);
+			padding: clamp(1.5rem, 4vw, 2rem);
+			border-radius: var(--radius-lg);
+			background: var(--bg-soft);
 		}
 
-		.process-index {
-			display: block;
+		/* Cal Sans + weight 400 (2026-09-24, "text style/size chưa đúng quy
+		   định") - trước đó dùng font hệ thống in đậm (weight 600), lệch với
+		   quy tắc tiêu đề đã chốt cho InfoCard.astro (Cal Sans, weight 400). */
+		.process-example-heading {
+			margin: 0 0 1rem;
 			font-family: var(--display);
-			font-size: 1.6rem;
-			color: var(--accent);
-			margin-bottom: 0.6rem;
-		}
-
-		.process-step h3 {
-			font-family: var(--sans);
+			font-weight: 400;
 			font-size: 1.05rem;
-			font-weight: 600;
-			margin-bottom: 0.5rem;
+			color: var(--ink);
 		}
 
-		.process-step p {
-			color: var(--ink-secondary);
+		/* Sub-flow minh hoạ: danh sách DỌC, mỗi mini-step một dòng, nối bằng
+		   đường kẻ mảnh bên trái qua chấm tròn - đúng ngôn ngữ hình ảnh timeline
+		   đã có ở trang Kinh nghiệm, không tạo pattern thị giác mới. Đổi từ ý
+		   tưởng xếp ngang nhiều thẻ nối mũi tên kiểu tài liệu phân tích nội bộ
+		   ("dồn quá nhiều trên 1 hàng", 2026-09-24). */
+		.mini-flow {
+			list-style: none;
+			margin: 0;
+			padding: 0;
+		}
+
+		.mini-flow-step {
+			position: relative;
+			display: flex;
+			gap: 0.75rem;
+			padding-bottom: 1rem;
+		}
+
+		.mini-flow-step:last-child {
+			padding-bottom: 0;
+		}
+
+		/* Đường nối dọc: chạy từ tâm chấm này tới tâm chấm kế tiếp - dừng ở item
+		   cuối vì không có chấm nào sau nó để nối tới. */
+		.mini-flow-step:not(:last-child)::before {
+			content: "";
+			position: absolute;
+			left: 3px;
+			top: 0.85rem;
+			bottom: -0.15rem;
+			width: 1px;
+			background: var(--border);
+		}
+
+		.mini-flow-dot {
+			flex: none;
+			width: 7px;
+			height: 7px;
+			margin-top: 0.45rem;
+			border-radius: 50%;
+			background: var(--accent);
+		}
+
+		/* Cal Sans + weight 400 - cùng lý do với .process-example-heading ở
+		   trên, đồng bộ với quy tắc tiêu đề của InfoCard.astro. */
+		.mini-flow-title {
+			margin: 0;
+			font-family: var(--display);
+			font-weight: 400;
 			font-size: 0.95rem;
+			color: var(--ink);
+		}
+
+		/* 0.95rem thay vì 0.85rem trước đó (2026-09-24, "nhỏ hơn các nội dung
+		   khác") - đồng bộ với cỡ chữ mô tả chuẩn dùng ở mọi box khác trên
+		   trang (`.info-card > p` trong InfoCard.astro). */
+		.mini-flow-body {
+			margin: 0.15rem 0 0;
+			font-size: 0.95rem;
+			line-height: 1.6;
+			color: var(--ink-secondary);
 		}
 
 		:global(.js-reveal) .process-list .process-step[data-reveal],
@@ -485,6 +730,49 @@ const metaItems = [
 			color: var(--accent);
 		}
 
+		/* Khối "Dashboard" (2026-09-24, đổi tên từ "Thử trực tiếp"): nhúng iframe
+		   bản dựng thật (PMW dashboard) để xem/thao tác ngay trên trang, không
+		   chỉ xem ảnh chụp tĩnh như .gallery phía trên. Khung bo góc lg +
+		   shadow-md đồng bộ với .gallery img; chiều cao cố định vừa đủ cho
+		   dashboard (không dùng aspect-ratio vì nội dung nhúng là ứng dụng
+		   thật, cần chiều cao ổn định để thao tác, không phải ảnh cần giữ tỉ
+		   lệ). Link "mở toàn màn hình" luôn có sẵn - nhúng trong khung nhỏ khó
+		   thao tác trên mobile/màn hẹp. */
+		.prototype-section {
+			padding-block: clamp(2rem, 5vw, 3rem);
+			border-top: 1px solid var(--border);
+		}
+
+		.prototype-lede {
+			max-width: var(--measure);
+			margin: 0 0 1.25rem;
+			color: var(--ink-secondary);
+		}
+
+		.prototype-lede a {
+			color: var(--accent-strong);
+			font-weight: 600;
+		}
+
+		/* Cao hơn hẳn tỉ lệ 16:10 (2026-09-24, yêu cầu) - ở bề rộng cột nội dung
+		   thật (~1100px), 16:10 chỉ cho ~690px; nội dung dashboard cần cuộn
+		   nhiều hơn một ảnh nên nâng hẳn min/preferred/max lên một mức rõ rệt
+		   thay vì tính theo tỉ lệ ảnh. */
+		.prototype-frame {
+			border-radius: var(--radius-lg);
+			overflow: hidden;
+			box-shadow: var(--shadow-md);
+			background: var(--bg-soft);
+			height: clamp(480px, 78vh, 860px);
+		}
+
+		.prototype-frame iframe {
+			display: block;
+			width: 100%;
+			height: 100%;
+			border: 0;
+		}
+
 		.closing-note {
 			max-width: var(--measure);
 			padding-block: clamp(1.5rem, 4vw, 2rem);
@@ -535,7 +823,11 @@ const metaItems = [
 			}
 
 			.process-list {
-				grid-template-columns: 1fr;
+				grid-template-columns: repeat(2, 1fr);
+			}
+
+			.flow-row {
+				grid-template-columns: repeat(2, 1fr);
 			}
 
 			.gallery figcaption {
@@ -546,6 +838,19 @@ const metaItems = [
 		@media (max-width: 640px) {
 			.meta-strip {
 				grid-template-columns: 1fr;
+			}
+
+			.process-list {
+				grid-template-columns: 1fr;
+			}
+
+			.flow-row {
+				grid-template-columns: 1fr;
+			}
+
+			.flow-hub {
+				max-width: 100%;
+				white-space: normal;
 			}
 		}
 	</style>

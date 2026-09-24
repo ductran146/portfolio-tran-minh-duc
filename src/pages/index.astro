@@ -4,6 +4,7 @@ import HeroMockBrowser from "../components/HeroMockBrowser.astro";
 import HeroMockResponsive from "../components/HeroMockResponsive.astro";
 import Icon from "../components/Icon.astro";
 import CtaBand from "../components/CtaBand.astro";
+import InfoCard from "../components/InfoCard.astro";
 import { getEntry } from "astro:content";
 import { localePath, resolveLocale, withBase } from "../i18n/ui";
 import { Image } from "astro:assets";
@@ -209,10 +210,16 @@ const clientLogos = clientGroups.flatMap((g) => g.clients).filter((c): c is { na
 			<div class="reason-grid">
 				{
 					reasons.map((r, i) => (
-						<article class="reason stagger" data-reveal style={`--i: ${i}`}>
-							<h3>{r.title}</h3>
+						<InfoCard
+							rootAs="article"
+							size="lg"
+							title={r.title}
+							class="reason stagger"
+							data-reveal
+							style={`--i: ${i}`}
+						>
 							<p>{r.body}</p>
-						</article>
+						</InfoCard>
 					))
 				}
 			</div>
@@ -730,25 +737,10 @@ const clientLogos = clientGroups.flatMap((g) => g.clients).filter((c): c is { na
 			gap: 1.25rem;
 		}
 
-		.reason {
-			padding: 1.75rem 1.5rem;
-			border-radius: var(--radius-lg);
-			background: var(--bg-soft);
-		}
-
-		.reason h3 {
-			font-size: 1.25rem;
-			line-height: 1.25;
-			margin-bottom: 0.75rem;
-		}
-
-		.reason p {
-			margin: 0;
-			color: var(--ink-secondary);
-			font-size: 0.95rem;
-			line-height: 1.6;
-		}
-
+		/* Style hộp (nền/bo góc/tiêu đề/nội dung) giờ do component dùng chung
+		   InfoCard.astro đảm nhiệm (2026-09-24) - không viết lại ở đây nữa để
+		   tránh lệch style với các nơi khác dùng cùng component (xem
+		   DESIGN.md). Chỉ còn quy tắc thời gian stagger riêng của trang này. */
 		:global(.js-reveal) .reason[data-reveal] {
 			transition-delay: calc(var(--i) * 90ms);
 		}

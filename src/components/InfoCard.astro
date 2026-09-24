@@ -1,0 +1,80 @@
+---
+// Thẻ "hộp mềm" dùng chung (2026-09-24) - đóng gói MỘT LẦN đúng style đã chốt
+// (nền --bg-soft, bo góc --radius-lg, KHÔNG shadow; tiêu đề Cal Sans
+// font-weight:400; nội dung --ink-secondary), để các nơi dùng về sau không tự
+// chế lại CSS và lệch style. Trước khi có component này, ".reason" (trang
+// chủ), ".flow-node" và ".process-step" (trang chi tiết dự án) mỗi nơi tự
+// viết một bản hơi khác nhau - đã dồn thành 3 style lệch nhau (radius-md vs
+// radius-lg, có shadow vs không, font-sans ép vs Cal Sans mặc định, weight
+// 600 vs 400) - xem lịch sử sửa lỗi trong DESIGN.md. Chỉ có ĐÚNG MỘT nguồn
+// định nghĩa CSS ở đây; nơi dùng không được ghi đè radius/shadow/font riêng.
+interface Props {
+	/** Số thứ tự hiển thị phía trên tiêu đề (Cal Sans, màu accent) - bỏ trống nếu không cần. */
+	index?: string;
+	title: string;
+	/** Thẻ HTML cho tiêu đề - mặc định h3. Đổi sang "span" khi ngữ cảnh không cần heading thật (ví dụ chip trong sơ đồ luồng). */
+	as?: "h2" | "h3" | "span";
+	/** Thẻ HTML cho khung ngoài - mặc định div; "article" cho card độc lập kiểu "Vì sao chọn tôi", "li" khi nằm trong danh sách có <ol>/<ul>. */
+	rootAs?: "div" | "article" | "li";
+	/** md (mặc định) = ô gọn dùng trong lưới nhỏ (sơ đồ luồng, quy trình tiếp cận).
+	 * lg = card lớn hơn, dùng cho nội dung độc lập kiểu "Vì sao chọn tôi". */
+	size?: "md" | "lg";
+	class?: string;
+	style?: string;
+}
+
+const { index, title, as: Tag = "h3", rootAs: Root = "div", size = "md", class: className, style: styleProp, ...rest } = Astro.props;
+---
+
+<Root class:list={["info-card", { "info-card-lg": size === "lg" }, className]} style={styleProp} {...rest}>
+	{index && <span class="info-card-index tabular">{index}</span>}
+	<Tag class="info-card-title">{title}</Tag>
+	<slot />
+</Root>
+
+<style>
+	.info-card {
+		padding: 1.25rem;
+		border-radius: var(--radius-lg);
+		background: var(--bg-soft);
+	}
+
+	.info-card-lg {
+		padding: 1.75rem 1.5rem;
+	}
+
+	.info-card-index {
+		display: block;
+		font-family: var(--display);
+		font-size: 1.6rem;
+		color: var(--accent);
+		margin-bottom: 0.6rem;
+	}
+
+	.info-card-title {
+		display: block;
+		font-family: var(--display);
+		font-weight: 400;
+		font-size: 1.05rem;
+		margin: 0 0 0.5rem;
+	}
+
+	.info-card-lg .info-card-title {
+		font-size: 1.25rem;
+		margin-bottom: 0.75rem;
+	}
+
+	/* Chọn direct-child thay vì bọc thêm div body - giữ nguyên cấu trúc phẳng
+	   để các utility dựa trên :nth-child (ví dụ ".stagger" ở global.css) vẫn
+	   nhắm đúng vào tiêu đề/nội dung như khi chưa tách component. */
+	.info-card > :global(p) {
+		margin: 0;
+		color: var(--ink-secondary);
+		font-size: 0.95rem;
+		line-height: 1.6;
+	}
+
+	.info-card > :global(p + p) {
+		margin-top: 0.75rem;
+	}
+</style>

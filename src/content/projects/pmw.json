@@ -12,18 +12,20 @@
     "Web app",
     "Vận hành"
   ],
-  "role": "Thiết kế UI/UX website & hệ thống báo cáo",
+  "role": "Thiết kế UI/UX cho cả website khách hàng (pmw.vn) và dashboard báo cáo vận hành nội bộ",
   "tools": [
     "Figma"
   ],
-  "context": "Cùng một đơn vị nhưng hai nhóm người dùng rất khác: người dân tra cứu hoá đơn trên điện thoại và cán bộ theo dõi số liệu sản xuất, vật tư, nhiên liệu theo tháng. Website công khai và cổng báo cáo dùng chung nhận diện PMW nhưng tách bạch về mật độ thông tin.",
+  "websiteUrl": "https://www.pmw.vn",
+  "prototypeUrl": "https://ductran146.github.io/pmw-dashboard/index.html",
+  "context": "Cùng một đơn vị nhưng hai nhóm người dùng rất khác: người dân tra cứu hoá đơn trên điện thoại và cán bộ theo dõi số liệu sản xuất, vật tư, nhiên liệu theo tháng. Bài toán tách thành hai sản phẩm riêng, dùng chung nhận diện PMW nhưng khác hẳn về mật độ thông tin: một website công khai (pmw.vn) cho khách hàng, và một dashboard báo cáo cho đội vận hành nội bộ.",
   "process": [
     {
-      "title": "Website cho khách hàng",
+      "title": "Website khách hàng (pmw.vn)",
       "body": "Bố cục responsive trên máy tính, tablet và điện thoại; các tác vụ thường gặp - tra cứu hoá đơn, thanh toán, báo lắp đặt/sửa chữa - đưa lên đầu trang."
     },
     {
-      "title": "Cổng tổng hợp báo cáo",
+      "title": "Dashboard báo cáo vận hành",
       "body": "Một cổng vào cho các hệ thống Quản lý sản xuất, Quản lý khách hàng, Quản lý mạng lưới GIS, Quản lý điều hành và Website; báo cáo vật tư - nhiên liệu - sản xuất so kế hoạch với thực hiện, xem được trên điện thoại."
     }
   ],
