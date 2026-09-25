@@ -21,6 +21,10 @@ const projects = defineCollection({
 			client: z.string().optional(),
 			real: z.boolean().default(false),
 			featured: z.boolean().default(false),
+			// Tạm ẩn dự án khỏi trang danh sách VÀ không sinh trang chi tiết (loại
+			// hẳn khỏi getStaticPaths, không phải chỉ ẩn UI) - dùng khi cần rút một
+			// dự án khỏi site mà không xoá dữ liệu, bật lại chỉ cần đổi về false.
+			draft: z.boolean().default(false),
 			order: z.number().default(1),
 			// Chỉ dùng khi dự án chưa có ảnh (nhãn trên plate trống).
 			plateLabel: z.string().optional(),

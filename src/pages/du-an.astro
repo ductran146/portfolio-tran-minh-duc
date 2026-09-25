@@ -10,8 +10,10 @@ const l = (p: string) => localePath(resolveLocale(Astro.currentLocale), p);
 // Dữ liệu dự án giờ đọc từ src/content/projects/*.json (quản lý qua Keystatic
 // tại /keystatic khi chạy npm run dev - xem keystatic.config.ts). Sắp xếp
 // theo field "order" do người chỉnh nội dung tự đặt, không phụ thuộc thứ tự
-// file trên đĩa.
-const allProjects = (await getCollection("projects")).sort(
+// file trên đĩa. Lọc bỏ dự án "draft" (tạm ẩn) - filter ngay tại getCollection
+// để không lộ ra bất kỳ nơi nào dùng allProjects bên dưới (thẻ nổi bật, lưới,
+// số thứ tự...).
+const allProjects = (await getCollection("projects", ({ data }) => !data.draft)).sort(
 	(a, b) => a.data.order - b.data.order,
 );
 
@@ -56,13 +58,13 @@ const others = allProjects
 				</div>
 				<div class="featured-body">
 					<span class="watermark tabular" aria-hidden="true">{String(featuredIndex + 1).padStart(2, "0")}</span>
+					<h2>{featured.data.title}</h2>
+					<p>{featured.data.summary}</p>
 					<div class="project-tags">
 						{featured.data.tags.map((t) => (
 							<span class="tag">{t}</span>
 						))}
 					</div>
-					<h2>{featured.data.title}</h2>
-					<p>{featured.data.summary}</p>
 					<span class="view-detail">Xem chi tiết →</span>
 				</div>
 			</a>
@@ -94,14 +96,14 @@ const others = allProjects
 								</div>
 							</div>
 							<div class="project-body">
+								<h2>{entry.data.title}</h2>
+								<p>{entry.data.summary}</p>
 								<div class="project-tags">
 									{entry.data.tags.map((t) => (
 										<span class="tag">{t}</span>
 									))}
 									{!entry.data.real && <span class="tag tag-demo">Minh hoạ</span>}
 								</div>
-								<h2>{entry.data.title}</h2>
-								<p>{entry.data.summary}</p>
 								<span class="view-detail">Xem chi tiết →</span>
 							</div>
 						</a>
@@ -230,6 +232,7 @@ const others = allProjects
 		}
 
 		.featured-body p {
+			margin: 0;
 			color: var(--ink-secondary);
 			max-width: 52ch;
 		}
@@ -314,11 +317,14 @@ const others = allProjects
 			padding: 1.35rem 1.5rem 1.6rem;
 		}
 
+		/* Chuyển xuống dưới mô tả (2026-09-24, yêu cầu) - margin đổi từ
+		   margin-bottom (khi tags còn đứng trước h2/p) sang margin-top để tạo
+		   khoảng cách với đoạn mô tả ngay phía trên. */
 		.project-tags {
 			display: flex;
 			flex-wrap: wrap;
 			gap: 0.5rem;
-			margin-bottom: 0.9rem;
+			margin-top: 0.9rem;
 		}
 
 		.tag {
@@ -346,6 +352,7 @@ const others = allProjects
 		}
 
 		.project-body p {
+			margin: 0;
 			color: var(--ink-secondary);
 			/* Tóm tắt thật dài 2-3 câu; thẻ chỉ mở đầu, đọc đủ ở trang chi tiết. */
 			display: -webkit-box;

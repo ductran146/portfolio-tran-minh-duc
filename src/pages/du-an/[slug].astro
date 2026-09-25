@@ -8,7 +8,10 @@ import CtaBand from "../../components/CtaBand.astro";
 import InfoCard from "../../components/InfoCard.astro";
 
 export async function getStaticPaths() {
-	const allProjects = (await getCollection("projects")).sort(
+	// Lọc bỏ dự án "draft" (tạm ẩn) ngay từ nguồn - dự án đó vừa không có trang
+	// chi tiết (không nằm trong getStaticPaths) vừa không xuất hiện trong logic
+	// "Dự án tiếp theo" của các dự án còn lại.
+	const allProjects = (await getCollection("projects", ({ data }) => !data.draft)).sort(
 		(a, b) => a.data.order - b.data.order,
 	);
 	return allProjects.map((entry, index) => ({

@@ -29,6 +29,10 @@ export default config({
 					label: 'Dự án nổi bật (mở đầu trang Dự án)',
 					defaultValue: false,
 				}),
+				draft: fields.checkbox({
+					label: 'Tạm ẩn (bỏ khỏi danh sách và không sinh trang chi tiết)',
+					defaultValue: false,
+				}),
 				order: fields.integer({
 					label: 'Thứ tự hiển thị (số nhỏ hơn hiện trước; không áp dụng cho dự án nổi bật)',
 					defaultValue: 1,

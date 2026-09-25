@@ -4,6 +4,7 @@
   "client": "Trường Đại học Khoa học và Công nghệ Hà Nội (USTH)",
   "real": true,
   "featured": false,
+  "draft": true,
   "order": 7,
   "cover": "../../assets/projects/usth/01.jpg",
   "summary": "Website cho Trường Đại học Khoa học và Công nghệ Hà Nội: trang chủ nổi bật thông tin tuyển sinh (hướng dẫn phỏng vấn tuyển sinh đại học 2020), giới thiệu trường, ngành đào tạo, hợp tác quốc tế và tin tức, theo nhận diện xanh - đỏ của USTH.",
