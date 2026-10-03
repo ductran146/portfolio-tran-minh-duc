@@ -5,6 +5,7 @@ import HeroMockResponsive from "../components/HeroMockResponsive.astro";
 import Icon from "../components/Icon.astro";
 import CtaBand from "../components/CtaBand.astro";
 import InfoCard from "../components/InfoCard.astro";
+import IntroOverlay from "../components/IntroOverlay.astro";
 import { getEntry } from "astro:content";
 import { localePath, resolveLocale, withBase } from "../i18n/ui";
 import { Image } from "astro:assets";
@@ -148,6 +149,9 @@ const clientLogos = clientGroups.flatMap((g) => g.clients).filter((c): c is { na
 ---
 
 <BaseLayout title="Trần Minh Đức - Senior UX/UI Designer">
+	<!-- Màn mở đầu ~7s (2026-10-03): overlay cố định, tự chạy rồi tan, một lần
+	     mỗi phiên (hard refresh phát lại). Xem IntroOverlay.astro + DESIGN.md. -->
+	<IntroOverlay />
 	<main>
 		<!-- Bố cục hero dùng CSS Grid Areas (2026-09-21, tách .hero-actions khỏi
 		     .hero-copy để đổi được THỨ TỰ trên mobile độc lập với desktop): desktop

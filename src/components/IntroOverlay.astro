@@ -1,0 +1,1024 @@
+---
+/**
+ * IntroOverlay — màn mở đầu trang chủ (chốt 2026-10-03 sau 6 vòng sửa phần hạ
+ * cánh, xem DESIGN.md "Intro mở đầu trang chủ").
+ *
+ * Là OVERLAY cố định phủ trang, chạy TỰ ĐỘNG theo thời gian rồi biến mất —
+ * không còn cơ chế cuộn-để-chuyển (section ghim, khoảng cuộn dư): trang chủ sau
+ * intro cuộn như mọi trang khác (yêu cầu "bỏ toàn bộ scroll dọc để đồng bộ").
+ * Chạy MỘT lần mỗi phiên (sessionStorage "dt-intro"); hard refresh phát lại.
+ *   0–.9s    bản vẽ kỹ thuật: lưới dựng hình, ngòi bút vẽ lưới 6 mặt một nét,
+ *            đường gấp gạch-chấm, kích thước 217/868, nhãn mặt A–F
+ *   .9–1.8   camera đẩy vào (đã trôi chậm từ 0s) + bắt đầu nghiêng vào 3D
+ *   1.8–2.5  5 mặt gấp waterfall thành khối, khối vẫn xoay liên tục
+ *   2.5–3.56 outline logo vẽ lên 3 mặt → màu brand nở ra từ đỉnh chung → bề
+ *            mặt thừa bị khắc rỗng; đúng 3.56s hoán sang SVG phẳng (sắc nét)
+ *   3.56–4.3 "bật đèn": nền tối → var(--bg), chấm lưới → màu ink
+ *   ~4.1     DỪNG CHỜ: gợi ý "Cuộn hoặc bấm để tiếp tục" ở đáy; chỉ khi người
+ *            dùng lăn chuột / chạm / bấm phím / bấm màn hình mới đi tiếp
+ *   +0.8s    logo thu nhỏ, bay THẲNG LÊN giữa header (JS)
+ *   +0       hoán sang logo header; tên hiện bằng blur-in (0.9s)
+ *   +0.6→1.85 cụm logo + tên trượt sang trái 1.25s; menu rơi lần lượt
+ *            (.15/.30/.45/.60s, mỗi mục .5s), icon theme rơi .75→1.25s — chạm
+ *            đáy ĐÚNG lúc cụm về chỗ; hero rơi xuống .35→1.25s; overlay tan
+ *   +2.0     gỡ class, mở khoá cuộn, trang là trang thường
+ * Header trong lúc intro: trong suốt, logo header tắt, .brand dịch ra giữa
+ * (--bshift); rule ở global.css (html.intro-active / intro-landed / intro-docked).
+ * Bỏ qua → nhảy thẳng về trạng thái cuối.
+ *
+ * Màu riêng của intro (nền tối #05100b, mint #49e0ab) KHÔNG phải token site —
+ * đây là "căn phòng vẽ kỹ thuật" trước khi bật đèn; logo luôn #0e7e5e như file
+ * public/logo-dt-green.svg để trùng khít với logo header khi hoán đổi.
+ */
+import { dtOutlinePaths } from "../data/dt-glint";
+import { resolveLocale } from "../i18n/ui";
+
+const locale = resolveLocale(Astro.currentLocale);
+const skipLabel = locale === "vi" ? "Bỏ qua" : "Skip";
+const hintLabel = locale === "vi" ? "Cuộn hoặc bấm để tiếp tục" : "Scroll or click to continue";
+---
+
+<!-- Chạy TRƯỚC khi section bên dưới được parse → quyết định hiện/ẩn trước lần
+     vẽ đầu, không nháy. data-astro-rerun: chạy lại mỗi lần ClientRouter quay
+     về trang chủ (sessionStorage đã "done" → ẩn). -->
+<script is:inline data-astro-rerun>
+  (function () {
+    var root = document.documentElement;
+    var done = false;
+    try {
+      done = sessionStorage.getItem("dt-intro") === "done";
+    } catch (e) {}
+    // Hard refresh (F5/⌘R) luôn phát lại intro — tiện test (yêu cầu 2026-10-03).
+    // Chỉ xét ở lần chạy ĐẦU của tài liệu (fresh): các lần rerun do ClientRouter
+    // quay về trang chủ vẫn giữ navigation type "reload" cũ nên phải bỏ qua.
+    var fresh = !window.__dtIntroRan;
+    window.__dtIntroRan = true;
+    var nav = performance.getEntriesByType && performance.getEntriesByType("navigation")[0];
+    var reload = !!(nav && nav.type === "reload");
+    var play = !done || (fresh && reload);
+    root.setAttribute("data-intro", play ? "play" : "skip");
+    root.classList.toggle("intro-active", play);
+  })();
+</script>
+
+<section class="dt-intro" aria-label={locale === "vi" ? "Mở đầu" : "Intro"}>
+  <div class="pin">
+  <div class="grid grid-base" aria-hidden="true"></div>
+  <div class="grid grid-hot" aria-hidden="true"></div>
+
+  <div class="scene" aria-hidden="true">
+    <div class="cam">
+      <div class="zoom">
+        <div class="cube">
+          <div class="net"><svg class="net-svg" viewBox="-340 -340 870 680"></svg></div>
+
+          <div class="face front">
+            <div class="base"></div>
+            <div class="tex"></div>
+            <div class="shade" style="--sh: .18"></div>
+            <svg class="skin" viewBox="0 0 184 184" data-face="front"></svg>
+          </div>
+          <div class="face top">
+            <div class="base"></div>
+            <div class="tex"></div>
+            <div class="shade" style="--sh: 0"></div>
+            <svg class="skin" viewBox="0 0 184 184" data-face="top"></svg>
+          </div>
+          <div class="face left">
+            <div class="base"></div>
+            <div class="tex"></div>
+            <div class="shade" style="--sh: .3"></div>
+            <svg class="skin" viewBox="0 0 184 184" data-face="left"></svg>
+          </div>
+          <div class="face right">
+            <div class="base"></div>
+            <div class="tex"></div>
+            <div class="shade" style="--sh: .32"></div>
+            <div class="face back">
+              <div class="base"></div>
+              <div class="tex"></div>
+              <div class="shade" style="--sh: .4"></div>
+            </div>
+          </div>
+          <div class="face bottom">
+            <div class="base"></div>
+            <div class="tex"></div>
+            <div class="shade" style="--sh: .45"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Logo cuối: SVG phẳng NGOÀI .scene (scene bị scale bằng transform → layer
+       rasterize ở 1× rồi phóng, mờ). Vị trí/kích thước do fit() đặt bằng px thật. -->
+  <div class="mark">
+    <svg viewBox="0 0 377 434" aria-hidden="true" focusable="false">
+      {dtOutlinePaths.map((d) => <path d={d} />)}
+    </svg>
+  </div>
+
+  <p class="hint" aria-hidden="true"><span class="hint-line"></span>{hintLabel}</p>
+
+  <button class="skip" type="button">{skipLabel}<span class="arrow">→</span></button>
+  </div>
+</section>
+
+<!-- is:global vì phần lớn nét vẽ/skin được JS tạo lúc chạy (không mang hash
+     scoped của Astro). Mọi rule đều nằm dưới .dt-intro. -->
+<style is:global>
+  html[data-intro="skip"] .dt-intro {
+    display: none;
+  }
+
+  .dt-intro {
+    --stage: #05100b;
+    --stage-deep: #08201a;
+    --mark: #0e7e5e;
+    --mint: #49e0ab;
+    --paper: #eaf3ee;
+    --S: 184px;
+    --H: 92px;
+    --T: 5s;
+
+    /* Overlay cố định dưới header (z 20) để logo header hiện lên trên lúc hạ
+       cánh, trên <main> để che hero tới khi hero "rơi" xuống. */
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+    transition: opacity 0.6s var(--ease-page);
+  }
+  .dt-intro.is-leaving {
+    opacity: 0;
+    pointer-events: none;
+  }
+  .dt-intro.is-gone {
+    display: none;
+  }
+  .dt-intro .pin {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    isolation: isolate;
+    background-color: var(--stage);
+    animation: dti-stage var(--T) linear both;
+    cursor: default;
+  }
+  /* "Bật đèn": nền tối → nền site ngay sau khi logo khoá (3.56s); lớp gradient
+     sâu (::before) tan cùng lúc. Sau đó KHÔNG còn lớp tối nào — nền phải sạch
+     đúng var(--bg) (bản đầu để sót một gradient tối → nền đục, 2026-10-03). */
+  @keyframes dti-stage {
+    0%, 71.2% { background-color: var(--stage); }
+    86%, 100% { background-color: var(--bg); }
+  }
+  .dt-intro .pin::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(120% 110% at 50% 45%, var(--stage-deep) 0%, var(--stage) 60%, #030906 100%);
+    animation: dti-deep var(--T) linear both;
+    pointer-events: none;
+  }
+  @keyframes dti-deep {
+    0%, 71.2% { opacity: 1; }
+    86%, 100% { opacity: 0; }
+  }
+  /* Bản skip (--T ≈ 0) và reduced-motion: mọi animation nhảy thẳng về trạng thái cuối. */
+  .dt-intro.is-done {
+    --T: 1ms;
+  }
+  /* Hạ cánh: logo intro tắt ngay frame logo header bật — cùng rect nên không
+     thấy đổi; !important để thắng animation dti-mark. */
+  .dt-intro.is-landed .mark {
+    opacity: 0 !important;
+  }
+
+  /* ---- Lưới chấm: lớp nền + lớp "nóng" màu accent mask theo con trỏ ---- */
+  .dt-intro .grid {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    pointer-events: none;
+    color: var(--paper);
+    background-image: radial-gradient(currentColor 1.05px, transparent 1.2px);
+    background-size: 20px 20px;
+    background-position: 10px 10px;
+    -webkit-mask-image: radial-gradient(60% 60% at 50% 48%, #000 20%, transparent 85%);
+    mask-image: radial-gradient(60% 60% at 50% 48%, #000 20%, transparent 85%);
+    animation: dti-grid var(--T) linear both;
+  }
+  @keyframes dti-grid {
+    0% { opacity: 0; color: var(--paper); }
+    2% { opacity: .42; color: var(--paper); }
+    71.2% { opacity: .42; color: var(--paper); }
+    86%, 100% { opacity: .3; color: var(--ink); }
+  }
+  .dt-intro .grid-hot {
+    color: var(--mint);
+    background-image: radial-gradient(currentColor 1.25px, transparent 1.45px);
+    -webkit-mask-image: radial-gradient(240px circle at var(--mx, -999px) var(--my, -999px), #000 0%, rgba(0, 0, 0, .5) 35%, transparent 72%);
+    mask-image: radial-gradient(240px circle at var(--mx, -999px) var(--my, -999px), #000 0%, rgba(0, 0, 0, .5) 35%, transparent 72%);
+    animation: dti-grid-hot var(--T) linear both;
+  }
+  @keyframes dti-grid-hot {
+    0% { opacity: 0; color: var(--mint); }
+    2% { opacity: 1; color: var(--mint); }
+    71.2% { opacity: 1; color: var(--mint); }
+    86%, 100% { opacity: 1; color: var(--accent); }
+  }
+
+  /* ---- Sân khấu 800×560, scale theo cạnh nhỏ của viewport (fit() đặt transform) ---- */
+  .dt-intro .scene {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 800px;
+    height: 560px;
+    transform-origin: 0 0;
+  }
+  /* Camera gần trực giao (60000px): không animate perspective, logo cuối đúng tỷ lệ. */
+  .dt-intro .cam {
+    position: absolute;
+    left: 400px;
+    top: 265px;
+    width: 0;
+    height: 0;
+    perspective: 60000px;
+  }
+  .dt-intro .zoom {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 0;
+    height: 0;
+    transform-style: preserve-3d;
+    animation: dti-zoom var(--T) linear both;
+  }
+  /* Đẩy camera liên tục: trôi chậm lúc đang vẽ, rồi tăng tốc với độ dốc đầu
+     khớp đoạn trôi (bezier .4,.08) → không có điểm gãy giữa bước 1 và 2. */
+  @keyframes dti-zoom {
+    0% { transform: scale(.56); }
+    18% { transform: scale(.62); animation-timing-function: cubic-bezier(.4, .08, .2, 1); }
+    38%, 100% { transform: scale(1); }
+  }
+  /* KHÔNG animate opacity trên .cube: opacity<1 ép preserve-3d về phẳng → nháy. */
+  .dt-intro .cube {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 0;
+    height: 0;
+    transform-style: preserve-3d;
+    animation: dti-spin var(--T) linear both;
+  }
+  @keyframes dti-spin {
+    0%, 18% { transform: rotateX(0deg) rotateY(0deg); animation-timing-function: cubic-bezier(.5, 0, .2, 1); }
+    66%, 100% { transform: rotateX(-35.264deg) rotateY(45deg); }
+  }
+
+  /* ---- Bản vẽ kỹ thuật (mặt phẳng trước) ---- */
+  .dt-intro .net {
+    position: absolute;
+    left: -340px;
+    top: -340px;
+    width: 870px;
+    height: 680px;
+    transform: translateZ(var(--H));
+    animation: dti-net var(--T) linear both;
+  }
+  @keyframes dti-net {
+    0%, 34% { opacity: 1; }
+    39%, 100% { opacity: 0; }
+  }
+  .dt-intro .net svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    overflow: visible;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  .dt-intro .cl {
+    fill: none;
+    stroke: rgba(73, 224, 171, .42);
+    stroke-width: .6;
+    stroke-dasharray: 3 5;
+    opacity: 0;
+    animation: dti-cl var(--T) linear both;
+  }
+  @keyframes dti-cl {
+    0%, .5% { opacity: 0; }
+    3.5% { opacity: 1; }
+    20% { opacity: 1; }
+    25%, 100% { opacity: 0; }
+  }
+  .dt-intro .ink {
+    fill: none;
+    stroke: var(--mint);
+    stroke-width: 1.5;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    animation: dti-ink var(--T) cubic-bezier(.3, 0, .3, 1) both;
+  }
+  @keyframes dti-ink {
+    0%, 1.5% { stroke-dashoffset: 100; }
+    14%, 100% { stroke-dashoffset: 0; }
+  }
+  .dt-intro .tip {
+    fill: var(--mint);
+    filter: drop-shadow(0 0 6px rgba(73, 224, 171, .9));
+    offset-rotate: 0deg;
+    opacity: 0;
+    animation: dti-tip var(--T) cubic-bezier(.3, 0, .3, 1) both;
+  }
+  @keyframes dti-tip {
+    0%, 1% { offset-distance: 0%; opacity: 0; }
+    1.5% { opacity: 1; }
+    14% { offset-distance: 100%; opacity: 1; }
+    15%, 100% { offset-distance: 100%; opacity: 0; }
+  }
+  .dt-intro .pt {
+    fill: var(--stage);
+    stroke: var(--mint);
+    stroke-width: 1.1;
+    opacity: 0;
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+  .dt-intro .fold {
+    fill: none;
+    stroke: var(--mint);
+    stroke-width: 1.1;
+    stroke-dasharray: 9 4 2 4;
+  }
+  .dt-intro .dim {
+    stroke: rgba(234, 243, 238, .75);
+    stroke-width: .8;
+    fill: none;
+  }
+  .dt-intro .dim-t {
+    font-size: 10px;
+    fill: var(--paper);
+    letter-spacing: .06em;
+  }
+  .dt-intro .lab {
+    font-size: 11px;
+    fill: var(--mint);
+    letter-spacing: .12em;
+  }
+  .dt-intro .cross {
+    stroke: rgba(73, 224, 171, .8);
+    stroke-width: .8;
+  }
+  /* Chú thích hiện lệch nhau: keyframe riêng từng phần tử do JS sinh (dti-anno-N). */
+  .dt-intro .fold,
+  .dt-intro .dim,
+  .dt-intro .dim-t,
+  .dt-intro .lab,
+  .dt-intro .cross {
+    opacity: 0;
+    animation: dti-none var(--T) linear both;
+  }
+  @keyframes dti-none {
+    0%, 100% { opacity: 0; }
+  }
+
+  /* ---- Các mặt khối ---- */
+  .dt-intro .face {
+    position: absolute;
+    left: calc(var(--H) * -1);
+    top: calc(var(--H) * -1);
+    width: var(--S);
+    height: var(--S);
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
+    opacity: 0;
+  }
+  .dt-intro .face > div,
+  .dt-intro .face > svg {
+    position: absolute;
+    inset: 0;
+  }
+  @property --r {
+    syntax: "<length>";
+    inherits: false;
+    initial-value: 0px;
+  }
+  /* Khắc: bề mặt ngoài logo bị cắt bởi vòng tròn lớn dần từ đỉnh chung 3 mặt. */
+  .dt-intro .base,
+  .dt-intro .tex,
+  .dt-intro .shade {
+    --r: 0px;
+    -webkit-mask-image: radial-gradient(circle at var(--cx, 0) var(--cy, 0), transparent calc(var(--r) - 1px), #000 var(--r));
+    mask-image: radial-gradient(circle at var(--cx, 0) var(--cy, 0), transparent calc(var(--r) - 1px), #000 var(--r));
+  }
+  @keyframes dti-cut {
+    0%, 64% { --r: 0px; }
+    71%, 100% { --r: 270px; }
+  }
+  .dt-intro .front > div { --cx: 0; --cy: 0; }
+  .dt-intro .left > div { --cx: 100%; --cy: 0; }
+  .dt-intro .top > div { --cx: 0; --cy: 100%; }
+  .dt-intro .base {
+    background: #0b2a20;
+    box-shadow: inset 0 0 0 1px rgba(73, 224, 171, .45);
+    opacity: 0;
+    animation: dti-base var(--T) linear both, dti-cut var(--T) cubic-bezier(.3, 0, .3, 1) both;
+  }
+  @keyframes dti-base {
+    0%, 30% { opacity: 0; }
+    36%, 100% { opacity: 1; }
+  }
+  .dt-intro .tex {
+    opacity: 0;
+    background-image: linear-gradient(rgba(73, 224, 171, .18) 1px, transparent 1px), linear-gradient(90deg, rgba(73, 224, 171, .18) 1px, transparent 1px);
+    background-size: 23px 23px;
+    animation: dti-tex var(--T) linear both, dti-cut var(--T) cubic-bezier(.3, 0, .3, 1) both;
+  }
+  @keyframes dti-tex {
+    0%, 44% { opacity: 0; }
+    52%, 100% { opacity: 1; }
+  }
+  .dt-intro .shade {
+    background: rgba(0, 0, 0, var(--sh, 0));
+    opacity: 0;
+    animation: dti-tex var(--T) linear both, dti-cut var(--T) cubic-bezier(.3, 0, .3, 1) both;
+  }
+  .dt-intro .skin {
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    overflow: hidden;
+    animation: dti-skin var(--T) linear both;
+  }
+  /* Skin tắt đúng frame logo phẳng bật (71.2%) — hình học trùng khít, không crossfade. */
+  @keyframes dti-skin {
+    0%, 50% { opacity: 0; }
+    52%, 71.2% { opacity: 1; }
+    71.21%, 100% { opacity: 0; }
+  }
+  .dt-intro .skin .fill path {
+    fill: var(--mark);
+  }
+  .dt-intro .skin .ol path {
+    fill: none;
+    stroke: var(--mint);
+    stroke-width: 1.3;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    animation: dti-ol var(--T) cubic-bezier(.4, 0, .3, 1) both;
+  }
+  @keyframes dti-ol {
+    0%, 54% { stroke-dashoffset: 100; opacity: 1; }
+    61% { stroke-dashoffset: 0; opacity: 1; }
+    68% { opacity: 1; }
+    71%, 100% { stroke-dashoffset: 0; opacity: 0; }
+  }
+  .dt-intro .skin .bloom {
+    transform-origin: var(--ox) var(--oy);
+    transform: scale(0);
+    animation: dti-bloom var(--T) cubic-bezier(.3, 0, .3, 1) both;
+  }
+  @keyframes dti-bloom {
+    0%, 62% { transform: scale(0); }
+    69%, 100% { transform: scale(1); }
+  }
+  .dt-intro .skin .wave {
+    fill: none;
+    stroke: var(--mint);
+    stroke-width: 1.2;
+    opacity: 0;
+    animation: dti-wave var(--T) linear both;
+  }
+  @keyframes dti-wave {
+    0%, 62% { opacity: 0; }
+    63% { opacity: .9; }
+    68% { opacity: .9; }
+    71%, 100% { opacity: 0; }
+  }
+
+  .dt-intro .front {
+    transform: translateZ(var(--H));
+    animation: dti-fin0 var(--T) linear both;
+  }
+  @keyframes dti-fin0 {
+    0%, 30% { opacity: 0; }
+    36%, 100% { opacity: 1; }
+  }
+  .dt-intro .top {
+    transform-origin: center bottom;
+    animation: dti-fold-top var(--T) cubic-bezier(.4, 0, .2, 1) both;
+  }
+  @keyframes dti-fold-top {
+    0%, 30% { opacity: 0; transform: translateZ(var(--H)) translateY(calc(var(--S) * -1)) rotateX(0deg); }
+    36% { opacity: 1; transform: translateZ(var(--H)) translateY(calc(var(--S) * -1)) rotateX(0deg); }
+    44%, 100% { opacity: 1; transform: translateZ(var(--H)) translateY(calc(var(--S) * -1)) rotateX(90deg); }
+  }
+  .dt-intro .left {
+    transform-origin: right center;
+    animation: dti-fold-left var(--T) cubic-bezier(.4, 0, .2, 1) both;
+  }
+  @keyframes dti-fold-left {
+    0%, 30% { opacity: 0; transform: translateZ(var(--H)) translateX(calc(var(--S) * -1)) rotateY(0deg); }
+    38% { opacity: 1; transform: translateZ(var(--H)) translateX(calc(var(--S) * -1)) rotateY(0deg); }
+    46%, 100% { opacity: 1; transform: translateZ(var(--H)) translateX(calc(var(--S) * -1)) rotateY(-90deg); }
+  }
+  .dt-intro .right {
+    transform-origin: left center;
+    animation: dti-fold-right var(--T) cubic-bezier(.4, 0, .2, 1) both;
+  }
+  @keyframes dti-fold-right {
+    0%, 30% { opacity: 0; transform: translateZ(var(--H)) translateX(var(--S)) rotateY(0deg); }
+    38% { opacity: 1; transform: translateZ(var(--H)) translateX(var(--S)) rotateY(0deg); }
+    46%, 100% { opacity: 1; transform: translateZ(var(--H)) translateX(var(--S)) rotateY(90deg); }
+  }
+  .dt-intro .bottom {
+    transform-origin: center top;
+    animation: dti-fold-bottom var(--T) cubic-bezier(.4, 0, .2, 1) both;
+  }
+  @keyframes dti-fold-bottom {
+    0%, 30% { opacity: 0; transform: translateZ(var(--H)) translateY(var(--S)) rotateX(0deg); }
+    40% { opacity: 1; transform: translateZ(var(--H)) translateY(var(--S)) rotateX(0deg); }
+    48%, 100% { opacity: 1; transform: translateZ(var(--H)) translateY(var(--S)) rotateX(-90deg); }
+  }
+  .dt-intro .back {
+    left: 0;
+    top: 0;
+    transform-origin: left center;
+    animation: dti-fold-back var(--T) cubic-bezier(.4, 0, .2, 1) both;
+  }
+  @keyframes dti-fold-back {
+    0%, 30% { opacity: 0; transform: translateX(var(--S)) rotateY(0deg); }
+    42% { opacity: 1; transform: translateX(var(--S)) rotateY(0deg); }
+    50%, 100% { opacity: 1; transform: translateX(var(--S)) rotateY(90deg); }
+  }
+
+  /* ---- Logo cuối (vector phẳng, vị trí do fit() đặt) ---- */
+  .dt-intro .mark {
+    position: absolute;
+    opacity: 0;
+    animation: dti-mark var(--T) linear both;
+  }
+  @keyframes dti-mark {
+    0%, 71.2% { opacity: 0; }
+    71.21%, 100% { opacity: 1; }
+  }
+  .dt-intro .mark svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    shape-rendering: geometricPrecision;
+  }
+  .dt-intro .mark path {
+    fill: var(--mark);
+  }
+  /* Shared-element với logo header khi bấm link: chỉ mang tên lúc intro đang
+     chiếm màn hình (header lúc đó ẩn và logo header bỏ tên — xem BaseLayout). */
+  html.intro-active .dt-intro .mark {
+    view-transition-name: brand-mark;
+  }
+
+  /* ---- Gợi ý tiếp tục: hiện khi intro đã dừng chờ (is-ready), tắt khi bay ---- */
+  .dt-intro .hint {
+    position: absolute;
+    left: 50%;
+    bottom: max(1.5rem, env(safe-area-inset-bottom));
+    transform: translateX(-50%);
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .5rem;
+    color: var(--ink-faint);
+    font-size: .8rem;
+    letter-spacing: .04em;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity .5s var(--ease-smooth);
+    pointer-events: none;
+  }
+  .dt-intro.is-ready .hint {
+    opacity: 1;
+  }
+  .dt-intro.is-flying .hint,
+  .dt-intro.is-landed .hint {
+    opacity: 0;
+    transition-duration: .25s;
+  }
+  .dt-intro .hint-line {
+    width: 1px;
+    height: 28px;
+    background: var(--ink-faint);
+    transform-origin: top;
+    animation: dti-breathe 1.6s var(--ease-page) infinite alternate;
+  }
+  @keyframes dti-breathe {
+    from { transform: scaleY(.35); }
+    to { transform: scaleY(1); }
+  }
+
+  /* ---- Bỏ qua ---- */
+  .dt-intro .skip {
+    position: absolute;
+    top: max(1rem, env(safe-area-inset-top));
+    right: max(1.25rem, env(safe-area-inset-right));
+    display: inline-flex;
+    align-items: center;
+    padding: .5rem .95rem;
+    border: 1px solid rgba(234, 243, 238, .16);
+    border-radius: 999px;
+    background: transparent;
+    color: rgba(234, 243, 238, .55);
+    font: inherit;
+    font-size: .8rem;
+    font-weight: 500;
+    letter-spacing: .02em;
+    cursor: pointer;
+    opacity: 0;
+    animation: dti-fade .5s var(--ease-smooth) .6s both;
+    transition: color .25s ease, border-color .25s ease, opacity .3s ease;
+  }
+  .dt-intro .skip:hover {
+    color: var(--paper);
+    border-color: rgba(234, 243, 238, .4);
+  }
+  .dt-intro .skip .arrow {
+    display: inline-block;
+    margin-left: .5rem;
+    transition: transform .3s ease;
+  }
+  .dt-intro .skip:hover .arrow {
+    transform: translateX(12px);
+  }
+  .dt-intro.is-done .skip {
+    opacity: 0 !important;
+    pointer-events: none;
+  }
+
+</style>
+
+<script>
+  const NS = "http://www.w3.org/2000/svg";
+  const PATHS: string[] = [];
+
+  function mk<K extends keyof SVGElementTagNameMap>(tag: K, attrs: Record<string, string | number> = {}, cls?: string) {
+    const e = document.createElementNS(NS, tag);
+    for (const k in attrs) e.setAttribute(k, String(attrs[k]));
+    if (cls) e.setAttribute("class", cls);
+    return e;
+  }
+
+  /** Bản vẽ kỹ thuật + skin logo trên 3 mặt: sinh một lần, keyframe lệch pha
+   *  cho từng chú thích gom vào một <style> (id dti-kf) để không trùng. */
+  function buildDrawing(root: HTMLElement) {
+    const svg = root.querySelector<SVGSVGElement>(".net-svg");
+    if (!svg || svg.childElementCount) return;
+    let css = "";
+    let n = 0;
+    const add = <T extends SVGElement>(e: T) => (svg.appendChild(e), e);
+    const anno = (e: SVGElement, at: number) => {
+      const id = `dti-anno-${n++}`;
+      e.style.animationName = id;
+      css += `@keyframes ${id}{0%,${at}%{opacity:0}${at + 1.2}%{opacity:1}20%{opacity:1}26%,100%{opacity:0}}`;
+    };
+
+    // Đường dựng hình
+    [-276, -92, 92, 276, 460].forEach((x) => add(mk("line", { x1: x, y1: -310, x2: x, y2: 310 }, "cl")));
+    [-276, -92, 92, 276].forEach((y) => add(mk("line", { x1: -310, y1: y, x2: 500, y2: y }, "cl")));
+
+    // Một nét bút liên tục vẽ lưới 6 mặt; đỉnh hiện khi bút đi qua
+    const netD =
+      "M-92,-92 L92,-92 L92,92 L-92,92 Z M-92,-92 L-92,-276 L92,-276 L92,-92 M-92,-92 L-276,-92 L-276,92 L-92,92 " +
+      "M92,-92 L276,-92 L276,92 L92,92 M-92,92 L-92,276 L92,276 L92,92 M276,-92 L460,-92 L460,92 L276,92";
+    add(mk("path", { d: netD, pathLength: 100 }, "ink"));
+    const total = 736 + 552 * 5;
+    const corners: [number, number, number][] = [
+      [-92, -92, 0], [92, -92, 184], [92, 92, 368], [-92, 92, 552], [-92, -276, 920], [92, -276, 1104], [-276, -92, 1472],
+      [-276, 92, 1656], [276, -92, 2024], [276, 92, 2208], [-92, 276, 2576], [92, 276, 2760], [460, -92, 3128], [460, 92, 3312],
+    ];
+    corners.forEach((c, i) => {
+      const r = add(mk("rect", { x: c[0] - 3.5, y: c[1] - 3.5, width: 7, height: 7 }, "pt"));
+      const at = 1.5 + 12.5 * (c[2] / total);
+      r.style.animation = `dti-pt-${i} var(--T) linear both`;
+      css += `@keyframes dti-pt-${i}{0%,${at.toFixed(2)}%{opacity:0;transform:scale(.4)}${(at + 1).toFixed(2)}%{opacity:1;transform:scale(1)}20%{opacity:1}26%,100%{opacity:0}}`;
+    });
+    const tip = add(mk("circle", { r: 3.4 }, "tip"));
+    tip.style.offsetPath = `path('${netD}')`;
+
+    // Đường gấp (cạnh chung) gạch-chấm
+    (
+      [
+        [-92, -92, 92, -92], [-92, 92, 92, 92], [-92, -92, -92, 92], [92, -92, 92, 92], [276, -92, 276, 92],
+      ] as [number, number, number, number][]
+    ).forEach((l, i) => anno(add(mk("line", { x1: l[0], y1: l[1], x2: l[2], y2: l[3] }, "fold")), 11.5 + i * 0.25));
+
+    // Kích thước: cạnh 217 (trên/trái), tổng 868 (dưới)
+    const dim = (x1: number, y1: number, x2: number, y2: number, label: string, lx: number, ly: number, rot: number, at: number) => {
+      const g = add(mk("g", {}, "dim"));
+      const seg = (d: string) => g.appendChild(mk("path", { d }));
+      seg(`M${x1},${y1} L${x2},${y2}`);
+      if (y1 === y2) {
+        seg(`M${x1},${y1 - 5} L${x1},${y1 + 5}`); seg(`M${x2},${y2 - 5} L${x2},${y2 + 5}`);
+        seg(`M${x1 + 4},${y1 - 2.5} L${x1},${y1} L${x1 + 4},${y1 + 2.5}`); seg(`M${x2 - 4},${y2 - 2.5} L${x2},${y2} L${x2 - 4},${y2 + 2.5}`);
+      } else {
+        seg(`M${x1 - 5},${y1} L${x1 + 5},${y1}`); seg(`M${x2 - 5},${y2} L${x2 + 5},${y2}`);
+        seg(`M${x1 - 2.5},${y1 + 4} L${x1},${y1} L${x1 + 2.5},${y1 + 4}`); seg(`M${x2 - 2.5},${y2 - 4} L${x2},${y2} L${x2 + 2.5},${y2 - 4}`);
+      }
+      anno(g, at);
+      const t = add(mk("text", { x: lx, y: ly, "text-anchor": "middle", transform: rot ? `rotate(${rot} ${lx} ${ly})` : "" }, "dim-t"));
+      t.textContent = label;
+      anno(t, at + 0.6);
+    };
+    dim(-92, -300, 92, -300, "217", 0, -306, 0, 13);
+    dim(-300, -92, -300, 92, "217", -306, 0, -90, 13.4);
+    dim(-276, 300, 460, 300, "868", 92, 312, 0, 13.8);
+
+    // Nhãn mặt A–F + tâm chữ thập
+    ([["A", 0, 0], ["B", 0, -184], ["C", -184, 0], ["D", 184, 0], ["E", 0, 184], ["F", 368, 0]] as [string, number, number][]).forEach((f, i) => {
+      const at = 14.2 + i * 0.25;
+      anno(add(mk("path", { d: `M${f[1] - 7},${f[2]} L${f[1] + 7},${f[2]} M${f[1]},${f[2] - 7} L${f[1]},${f[2] + 7}` }, "cross")), at);
+      const t = add(mk("text", { x: f[1] + 11, y: f[2] - 9 }, "lab"));
+      t.textContent = f[0];
+      anno(t, at + 0.3);
+    });
+
+    // Skin logo: ma trận nghịch đảo hình chiếu trục đo, đưa từng mảng logo
+    // (toạ độ 377×434) lên đúng mặt 184×184 — ở góc isometric, 3 mặt ghép lại
+    // trùng khít logo phẳng. Đỉnh chung của 3 mặt = tâm logo → gốc vòng bloom/khắc.
+    const faces: Record<string, { idx: number[]; m: number[]; v: [number, number] }> = {
+      top: { idx: [6, 5, 4], m: [0.48962, 0.48962, -0.84793, 0.84793, 91.73, -92.27], v: [0, 184] },
+      front: { idx: [1, 3], m: [0.97925, 0.48962, 0, 0.84793, -184.54, -276.27], v: [0, 0] },
+      left: { idx: [0, 2], m: [0.97925, -0.48962, 0, 0.84793, -0.5386, -91.73], v: [184, 0] },
+    };
+    root.querySelectorAll<SVGSVGElement>(".skin").forEach((skin) => {
+      const f = faces[skin.dataset.face || ""];
+      if (!f || skin.childElementCount) return;
+      const clipId = `dti-clip-${skin.dataset.face}`;
+      const defs = mk("defs");
+      const cp = mk("clipPath", { id: clipId });
+      const cc = mk("circle", { cx: f.v[0], cy: f.v[1], r: 270 }, "bloom");
+      cc.style.setProperty("--ox", `${f.v[0]}px`);
+      cc.style.setProperty("--oy", `${f.v[1]}px`);
+      cp.appendChild(cc);
+      defs.appendChild(cp);
+      skin.appendChild(defs);
+      const group = (cls: string) => {
+        const g = mk("g", { transform: `matrix(${f.m.join(" ")})` }, cls);
+        f.idx.forEach((i) => g.appendChild(mk("path", { d: PATHS[i], pathLength: 100 })));
+        return g;
+      };
+      const fillWrap = mk("g", { "clip-path": `url(#${clipId})` });
+      fillWrap.appendChild(group("fill"));
+      skin.appendChild(fillWrap);
+      skin.appendChild(group("ol"));
+      const w = mk("circle", { cx: f.v[0], cy: f.v[1], r: 270 }, "wave bloom");
+      w.style.setProperty("--ox", `${f.v[0]}px`);
+      w.style.setProperty("--oy", `${f.v[1]}px`);
+      skin.appendChild(w);
+    });
+
+    if (!document.getElementById("dti-kf")) {
+      const st = document.createElement("style");
+      st.id = "dti-kf";
+      st.textContent = css;
+      document.head.appendChild(st);
+    }
+  }
+
+  function markDone() {
+    try {
+      sessionStorage.setItem("dt-intro", "done");
+    } catch {}
+  }
+
+  const INTRO_CLASSES = ["intro-active", "intro-anim", "intro-landed", "intro-docked", "intro-lock"];
+  // Dọn listener/observer của lần init trước. Module JS sống xuyên các lần
+  // chuyển trang bằng ClientRouter: listener scroll cũ đo .dt-intro đã bị gỡ
+  // (rect top = 0 → p = 0) và gắn lại intro-active lên <html> → header trang
+  // trong biến mất (lỗi đo 2026-10-03). Gọi ở astro:before-swap.
+  let cleanup: (() => void) | null = null;
+
+  function initIntro() {
+    const root = document.querySelector<HTMLElement>(".dt-intro");
+    if (!root || root.dataset.bound) return;
+    if (document.documentElement.getAttribute("data-intro") === "skip") return;
+    root.dataset.bound = "1";
+    cleanup?.();
+    // Khoá cuộn tới khi intro chạy xong (5s hoặc Bỏ qua) — yêu cầu 2026-10-03.
+    document.documentElement.classList.add("intro-lock");
+    window.scrollTo(0, 0);
+
+    // Path logo lấy từ chính SVG đã render (một nguồn: src/data/dt-glint.ts).
+    PATHS.length = 0;
+    root.querySelectorAll<SVGPathElement>(".mark path").forEach((p) => PATHS.push(p.getAttribute("d") || ""));
+    buildDrawing(root);
+
+    const pin = root.querySelector<HTMLElement>(".pin")!;
+    const scene = root.querySelector<HTMLElement>(".scene")!;
+    const mark = root.querySelector<HTMLElement>(".mark")!;
+    const html = document.documentElement;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    // Scene 800×560 scale theo cạnh nhỏ, canh giữa; logo đặt bằng px thật
+    // (ngoài scene) để vector sắc nét ở mọi kích thước.
+    const start = { left: 0, top: 0, w: 0, h: 0 };
+    const target = { cy: 0, w: 0 };
+    const headerMark = document.querySelector<HTMLElement>(".site-header .brand-mark");
+    const brand = document.querySelector<HTMLElement>(".site-header .brand");
+    let flyP = 0;
+    const measureHeader = () => {
+      if (!headerMark || !brand) return;
+      brand.style.transform = "none";
+      const hr = headerMark.getBoundingClientRect();
+      brand.style.transform = "";
+      const pr = pin.getBoundingClientRect();
+      target.w = hr.width;
+      target.cy = hr.top - pr.top + hr.height / 2;
+      // Dịch brand sao cho LOGO nằm đúng tâm ngang màn hình (tên hiện bên phải).
+      html.style.setProperty("--bshift", `${pin.clientWidth / 2 - (hr.left + hr.width / 2)}px`);
+    };
+    const ease = (t: number) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
+    const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+    // Logo thu nhỏ và đi THẲNG LÊN (giữ tâm ngang) tới giữa header; t 0→1.
+    const placeMark = (t: number) => {
+      flyP = t;
+      const sI = ease(t);
+      const w = headerMark ? lerp(start.w, target.w, sI) : start.w;
+      const h = w * (434 / 377);
+      const cx = start.left + start.w / 2;
+      const cy = headerMark ? lerp(start.top + start.h / 2, target.cy, sI) : start.top + start.h / 2;
+      mark.style.left = `${cx - w / 2}px`;
+      mark.style.top = `${cy - h / 2}px`;
+      mark.style.width = `${w}px`;
+      mark.style.height = `${h}px`;
+    };
+    const fit = () => {
+      const W = pin.clientWidth;
+      const H = pin.clientHeight;
+      const k = Math.min(W / 800, H / 560);
+      const ox = (W - 800 * k) / 2;
+      const oy = (H - 560 * k) / 2;
+      scene.style.transform = `translate(${ox}px, ${oy}px) scale(${k})`;
+      start.left = ox + 270 * k;
+      start.top = oy + 115 * k;
+      start.w = 260.06 * k;
+      start.h = 299.4 * k;
+      measureHeader();
+      placeMark(flyP);
+    };
+    fit();
+    const ro = "ResizeObserver" in window ? new ResizeObserver(fit) : null;
+    if (ro) ro.observe(pin);
+    else window.addEventListener("resize", fit);
+
+    // Chấm sáng theo con trỏ: lerp 0.18 để điểm sáng lướt theo chứ không bám cứng.
+    const hot = root.querySelector<HTMLElement>(".grid-hot")!;
+    let tx = -999, ty = -999, cx = -999, cy = -999, raf = 0;
+    const glide = () => {
+      cx += (tx - cx) * 0.18;
+      cy += (ty - cy) * 0.18;
+      hot.style.setProperty("--mx", `${cx.toFixed(1)}px`);
+      hot.style.setProperty("--my", `${cy.toFixed(1)}px`);
+      raf = Math.abs(tx - cx) > 0.3 || Math.abs(ty - cy) > 0.3 ? requestAnimationFrame(glide) : 0;
+    };
+    root.addEventListener("pointermove", (e) => {
+      const r = pin.getBoundingClientRect();
+      tx = e.clientX - r.left;
+      ty = e.clientY - r.top;
+      if (cx < -500) { cx = tx; cy = ty; }
+      if (!raf) raf = requestAnimationFrame(glide);
+    });
+    root.addEventListener("pointerleave", () => {
+      tx = -999; ty = -999;
+      if (!raf) raf = requestAnimationFrame(glide);
+    });
+
+    // ---- Chuỗi hạ cánh theo thời gian (sau khi logo khoá ở 3.56s) ----
+    // Mốc tính để icon theme chạm đáy (dock + .75 + .5 = 1.25s) ĐÚNG lúc cụm
+    // logo + tên về chỗ (transition 1.25s) và hero rơi xong (.35 + .9 = 1.25s).
+    const FLY_MS = 800, NAME_MS = 600, DOCK_MS = 1250, LEAVE_MS = 150;
+    const timers: number[] = [];
+    const after = (ms: number, fn: () => void) => timers.push(window.setTimeout(fn, ms));
+    let flyRaf = 0;
+    let ended = false;
+
+    // Hero "rơi xuống": các [data-reveal] trong main đã hiện từ lúc tải (nằm
+    // dưới overlay) → chạy lại một lần để người xem intro vẫn thấy tiêu đề gõ.
+    const replayHero = () => {
+      const main = document.querySelector<HTMLElement>("body > main");
+      if (!main) return;
+      const seen = main.querySelectorAll<HTMLElement>("[data-reveal].is-visible");
+      seen.forEach((el) => el.classList.remove("is-visible"));
+      void main.offsetWidth;
+      seen.forEach((el) => el.classList.add("is-visible"));
+    };
+
+    const end = () => {
+      if (ended) return;
+      ended = true;
+      disarm();
+      timers.forEach((t) => window.clearTimeout(t));
+      cancelAnimationFrame(flyRaf);
+      root.classList.add("is-gone");
+      html.classList.remove("intro-active", "intro-anim", "intro-landed", "intro-docked", "intro-lock");
+      html.style.removeProperty("--bshift");
+      // Thanh cuộn vừa quay lại → header đo lại vị trí vạch active (nghe `resize`).
+      requestAnimationFrame(() => window.dispatchEvent(new Event("resize")));
+      markDone();
+    };
+
+    const dock = () => {
+      html.classList.add("intro-docked");
+      after(LEAVE_MS, () => root.classList.add("is-leaving"));
+      after(DOCK_MS + 150, end);
+    };
+
+    const land = () => {
+      root.classList.add("is-landed");
+      html.classList.add("intro-landed");
+      replayHero();
+      after(NAME_MS, dock);
+    };
+
+    const fly = () => {
+      const t0 = performance.now();
+      const step = (now: number) => {
+        const t = Math.min(1, (now - t0) / FLY_MS);
+        placeMark(t);
+        if (t < 1) flyRaf = requestAnimationFrame(step);
+        else land();
+      };
+      flyRaf = requestAnimationFrame(step);
+    };
+
+    // Bỏ qua (hoặc reduced-motion): về thẳng trạng thái cuối.
+    const skipAll = () => {
+      root.classList.add("is-done", "is-landed");
+      html.classList.add("intro-landed", "intro-docked");
+      replayHero();
+      end();
+    };
+    if (reduced) {
+      skipAll();
+      return;
+    }
+    // Intro chạy xong thì DỪNG CHỜ (logo lớn, nền sáng, gợi ý ở đáy): chuỗi hạ
+    // cánh chỉ chạy khi người dùng lăn chuột / chạm / bấm phím / bấm màn hình
+    // (yêu cầu 2026-10-03 — không tự vào trang chủ). Cuộn đang bị khoá nên bắt
+    // ý định qua wheel/touch/key thay vì sự kiện scroll.
+    let armed = false;
+    const go = (e?: Event) => {
+      if (!armed) return;
+      if (e instanceof KeyboardEvent && !["ArrowDown", "PageDown", " ", "Enter", "Spacebar"].includes(e.key)) return;
+      if (e instanceof WheelEvent && e.deltaY <= 0) return;
+      armed = false;
+      disarm();
+      root.classList.add("is-flying");
+      fly();
+    };
+    function disarm() {
+      window.removeEventListener("wheel", go);
+      window.removeEventListener("touchstart", go);
+      window.removeEventListener("keydown", go);
+      pin.removeEventListener("pointerdown", go);
+    }
+    const arm = () => {
+      armed = true;
+      root.classList.add("is-ready");
+      window.addEventListener("wheel", go, { passive: true });
+      window.addEventListener("touchstart", go, { passive: true });
+      window.addEventListener("keydown", go);
+      pin.addEventListener("pointerdown", go);
+    };
+    mark.addEventListener("animationend", () => after(500, arm), { once: true });
+    root.querySelector(".skip")?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      skipAll();
+    });
+
+    cleanup = () => {
+      disarm();
+      timers.forEach((t) => window.clearTimeout(t));
+      cancelAnimationFrame(flyRaf);
+      window.removeEventListener("resize", fit);
+      ro?.disconnect();
+      html.classList.remove(...INTRO_CLASSES);
+      html.style.removeProperty("--bshift");
+      cleanup = null;
+    };
+  }
+
+  document.addEventListener("astro:page-load", initIntro);
+  // Rời trang chủ: gỡ listener/observer của intro trước khi DOM bị thay.
+  document.addEventListener("astro:before-swap", () => cleanup?.());
+  // Trang mới không có intro (hoặc đã skip) → chắc chắn header hiện.
+  document.addEventListener("astro:after-swap", () => {
+    if (document.documentElement.getAttribute("data-intro") !== "play" || !document.querySelector(".dt-intro")) {
+      document.documentElement.classList.remove(...INTRO_CLASSES);
+    }
+  });
+  initIntro();
+</script>

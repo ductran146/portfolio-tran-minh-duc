@@ -428,6 +428,18 @@ const showLangNotice = locale !== "vi" && !translated;
 				height: 52px;
 				width: auto;
 				display: block;
+				/* Shared element với logo lớn của intro trang chủ (2026-10-03): bấm
+				   link trong intro → logo intro bay/thu về đây trên trang đích. Tên
+				   gate theo html.intro-active: lúc intro đang chiếm màn hình, chỉ logo
+				   intro mang tên (header ẩn); mọi lúc khác chỉ logo header mang tên —
+				   hai phần tử cùng tên trong một trạng thái sẽ làm trình duyệt huỷ
+				   View Transition. Header persist → ảnh cũ/mới của logo trùng nhau,
+				   các lần chuyển trang bình thường không thấy gì khác. */
+				view-transition-name: brand-mark;
+			}
+
+			:global(html.intro-active) .brand-mark {
+				view-transition-name: none;
 			}
 
 			.site-nav {

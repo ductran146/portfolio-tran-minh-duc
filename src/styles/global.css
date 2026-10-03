@@ -167,15 +167,17 @@ a {
   border-radius: 4px;
 }
 
-::-webkit-scrollbar {
-  width: 10px;
+/* Ẩn thanh cuộn dọc toàn site (2026-10-03, yêu cầu "bỏ toàn bộ scroll dọc để
+   web đồng bộ các trang khác"): vẫn cuộn bằng chuột/trackpad/phím, chỉ không
+   vẽ thanh. Trước đó ::-webkit-scrollbar được style 10px → trên macOS thanh
+   luôn hiện (styling tắt overlay scrollbar), và lúc intro khoá cuộn còn để lại
+   dải trắng 10px bên phải màn tối. Không thanh = không gutter = không lệch
+   layout khi mở khoá. Đánh đổi: mất gợi ý vị trí trang — chấp nhận cho portfolio. */
+html {
+  scrollbar-width: none;
 }
-::-webkit-scrollbar-track {
-  background: var(--bg);
-}
-::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: 999px;
+html::-webkit-scrollbar {
+  display: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -289,6 +291,134 @@ a {
   ::view-transition-group(*) {
     animation: none;
   }
+}
+
+/* ---- Intro trang chủ (IntroOverlay.astro, 2026-10-03) ----
+   Header "hiện hình" theo ba TRẠNG THÁI do JS của component đặt lên <html>
+   theo THỜI GIAN (chốt 2026-10-03 lần 6 — bỏ hẳn cơ chế cuộn, intro tự chạy):
+     html.intro-active  intro đang phủ trang: header trong suốt, logo header
+                        tắt (logo intro đang bay thẳng lên chỗ đó), .brand dịch
+                        ra giữa (--bshift, JS đo), tên/menu/công cụ ẩn
+     html.intro-landed  logo hạ cánh → logo header bật NGAY (cùng rect, không
+                        transition), tên hiện bằng blur-in như hero text (0.9s)
+     html.intro-docked  (0.6s sau) cụm logo + tên trượt sang trái 1.25s; menu
+                        RƠI lần lượt (.15/.30/.45/.60s, mỗi mục .5s — mục sau
+                        bắt đầu khi mục trước đi 30%), icon theme rơi .75→1.25s
+                        → chạm đáy ĐÚNG lúc cụm về chỗ (yêu cầu); hero rơi
+                        xuống .35→1.25s; bottom nav mobile trượt lên
+   html.intro-lock      khoá cuộn suốt intro (overflow hidden; site đã ẩn scrollbar)
+   ĐẶC HIỆU: Astro scope rule header thành `.site-nav[data-astro-cid] a[...]`
+   (0,3,1) nên mọi rule ở đây phải có `.site-header` trong selector (≥ 0,3,2),
+   nếu không `transition: color` của BaseLayout ghi đè hết (lỗi đo 2026-10-03).
+   Transition chỉ khai báo DƯỚI html.intro-active: khi điều hướng, Astro thay
+   attribute <html> → class mất, header về trạng thái thường NGAY (đích morph
+   brand-mark của View Transition đúng). */
+html.intro-lock {
+  overflow: hidden;
+}
+
+html.intro-active .site-header {
+  background: transparent;
+  border-color: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  transition: background-color 1.25s var(--ease-smooth), border-color 1.25s var(--ease-smooth);
+}
+
+html.intro-docked .site-header {
+  background: var(--header-bg);
+  border-color: var(--border);
+}
+
+/* Cụm logo + tên: đứng giữa, rồi trượt về góc trái trong đúng 1.25s. */
+html.intro-active .site-header .brand {
+  transform: translateX(var(--bshift, 0px));
+  pointer-events: none;
+  transition: transform 1.25s var(--ease-smooth);
+}
+
+html.intro-docked .site-header .brand {
+  transform: none;
+}
+
+/* Bước: không transition — logo intro vừa tắt ở đúng rect này. */
+html.intro-active .site-header .brand-mark {
+  opacity: 0;
+}
+
+html.intro-landed .site-header .brand-mark {
+  opacity: 1;
+}
+
+/* Tên hiện như từng ký tự ở hero: mờ 8px, hơi thấp, rồi nét dần. */
+html.intro-active .site-header .brand > span {
+  opacity: 0;
+  filter: blur(8px);
+  transform: translateY(0.12em);
+  transition: opacity 0.9s var(--ease-smooth), filter 0.9s var(--ease-smooth), transform 0.9s var(--ease-smooth);
+}
+
+html.intro-landed .site-header .brand > span {
+  opacity: 1;
+  filter: blur(0);
+  transform: none;
+}
+
+html.intro-active .site-header .site-nav a {
+  opacity: 0;
+  transform: translateY(-16px);
+  transition: opacity 0.5s var(--ease-smooth), transform 0.5s var(--ease-smooth), color 0.25s var(--ease-smooth);
+}
+
+html.intro-docked .site-header .site-nav a {
+  opacity: 1;
+  transform: none;
+}
+
+html.intro-docked .site-header .site-nav a:nth-child(1) { transition-delay: 0.15s, 0.15s, 0s; }
+html.intro-docked .site-header .site-nav a:nth-child(2) { transition-delay: 0.3s, 0.3s, 0s; }
+html.intro-docked .site-header .site-nav a:nth-child(3) { transition-delay: 0.45s, 0.45s, 0s; }
+html.intro-docked .site-header .site-nav a:nth-child(4) { transition-delay: 0.6s, 0.6s, 0s; }
+
+html.intro-active .site-header .header-tools {
+  opacity: 0;
+  transform: translateY(-16px);
+  transition: opacity 0.5s var(--ease-smooth), transform 0.5s var(--ease-smooth);
+}
+
+/* Công cụ rơi sau mục menu cuối: .75 + .5 = 1.25s = lúc cụm về chỗ. */
+html.intro-docked .site-header .header-tools {
+  opacity: 1;
+  transform: none;
+  transition-delay: 0.75s;
+}
+
+/* Vạch active có opacity inline do JS đặt → cần !important để ẩn; docked thì
+   trả lại cho inline. */
+html.intro-active:not(.intro-docked) .nav-indicator {
+  opacity: 0 !important;
+}
+
+html.intro-active .bottom-nav {
+  transform: translateY(100%);
+  transition: transform 0.7s var(--ease-smooth) 0.55s;
+}
+
+html.intro-docked .bottom-nav {
+  transform: none;
+}
+
+/* Hero "rơi xuống" khi overlay tan: .35 → 1.25s, cùng mốc kết thúc với cụm
+   brand và icon theme. Chỉ trang có intro (body > main dưới html.intro-active). */
+html.intro-active body > main {
+  opacity: 0;
+  transform: translateY(-24px);
+  transition: opacity 0.9s var(--ease-smooth) 0.35s, transform 0.9s var(--ease-smooth) 0.35s;
+}
+
+html.intro-docked body > main {
+  opacity: 1;
+  transform: none;
 }
 
 /* Safe by default: content is fully visible with no JS. Only a page that
