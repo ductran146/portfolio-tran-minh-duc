@@ -131,6 +131,45 @@ const ICONS = {
     body: `<path opacity=".5" d="M14.2 3H9.8C5.65164 3 3.57746 3 2.28873 4.31802C1 5.63604 1 7.75736 1 12C1 16.2426 1 18.364 2.28873 19.682C3.57746 21 5.65164 21 9.8 21H14.2C18.3484 21 20.4225 21 21.7113 19.682C23 18.364 23 16.2426 23 12C23 7.75736 23 5.63604 21.7113 4.31802C20.4225 3 18.3484 3 14.2 3Z"/><path d="M19.1284 8.03302C19.4784 7.74133 19.5257 7.22112 19.234 6.87109C18.9423 6.52106 18.4221 6.47377 18.0721 6.76546L15.6973 8.74444C14.671 9.59966 13.9585 10.1915 13.357 10.5784C12.7747 10.9529 12.3798 11.0786 12.0002 11.0786C11.6206 11.0786 11.2258 10.9529 10.6435 10.5784C10.0419 10.1915 9.32941 9.59966 8.30315 8.74444L5.92837 6.76546C5.57834 6.47377 5.05812 6.52106 4.76643 6.87109C4.47474 7.22112 4.52204 7.74133 4.87206 8.03302L7.28821 10.0465C8.2632 10.859 9.05344 11.5176 9.75091 11.9661C10.4775 12.4334 11.185 12.7286 12.0002 12.7286C12.8154 12.7286 13.523 12.4334 14.2495 11.9661C14.947 11.5176 15.7372 10.859 16.7122 10.0465L19.1284 8.03302Z"/>`,
   },
 
+  // ---- Ô Rubik trên khối intro (2026-10-04): 7 icon khái niệm UX/UI/product
+  //      design tự vẽ bổ sung (cùng họ "stroke"), dùng cùng tokens/chart/sparkle/
+  //      mobile/responsive/search/flow/code/layers/figma/user/mouse có sẵn. ----
+  // Con trỏ chuột — tương tác, prototype
+  cursor: {
+    kind: "stroke",
+    body: `<path class="p p1" d="M5.5 3.5 19 11.3l-6.2 1.6-3.3 6.1z"/>`,
+  },
+  // Ngòi bút — vẽ vector, UI
+  pen: {
+    kind: "stroke",
+    body: `<path class="p p1" d="m12.5 3.5 8 8-8.5 8.5L3.5 20.5l.5-8.5z"/><circle class="p p2" cx="10" cy="14" r="1.4" fill="currentColor" stroke="none"/><path class="p p3" d="m10 14 6-6"/>`,
+  },
+  // Lưới 3×3 — layout, grid system
+  grid: {
+    kind: "stroke",
+    body: `<rect class="p p1" x="3" y="3" width="5" height="5" rx="1"/><rect class="p p1" x="9.5" y="3" width="5" height="5" rx="1"/><rect class="p p1" x="16" y="3" width="5" height="5" rx="1"/><rect class="p p2" x="3" y="9.5" width="5" height="5" rx="1"/><rect class="p p2" x="9.5" y="9.5" width="5" height="5" rx="1" fill="currentColor" stroke="none"/><rect class="p p2" x="16" y="9.5" width="5" height="5" rx="1"/><rect class="p p3" x="3" y="16" width="5" height="5" rx="1"/><rect class="p p3" x="9.5" y="16" width="5" height="5" rx="1"/><rect class="p p3" x="16" y="16" width="5" height="5" rx="1"/>`,
+  },
+  // Component — 4 hình thoi (ký hiệu component trong design tool)
+  component: {
+    kind: "stroke",
+    body: `<path class="p p1" d="m12 2.5 3.5 3.5L12 9.5 8.5 6z"/><path class="p p2" d="m6 8.5 3.5 3.5L6 15.5 2.5 12z"/><path class="p p3" d="m18 8.5 3.5 3.5L18 15.5 14.5 12z"/><path class="p p4" d="m12 14.5 3.5 3.5-3.5 3.5-3.5-3.5z" fill="currentColor" stroke="none"/>`,
+  },
+  // Typography — chữ A lớn + vạch nền
+  typography: {
+    kind: "stroke",
+    body: `<path class="p p1" d="M5 18.5 11 5h2l6 13.5"/><path class="p p2" d="M8.2 14h7.6"/><path class="p p3" d="M4 21h16"/>`,
+  },
+  // Mắt — nghiên cứu người dùng, quan sát
+  eye: {
+    kind: "stroke",
+    body: `<path class="p p1" d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle class="p p2" cx="12" cy="12" r="2.6" fill="currentColor" stroke="none"/>`,
+  },
+  // Bong bóng — phản hồi, phỏng vấn
+  chat: {
+    kind: "stroke",
+    body: `<path class="p p1" d="M4 5.5h16v10.5H9.5L4.5 20z"/><circle class="p p2" cx="9" cy="11" r="1" fill="currentColor" stroke="none"/><circle class="p p2" cx="12.5" cy="11" r="1" fill="currentColor" stroke="none"/><circle class="p p2" cx="16" cy="11" r="1" fill="currentColor" stroke="none"/>`,
+  },
+
   // Chuột (gợi ý cuộn trong intro trang chủ, 2026-10-03, người dùng cung cấp):
   // Solar Linear "mouse" (CC BY 4.0, 480 Design), vẽ bằng nét nên xếp vào họ
   // "stroke". Bánh lăn .wheel tách riêng để intro cho nó lăn xuống.

@@ -10,11 +10,15 @@
  *   0–.9s    bản vẽ kỹ thuật: lưới dựng hình, ngòi bút vẽ lưới 6 mặt một nét,
  *            đường gấp gạch-chấm, kích thước 217/868, nhãn mặt A–F
  *   .9–1.8   camera đẩy vào (đã trôi chậm từ 0s) + bắt đầu nghiêng vào 3D
- *   1.8–2.5  5 mặt gấp waterfall thành khối, khối vẫn xoay liên tục
- *   2.5–3.56 outline logo vẽ lên 3 mặt → màu brand nở ra từ đỉnh chung → bề
- *            mặt thừa bị khắc rỗng; đúng 3.56s hoán sang SVG phẳng (sắc nét)
- *   3.56–4.3 "bật đèn": nền tối → var(--bg), chấm lưới → màu ink
- *   ~4.1     DỪNG CHỜ: gợi ý "Cuộn hoặc bấm để tiếp tục" ở đáy; chỉ khi người
+ *   1.5–2.5  5 mặt gấp waterfall thành khối Rubik 3×3 (ô tone + icon UX/UI),
+ *            khối xoay chậm liên tục về góc isometric (tới 3.3s)
+ *   2.5–3.5  hoán sang khối 27 cubie (y hệt), vặn 3 tầng thật: tầng trên
+ *            xoay ngang, cột phải xoay dọc, mặt trước xoay — mỗi lần 0.3s
+ *   3.5–3.7  "giải xong": mọi sticker về một màu brand → khối đặc liền
+ *   3.75–4.15 khắc: mask tròn từ đỉnh chung cắt rỗng phần không thuộc logo;
+ *            4.16s hoán sang SVG phẳng (sắc nét)
+ *   4.16–4.75 "bật đèn": nền tối → var(--bg), chấm lưới → màu ink
+ *   ~5.0     DỪNG CHỜ: gợi ý "Cuộn hoặc bấm để tiếp tục" ở đáy; chỉ khi người
  *            dùng lăn chuột / chạm / bấm phím / bấm màn hình mới đi tiếp
  *   +0.8s    logo thu nhỏ, bay THẲNG LÊN giữa header (JS)
  *   +0       hoán sang logo header; tên hiện bằng blur-in (0.9s)
@@ -37,6 +41,24 @@ import { resolveLocale } from "../i18n/ui";
 const locale = resolveLocale(Astro.currentLocale);
 const skipLabel = locale === "vi" ? "Bỏ qua" : "Skip";
 const hintLabel = locale === "vi" ? "Cuộn xuống để xem tiếp" : "Scroll down to continue";
+
+// Ô Rubik 3×3 trên 3 mặt nhìn thấy (2026-10-04): mỗi ô một icon UX/UI/product
+// design + một tone xanh (0–100, càng cao càng sáng; xáo để không thành dải).
+// 3 mặt khuất chỉ có tone. Thứ tự ô: trái→phải, trên→dưới.
+import type { IconName } from "./Icon.astro";
+const rubik: Record<"front" | "top" | "left", IconName[]> = {
+  front: ["cursor", "pen", "component", "tokens", "typography", "grid", "layers", "responsive", "figma"],
+  top: ["search", "eye", "flow", "chat", "user", "sparkle", "chart", "mobile", "code"],
+  left: ["grid", "mouse", "layers", "flow", "component", "typography", "sparkle", "responsive", "pen"],
+};
+const tones: Record<string, number[]> = {
+  front: [18, 6, 30, 10, 24, 4, 14, 34, 8],
+  top: [8, 26, 12, 36, 6, 20, 14, 4, 28],
+  left: [22, 10, 4, 30, 16, 8, 26, 12, 34],
+  right: [14, 24, 6, 30, 10, 18, 4, 26, 12],
+  bottom: [6, 18, 28, 12, 4, 22, 16, 30, 8],
+  back: [20, 8, 30, 4, 24, 12, 16, 6, 26],
+};
 ---
 
 <!-- Chạy TRƯỚC khi section bên dưới được parse → quyết định hiện/ẩn trước lần
@@ -73,38 +95,41 @@ const hintLabel = locale === "vi" ? "Cuộn xuống để xem tiếp" : "Scroll 
         <div class="cube">
           <div class="net"><svg class="net-svg" viewBox="-340 -340 870 680"></svg></div>
 
+          <div class="rubik3d" aria-hidden="true"></div>
+          <div class="shell">
           <div class="face front">
             <div class="base"></div>
-            <div class="tex"></div>
+            <div class="tex rubik">{rubik.front.map((n, i) => (<span class="cell" style={`--tone: ${tones.front[i]}`}><Icon name={n} size={22} /></span>))}</div>
             <div class="shade" style="--sh: .18"></div>
             <svg class="skin" viewBox="0 0 184 184" data-face="front"></svg>
           </div>
           <div class="face top">
             <div class="base"></div>
-            <div class="tex"></div>
+            <div class="tex rubik">{rubik.top.map((n, i) => (<span class="cell" style={`--tone: ${tones.top[i]}`}><Icon name={n} size={22} /></span>))}</div>
             <div class="shade" style="--sh: 0"></div>
             <svg class="skin" viewBox="0 0 184 184" data-face="top"></svg>
           </div>
           <div class="face left">
             <div class="base"></div>
-            <div class="tex"></div>
+            <div class="tex rubik">{rubik.left.map((n, i) => (<span class="cell" style={`--tone: ${tones.left[i]}`}><Icon name={n} size={22} /></span>))}</div>
             <div class="shade" style="--sh: .3"></div>
             <svg class="skin" viewBox="0 0 184 184" data-face="left"></svg>
           </div>
           <div class="face right">
             <div class="base"></div>
-            <div class="tex"></div>
+            <div class="tex rubik">{tones.right.map((t) => (<span class="cell" style={`--tone: ${t}`}></span>))}</div>
             <div class="shade" style="--sh: .32"></div>
             <div class="face back">
               <div class="base"></div>
-              <div class="tex"></div>
+              <div class="tex rubik">{tones.back.map((t) => (<span class="cell" style={`--tone: ${t}`}></span>))}</div>
               <div class="shade" style="--sh: .4"></div>
             </div>
           </div>
           <div class="face bottom">
             <div class="base"></div>
-            <div class="tex"></div>
+            <div class="tex rubik">{tones.bottom.map((t) => (<span class="cell" style={`--tone: ${t}`}></span>))}</div>
             <div class="shade" style="--sh: .45"></div>
+          </div>
           </div>
         </div>
       </div>
@@ -169,8 +194,8 @@ const hintLabel = locale === "vi" ? "Cuộn xuống để xem tiếp" : "Scroll 
      sâu (::before) tan cùng lúc. Sau đó KHÔNG còn lớp tối nào — nền phải sạch
      đúng var(--bg) (bản đầu để sót một gradient tối → nền đục, 2026-10-03). */
   @keyframes dti-stage {
-    0%, 71.2% { background-color: var(--stage); }
-    86%, 100% { background-color: var(--bg); }
+    0%, 83.2% { background-color: var(--stage); }
+    95%, 100% { background-color: var(--bg); }
   }
   .dt-intro .pin::before {
     content: "";
@@ -181,8 +206,8 @@ const hintLabel = locale === "vi" ? "Cuộn xuống để xem tiếp" : "Scroll 
     pointer-events: none;
   }
   @keyframes dti-deep {
-    0%, 71.2% { opacity: 1; }
-    86%, 100% { opacity: 0; }
+    0%, 83.2% { opacity: 1; }
+    95%, 100% { opacity: 0; }
   }
   /* Bản skip (--T ≈ 0) và reduced-motion: mọi animation nhảy thẳng về trạng thái cuối. */
   .dt-intro.is-done {
@@ -211,8 +236,8 @@ const hintLabel = locale === "vi" ? "Cuộn xuống để xem tiếp" : "Scroll 
   @keyframes dti-grid {
     0% { opacity: 0; color: var(--paper); }
     2% { opacity: .42; color: var(--paper); }
-    71.2% { opacity: .42; color: var(--paper); }
-    86%, 100% { opacity: .3; color: var(--ink); }
+    83.2% { opacity: .42; color: var(--paper); }
+    95%, 100% { opacity: .3; color: var(--ink); }
   }
   .dt-intro .grid-hot {
     color: var(--mint);
@@ -224,8 +249,8 @@ const hintLabel = locale === "vi" ? "Cuộn xuống để xem tiếp" : "Scroll 
   @keyframes dti-grid-hot {
     0% { opacity: 0; color: var(--mint); }
     2% { opacity: 1; color: var(--mint); }
-    71.2% { opacity: 1; color: var(--mint); }
-    86%, 100% { opacity: 1; color: var(--accent); }
+    83.2% { opacity: 1; color: var(--mint); }
+    95%, 100% { opacity: 1; color: var(--accent); }
   }
 
   /* ---- Sân khấu 800×560, scale theo cạnh nhỏ của viewport (fit() đặt transform) ---- */
@@ -276,6 +301,93 @@ const hintLabel = locale === "vi" ? "Cuộn xuống để xem tiếp" : "Scroll 
     0%, 18% { transform: rotateX(0deg) rotateY(0deg); animation-timing-function: cubic-bezier(.5, 0, .2, 1); }
     66%, 100% { transform: rotateX(-35.264deg) rotateY(45deg); }
   }
+  /* ---- Rubik 27 cubie (2026-10-04, phương án B): từ 50% (gấp xong) tới 74%
+     (giải xong) khối 6 mặt (.shell) ẩn, khối 27 cubie (.rubik3d) hiện — hai
+     bản trông y hệt nhau nên hoán đổi không thấy. JS vặn 3 tầng thật (tầng
+     trên quanh Y, cột phải quanh X, mặt trước quanh Z) bằng DOMMatrix; sau đó
+     mọi sticker về một màu brand (dti-solve) rồi trả lại .shell để khắc. ---- */
+  .dt-intro .shell,
+  .dt-intro .rubik3d {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 0;
+    height: 0;
+    transform-style: preserve-3d;
+  }
+  .dt-intro .shell {
+    animation: dti-shell var(--T) linear both;
+  }
+  @keyframes dti-shell {
+    0%, 49.99% { visibility: visible; }
+    50%, 73.99% { visibility: hidden; }
+    74%, 100% { visibility: visible; }
+  }
+  .dt-intro .rubik3d {
+    --s: calc(var(--S) / 3);
+    visibility: hidden;
+    animation: dti-rubik var(--T) linear both;
+  }
+  @keyframes dti-rubik {
+    0%, 49.99% { visibility: hidden; }
+    50%, 73.99% { visibility: visible; }
+    74%, 100% { visibility: hidden; }
+  }
+  .dt-intro .cb {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 0;
+    height: 0;
+    transform-style: preserve-3d;
+  }
+  .dt-intro .cf {
+    position: absolute;
+    left: calc(var(--s) / -2);
+    top: calc(var(--s) / -2);
+    width: var(--s);
+    height: var(--s);
+    backface-visibility: hidden;
+    background: #071a13;
+  }
+  .dt-intro .cf.ext {
+    padding: 1px;
+    background: rgba(73, 224, 171, .32);
+  }
+  .dt-intro .cf .cell {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+  /* Bóng theo mặt (khớp .shade của khối 6 mặt) và lớp "giải xong" màu brand. */
+  .dt-intro .cf .cell::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, var(--sh, 0));
+  }
+  .dt-intro .cf .cell::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    background: var(--mark);
+    opacity: 0;
+    z-index: 1;
+    animation: dti-solve var(--T) linear both;
+  }
+  .dt-intro .cf.ext.s-front { transform: translateZ(calc(var(--s) / 2)); --sh: .18; }
+  .dt-intro .cf.ext.s-top { transform: translateY(calc(var(--s) / -2)) rotateX(90deg); --sh: 0; }
+  .dt-intro .cf.ext.s-left { transform: translateX(calc(var(--s) / -2)) rotateY(-90deg); --sh: .3; }
+  .dt-intro .cf.ext.s-right { transform: translateX(calc(var(--s) / 2)) rotateY(90deg); --sh: .32; }
+  .dt-intro .cf.ext.s-back { transform: translateZ(calc(var(--s) / -2)) rotateY(180deg); --sh: .4; }
+  .dt-intro .cf.ext.s-bottom { transform: translateY(calc(var(--s) / 2)) rotateX(-90deg); --sh: .45; }
+  .dt-intro .cf.s-front:not(.ext) { transform: translateZ(calc(var(--s) / 2)); }
+  .dt-intro .cf.s-top:not(.ext) { transform: translateY(calc(var(--s) / -2)) rotateX(90deg); }
+  .dt-intro .cf.s-left:not(.ext) { transform: translateX(calc(var(--s) / -2)) rotateY(-90deg); }
+  .dt-intro .cf.s-right:not(.ext) { transform: translateX(calc(var(--s) / 2)) rotateY(90deg); }
+  .dt-intro .cf.s-back:not(.ext) { transform: translateZ(calc(var(--s) / -2)) rotateY(180deg); }
+  .dt-intro .cf.s-bottom:not(.ext) { transform: translateY(calc(var(--s) / 2)) rotateX(-90deg); }
 
   /* ---- Bản vẽ kỹ thuật (mặt phẳng trước) ---- */
   .dt-intro .net {
@@ -415,8 +527,8 @@ const hintLabel = locale === "vi" ? "Cuộn xuống để xem tiếp" : "Scroll 
     mask-image: radial-gradient(circle at var(--cx, 0) var(--cy, 0), transparent calc(var(--r) - 1px), #000 var(--r));
   }
   @keyframes dti-cut {
-    0%, 64% { --r: 0px; }
-    71%, 100% { --r: 270px; }
+    0%, 75% { --r: 0px; }
+    83%, 100% { --r: 270px; }
   }
   .dt-intro .front > div { --cx: 0; --cy: 0; }
   .dt-intro .left > div { --cx: 100%; --cy: 0; }
@@ -431,11 +543,40 @@ const hintLabel = locale === "vi" ? "Cuộn xuống để xem tiếp" : "Scroll 
     0%, 30% { opacity: 0; }
     36%, 100% { opacity: 1; }
   }
+  /* Mặt khối = Rubik 3×3 (2026-10-04): 9 ô, khe hở lộ nền mint mờ thành đường
+     kẻ; mỗi ô một tone (color-mix nền tối ↔ mint theo --tone %) + icon mint. */
   .dt-intro .tex {
     opacity: 0;
-    background-image: linear-gradient(rgba(73, 224, 171, .18) 1px, transparent 1px), linear-gradient(90deg, rgba(73, 224, 171, .18) 1px, transparent 1px);
-    background-size: 23px 23px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 2px;
+    padding: 2px;
+    background: rgba(73, 224, 171, .32);
     animation: dti-tex var(--T) linear both, dti-cut var(--T) cubic-bezier(.3, 0, .3, 1) both;
+  }
+  .dt-intro .cell {
+    display: grid;
+    place-items: center;
+    background: color-mix(in srgb, #0b2a20, var(--mint) calc(var(--tone, 10) * 1%));
+    color: var(--mint);
+  }
+  .dt-intro .cell .icon {
+    opacity: .85;
+  }
+  /* "Giải xong" (70→74%): một lớp màu brand phủ kín 9 ô + khe → 6 mặt mỗi mặt
+     một màu như Rubik đã giải; khối thành khối đặc liền trước khi bị khắc. */
+  .dt-intro .tex::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--mark);
+    opacity: 0;
+    animation: dti-solve var(--T) linear both;
+  }
+  @keyframes dti-solve {
+    0%, 70% { opacity: 0; }
+    74%, 100% { opacity: 1; }
   }
   @keyframes dti-tex {
     0%, 44% { opacity: 0; }
@@ -455,9 +596,19 @@ const hintLabel = locale === "vi" ? "Cuộn xuống để xem tiếp" : "Scroll 
   }
   /* Skin tắt đúng frame logo phẳng bật (71.2%) — hình học trùng khít, không crossfade. */
   @keyframes dti-skin {
-    0%, 50% { opacity: 0; }
-    52%, 71.2% { opacity: 1; }
-    71.21%, 100% { opacity: 0; }
+    0%, 60% { opacity: 0; }
+    62%, 83.2% { opacity: 1; }
+    83.21%, 100% { opacity: 0; }
+  }
+  /* Outline/bloom/wave của bản "vẽ → tô → khắc" không còn dùng khi mặt khối là
+     Rubik: khối đặc màu brand bị khắc thẳng thành logo. Giữ markup JS, tắt bằng CSS. */
+  .dt-intro .skin .ol,
+  .dt-intro .skin .wave {
+    display: none;
+  }
+  .dt-intro .skin .bloom {
+    animation: none;
+    transform: scale(1);
   }
   .dt-intro .skin .fill path {
     fill: var(--mark);
@@ -564,8 +715,8 @@ const hintLabel = locale === "vi" ? "Cuộn xuống để xem tiếp" : "Scroll 
     animation: dti-mark var(--T) linear both;
   }
   @keyframes dti-mark {
-    0%, 71.2% { opacity: 0; }
-    71.21%, 100% { opacity: 1; }
+    0%, 83.2% { opacity: 0; }
+    83.21%, 100% { opacity: 1; }
   }
   .dt-intro .mark svg {
     width: 100%;
@@ -910,6 +1061,7 @@ const hintLabel = locale === "vi" ? "Cuộn xuống để xem tiếp" : "Scroll 
     const timers: number[] = [];
     const after = (ms: number, fn: () => void) => timers.push(window.setTimeout(fn, ms));
     let flyRaf = 0;
+    let twistRaf = 0;
     let ended = false;
 
     // Hero "rơi xuống": các [data-reveal] trong main đã hiện từ lúc tải (nằm
@@ -929,6 +1081,7 @@ const hintLabel = locale === "vi" ? "Cuộn xuống để xem tiếp" : "Scroll 
       disarm();
       timers.forEach((t) => window.clearTimeout(t));
       cancelAnimationFrame(flyRaf);
+      cancelAnimationFrame(twistRaf);
       root.classList.add("is-gone");
       html.classList.remove("intro-active", "intro-anim", "intro-landed", "intro-docked", "intro-lock");
       html.style.removeProperty("--bshift");
@@ -972,6 +1125,60 @@ const hintLabel = locale === "vi" ? "Cuộn xuống để xem tiếp" : "Scroll 
       skipAll();
       return;
     }
+
+    // ---- Rubik 27 cubie: dựng từ chính các ô của khối 6 mặt (clone .cell →
+    // cùng tone/icon), mỗi cubie 6 mặt (mặt trong tối) để lúc vặn không hở.
+    // Ánh xạ ô (col,row) của từng mặt sang toạ độ cubie theo đúng hướng bản lề
+    // của khối 6 mặt: top: col=x+1,row=z+1 · left: col=z+1,row=y+1 ·
+    // right: col=1−z · back: col=1−x · bottom: row=1−z (xem DESIGN.md).
+    const r3 = root.querySelector<HTMLElement>(".rubik3d")!;
+    const s3 = 184 / 3;
+    const cellOf = (face: string, col: number, row: number) =>
+      root.querySelector<HTMLElement>(`.face.${face} > .tex > .cell:nth-child(${row * 3 + col + 1})`);
+    type Cubie = { el: HTMLElement; base: DOMMatrix; pos: [number, number, number] };
+    const cubies: Cubie[] = [];
+    for (let x = -1; x <= 1; x++) for (let y = -1; y <= 1; y++) for (let z = -1; z <= 1; z++) {
+      const el = document.createElement("div");
+      el.className = "cb";
+      const base = new DOMMatrix().translate(x * s3, y * s3, z * s3);
+      el.style.transform = base.toString();
+      const sides: [string, boolean, HTMLElement | null][] = [
+        ["front", z === 1, cellOf("front", x + 1, y + 1)],
+        ["top", y === -1, cellOf("top", x + 1, z + 1)],
+        ["left", x === -1, cellOf("left", z + 1, y + 1)],
+        ["right", x === 1, cellOf("right", 1 - z, y + 1)],
+        ["back", z === -1, cellOf("back", 1 - x, y + 1)],
+        ["bottom", y === 1, cellOf("bottom", x + 1, 1 - z)],
+      ];
+      sides.forEach(([side, ext, cell]) => {
+        const f = document.createElement("div");
+        f.className = `cf s-${side}${ext && cell ? " ext" : ""}`;
+        if (ext && cell) f.appendChild(cell.cloneNode(true));
+        el.appendChild(f);
+      });
+      r3.appendChild(el);
+      cubies.push({ el, base, pos: [x, y, z] });
+    }
+    const twist = (startMs: number, axis: [number, number, number], pick: (p: [number, number, number]) => boolean, deg: number, durMs: number) =>
+      after(startMs, () => {
+        const sel = cubies.filter((c) => pick(c.pos));
+        const t0 = performance.now();
+        const step = (now: number) => {
+          const t = Math.min(1, (now - t0) / durMs);
+          const e = ease(t);
+          sel.forEach((c) => { c.el.style.transform = new DOMMatrix().rotateAxisAngle(axis[0], axis[1], axis[2], deg * e).multiply(c.base).toString(); });
+          if (t < 1) twistRaf = requestAnimationFrame(step);
+          else sel.forEach((c) => {
+            c.base = new DOMMatrix().rotateAxisAngle(axis[0], axis[1], axis[2], deg).multiply(c.base);
+            c.pos = [Math.round(c.base.m41 / s3), Math.round(c.base.m42 / s3), Math.round(c.base.m43 / s3)];
+          });
+        };
+        twistRaf = requestAnimationFrame(step);
+      });
+    // 50→70% của 5s: ba lần vặn 0.3s nối nhau — tầng trên (ngang), cột phải (dọc), mặt trước.
+    twist(2520, [0, 1, 0], (p) => p[1] === -1, 90, 300);
+    twist(2840, [1, 0, 0], (p) => p[0] === 1, 90, 300);
+    twist(3160, [0, 0, 1], (p) => p[2] === 1, -90, 300);
     // Intro chạy xong thì DỪNG CHỜ (logo lớn, nền sáng, gợi ý ở đáy): chuỗi hạ
     // cánh chỉ chạy khi người dùng lăn chuột / chạm / bấm phím / bấm màn hình
     // (yêu cầu 2026-10-03 — không tự vào trang chủ). Cuộn đang bị khoá nên bắt
@@ -1010,6 +1217,7 @@ const hintLabel = locale === "vi" ? "Cuộn xuống để xem tiếp" : "Scroll 
       disarm();
       timers.forEach((t) => window.clearTimeout(t));
       cancelAnimationFrame(flyRaf);
+      cancelAnimationFrame(twistRaf);
       window.removeEventListener("resize", fit);
       ro?.disconnect();
       html.classList.remove(...INTRO_CLASSES);
