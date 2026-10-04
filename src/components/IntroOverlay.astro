@@ -30,12 +30,13 @@
  * đây là "căn phòng vẽ kỹ thuật" trước khi bật đèn; logo luôn #0e7e5e như file
  * public/logo-dt-green.svg để trùng khít với logo header khi hoán đổi.
  */
+import Icon from "./Icon.astro";
 import { dtOutlinePaths } from "../data/dt-glint";
 import { resolveLocale } from "../i18n/ui";
 
 const locale = resolveLocale(Astro.currentLocale);
 const skipLabel = locale === "vi" ? "Bỏ qua" : "Skip";
-const hintLabel = locale === "vi" ? "Cuộn hoặc bấm để tiếp tục" : "Scroll or click to continue";
+const hintLabel = locale === "vi" ? "Cuộn xuống để xem tiếp" : "Scroll down to continue";
 ---
 
 <!-- Chạy TRƯỚC khi section bên dưới được parse → quyết định hiện/ẩn trước lần
@@ -118,7 +119,7 @@ const hintLabel = locale === "vi" ? "Cuộn hoặc bấm để tiếp tục" : "
     </svg>
   </div>
 
-  <p class="hint" aria-hidden="true"><span class="hint-line"></span>{hintLabel}</p>
+  <p class="hint" aria-hidden="true"><Icon name="mouse" size={28} class="hint-mouse" />{hintLabel}</p>
 
   <button class="skip" type="button">{skipLabel}<span class="arrow">→</span></button>
   </div>
@@ -608,16 +609,22 @@ const hintLabel = locale === "vi" ? "Cuộn hoặc bấm để tiếp tục" : "
     opacity: 0;
     transition-duration: .25s;
   }
-  .dt-intro .hint-line {
-    width: 1px;
-    height: 28px;
-    background: var(--ink-faint);
-    transform-origin: top;
-    animation: dti-breathe 1.6s var(--ease-page) infinite alternate;
+  /* Icon chuột (Icon.astro "mouse", do người dùng chọn thay vạch dọc): bánh
+     lăn lăn xuống rồi mờ đi, lặp 1.6s — chỉ transform/opacity. */
+  .dt-intro .hint-mouse {
+    display: block;
+    color: var(--ink-faint);
   }
-  @keyframes dti-breathe {
-    from { transform: scaleY(.35); }
-    to { transform: scaleY(1); }
+  .dt-intro .hint-mouse .wheel {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: dti-wheel 1.6s var(--ease-page) infinite;
+  }
+  @keyframes dti-wheel {
+    0% { transform: translateY(0); opacity: .5; }
+    60% { transform: translateY(5px); opacity: .15; }
+    61% { transform: translateY(0); opacity: 0; }
+    100% { transform: translateY(0); opacity: .5; }
   }
 
   /* ---- Bỏ qua ---- */
