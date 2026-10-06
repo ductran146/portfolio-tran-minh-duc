@@ -4,7 +4,7 @@
   "client": "Công ty cổ phần cấp nước Phú Mỹ",
   "real": true,
   "featured": false,
-  "order": 6,
+  "order": 7,
   "cover": "../../assets/projects/pmw/01.jpg",
   "summary": "Website responsive cho khách hàng dùng nước và cổng tổng hợp báo cáo nội bộ cho công ty cấp nước. Phía khách hàng: tra cứu hoá đơn, thanh toán trực tuyến, chất lượng nước, lắp đặt - sửa chữa - di dời, tin tức. Phía vận hành: quản lý sản xuất, khách hàng, mạng lưới GIS và điều hành.",
   "tags": [

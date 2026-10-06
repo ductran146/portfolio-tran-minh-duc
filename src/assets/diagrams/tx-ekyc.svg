@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 500" role="img" aria-labelledby="tx-ekyc-title tx-ekyc-desc" style="display:block;width:100%;min-width:1000px;max-width:1000px;height:auto;margin-inline:auto">
+<title id="tx-ekyc-title">Luồng mở tài khoản eKYC</title>
+<desc id="tx-ekyc-desc">Cá nhân trong nước mở tài khoản online: xác thực số điện thoại bằng OTP, quét CCCD gắn chip qua NFC, chụp ảnh và xác thực khuôn mặt, bổ sung hồ sơ, ký hợp đồng bằng chữ ký số; thiết bị không hỗ trợ NFC thì được hướng dẫn đến công ty chứng khoán.</desc>
+<style>
+.fd-bg{fill:var(--bg-soft,#f6f7f6)}
+.fd-dot{fill:var(--border,#e6e9e6)}
+.fd-node{fill:var(--surface,#fff);stroke:var(--ink,#121815);stroke-width:1}
+.fd-end{fill:var(--bg-soft,#f6f7f6);stroke:var(--ink-faint,#838d86);stroke-width:1}
+.fd-focal{fill:var(--accent-tint,#e6f3ee);stroke:var(--accent,#0b7a5b);stroke-width:1.2}
+.fd-name{font:600 13px/1 var(--sans,system-ui,sans-serif);fill:var(--ink,#121815)}
+.fd-sub{font:400 11px/1 var(--sans,system-ui,sans-serif);fill:var(--ink-secondary,#4b544e)}
+.fd-lbl{font:600 10px/1 var(--sans,system-ui,sans-serif);letter-spacing:.08em;fill:var(--ink-secondary,#4b544e)}
+.fd-lbl-a{fill:var(--accent,#0b7a5b)}
+.fd-note{font:italic 400 12px/1 var(--sans,system-ui,sans-serif);fill:var(--ink-secondary,#4b544e)}
+.fd-eyebrow{font:600 9px/1 var(--sans,system-ui,sans-serif);letter-spacing:.16em;fill:var(--ink-faint,#838d86)}
+.fd-arrow{fill:none;stroke:var(--ink-secondary,#4b544e);stroke-width:1.2}
+.fd-arrow-a{fill:none;stroke:var(--accent,#0b7a5b);stroke-width:1.5}
+.fd-dash{stroke-dasharray:3 3;stroke:var(--ink-faint,#838d86)}
+.fd-ah{fill:var(--ink-secondary,#4b544e)}
+.fd-ah-a{fill:var(--accent,#0b7a5b)}
+.fd-mask{fill:var(--bg-soft,#f6f7f6)}
+.fd-rule{stroke:var(--border,#e6e9e6);stroke-width:1}
+.fd-dashed{stroke-dasharray:4 3}
+.fd-line{fill:none;stroke:var(--ink-secondary,#4b544e);stroke-width:1.2}
+</style>
+<defs>
+<pattern id="tx-ekyc-dots" width="22" height="22" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="0.9" class="fd-dot"/></pattern>
+<marker id="tx-ekyc-ah" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon class="fd-ah" points="0 0, 8 3, 0 6"/></marker>
+<marker id="tx-ekyc-ah-a" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon class="fd-ah-a" points="0 0, 8 3, 0 6"/></marker>
+</defs>
+<rect class="fd-bg" width="1000" height="500"/>
+<rect width="1000" height="500" fill="url(#tx-ekyc-dots)" opacity="0.6"/>
+<!-- connectors (behind nodes) -->
+<path class="fd-arrow" d="M180,156 L220,156" marker-end="url(#tx-ekyc-ah)"/>
+<path class="fd-arrow" d="M368,156 L412,156" marker-end="url(#tx-ekyc-ah)"/>
+<path class="fd-arrow" d="M532,156 L588,156" marker-end="url(#tx-ekyc-ah)"/>
+<path class="fd-arrow" d="M736,156 L780,156" marker-end="url(#tx-ekyc-ah)"/>
+<path class="fd-arrow" d="M854,188 L854,264" marker-end="url(#tx-ekyc-ah)"/>
+<path class="fd-arrow" d="M780,296 L736,296" marker-end="url(#tx-ekyc-ah)"/>
+<path class="fd-arrow" d="M472,204 L472,268" marker-end="url(#tx-ekyc-ah)"/>
+<!-- arrow labels -->
+<rect class="fd-mask" x="547" y="148" width="26" height="16" rx="2"/><text class="fd-lbl" x="560" y="159.5" text-anchor="middle">CÓ</text>
+<rect class="fd-mask" x="482" y="228" width="96" height="16" rx="2"/><text class="fd-lbl" x="530" y="239.5" text-anchor="middle">KHÔNG HỖ TRỢ</text>
+<!-- nodes -->
+<rect class="fd-end" x="40" y="128" width="140" height="56" rx="28"/><text class="fd-name" x="110.0" y="153" text-anchor="middle">Chọn loại khách</text><text class="fd-sub" x="110.0" y="169" text-anchor="middle">Cá nhân trong nước</text>
+<rect class="fd-node" x="220" y="124" width="148" height="64" rx="6"/><text class="fd-name" x="294.0" y="145" text-anchor="middle">Số điện thoại</text><text class="fd-sub" x="294.0" y="161" text-anchor="middle">nhập SĐT</text><text class="fd-sub" x="294.0" y="175" text-anchor="middle">xác thực OTP</text>
+<polygon class="fd-node" points="472,108 532,156 472,204 412,156"/><text class="fd-name" x="472" y="153.5" text-anchor="middle" style="font-size:12px">Thiết bị có</text><text class="fd-name" x="472" y="168.5" text-anchor="middle" style="font-size:12px">NFC?</text>
+<rect class="fd-node" x="588" y="124" width="148" height="64" rx="6"/><text class="fd-name" x="662.0" y="145" text-anchor="middle">Xác thực danh tính</text><text class="fd-sub" x="662.0" y="161" text-anchor="middle">QR · chip NFC</text><text class="fd-sub" x="662.0" y="175" text-anchor="middle">ảnh CCCD · khuôn mặt</text>
+<rect class="fd-node" x="780" y="124" width="148" height="64" rx="6"/><text class="fd-name" x="854.0" y="145" text-anchor="middle">Bổ sung hồ sơ</text><text class="fd-sub" x="854.0" y="161" text-anchor="middle">liên lạc · nghề nghiệp</text><text class="fd-sub" x="854.0" y="175" text-anchor="middle">dịch vụ · đăng nhập</text>
+<rect class="fd-node" x="780" y="264" width="148" height="64" rx="6"/><text class="fd-name" x="854.0" y="285" text-anchor="middle">Hợp đồng &amp; chữ ký</text><text class="fd-sub" x="854.0" y="301" text-anchor="middle">đồng ý điều khoản</text><text class="fd-sub" x="854.0" y="315" text-anchor="middle">ký trên màn hình</text>
+<rect class="fd-focal" x="588" y="264" width="148" height="64" rx="6"/><text class="fd-name" x="662.0" y="285" text-anchor="middle">Chờ phê duyệt</text><text class="fd-sub" x="662.0" y="301" text-anchor="middle">thông báo kết quả</text><text class="fd-sub" x="662.0" y="315" text-anchor="middle">trong 24 giờ</text>
+<rect class="fd-end" x="378" y="268" width="188" height="56" rx="28"/><text class="fd-name" x="472.0" y="293" text-anchor="middle">Đến công ty chứng khoán</text><text class="fd-sub" x="472.0" y="309" text-anchor="middle">mở tài khoản trực tiếp</text>
+<!-- legend / notes -->
+<text class="fd-note" x="40" y="380" text-anchor="start">NFC đang tắt: hộp thoại hướng dẫn bật trong Cài đặt.</text>
+<text class="fd-note" x="40" y="400" text-anchor="start">Luồng đang được hoàn thiện; các trạng thái lỗi còn bổ sung.</text>
+<line class="fd-rule" x1="40" y1="448" x2="960" y2="448"/>
+<text class="fd-eyebrow" x="40" y="468">CHÚ GIẢI</text>
+<rect class="fd-end" x="116" y="458" width="24" height="12" rx="6"/>
+<text class="fd-sub" x="148" y="468">Bắt đầu / kết thúc</text>
+<rect class="fd-node" x="276" y="458" width="24" height="12" rx="2"/>
+<text class="fd-sub" x="308" y="468">Bước</text>
+<rect class="fd-focal" x="358" y="458" width="24" height="12" rx="2"/>
+<text class="fd-sub" x="390" y="468">Kết quả</text>
+<polygon class="fd-node" points="460,464 472,457 484,464 472,471"/>
+<text class="fd-sub" x="492" y="468">Điều kiện</text>
+<path class="fd-arrow" d="M568,464 L592,464" marker-end="url(#tx-ekyc-ah)"/>
+<text class="fd-sub" x="600" y="468">Chuyển bước</text>
+</svg>

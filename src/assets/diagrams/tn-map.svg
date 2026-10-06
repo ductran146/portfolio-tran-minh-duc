@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 540" role="img" aria-labelledby="tn-map-title tn-map-desc" style="display:block;width:100%;min-width:1000px;max-width:1000px;height:auto;margin-inline:auto">
+<title id="tn-map-title">Bản đồ điều hướng Tường Ngân</title>
+<desc id="tn-map-desc">Cấu trúc menu quản lý kho hàng: năm nhóm chính gồm Dữ liệu gốc, Tồn kho, Giao dịch, Công nợ và Thu/Chi, Báo cáo; nhóm Giao dịch gồm phiếu nhập, phiếu bán và phiếu trả hàng.</desc>
+<style>
+.fd-bg{fill:var(--bg-soft,#f6f7f6)}
+.fd-dot{fill:var(--border,#e6e9e6)}
+.fd-node{fill:var(--surface,#fff);stroke:var(--ink,#121815);stroke-width:1}
+.fd-end{fill:var(--bg-soft,#f6f7f6);stroke:var(--ink-faint,#838d86);stroke-width:1}
+.fd-focal{fill:var(--accent-tint,#e6f3ee);stroke:var(--accent,#0b7a5b);stroke-width:1.2}
+.fd-name{font:600 13px/1 var(--sans,system-ui,sans-serif);fill:var(--ink,#121815)}
+.fd-sub{font:400 11px/1 var(--sans,system-ui,sans-serif);fill:var(--ink-secondary,#4b544e)}
+.fd-lbl{font:600 10px/1 var(--sans,system-ui,sans-serif);letter-spacing:.08em;fill:var(--ink-secondary,#4b544e)}
+.fd-lbl-a{fill:var(--accent,#0b7a5b)}
+.fd-note{font:italic 400 12px/1 var(--sans,system-ui,sans-serif);fill:var(--ink-secondary,#4b544e)}
+.fd-eyebrow{font:600 9px/1 var(--sans,system-ui,sans-serif);letter-spacing:.16em;fill:var(--ink-faint,#838d86)}
+.fd-arrow{fill:none;stroke:var(--ink-secondary,#4b544e);stroke-width:1.2}
+.fd-arrow-a{fill:none;stroke:var(--accent,#0b7a5b);stroke-width:1.5}
+.fd-dash{stroke-dasharray:3 3;stroke:var(--ink-faint,#838d86)}
+.fd-ah{fill:var(--ink-secondary,#4b544e)}
+.fd-ah-a{fill:var(--accent,#0b7a5b)}
+.fd-mask{fill:var(--bg-soft,#f6f7f6)}
+.fd-rule{stroke:var(--border,#e6e9e6);stroke-width:1}
+.fd-dashed{stroke-dasharray:4 3}
+.fd-line{fill:none;stroke:var(--ink-secondary,#4b544e);stroke-width:1.2}
+</style>
+<defs>
+<pattern id="tn-map-dots" width="22" height="22" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="0.9" class="fd-dot"/></pattern>
+<marker id="tn-map-ah" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon class="fd-ah" points="0 0, 8 3, 0 6"/></marker>
+<marker id="tn-map-ah-a" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon class="fd-ah-a" points="0 0, 8 3, 0 6"/></marker>
+</defs>
+<rect class="fd-bg" width="1000" height="540"/>
+<rect width="1000" height="540" fill="url(#tn-map-dots)" opacity="0.6"/>
+<!-- connectors (behind nodes) -->
+<line class="fd-line" x1="482" y1="96" x2="482" y2="148"/>
+<line class="fd-line" x1="114" y1="148" x2="850" y2="148"/>
+<line class="fd-line" x1="114" y1="148" x2="114" y2="196"/>
+<line class="fd-line" x1="298" y1="148" x2="298" y2="196"/>
+<line class="fd-line" x1="482" y1="148" x2="482" y2="196"/>
+<line class="fd-line" x1="666" y1="148" x2="666" y2="196"/>
+<line class="fd-line" x1="850" y1="148" x2="850" y2="196"/>
+<line class="fd-line" x1="420" y1="260" x2="420" y2="432"/>
+<line class="fd-line" x1="420" y1="320" x2="444" y2="320"/>
+<line class="fd-line" x1="420" y1="376" x2="444" y2="376"/>
+<line class="fd-line" x1="420" y1="432" x2="444" y2="432"/>
+<!-- arrow labels -->
+
+<!-- nodes -->
+<rect class="fd-node" x="362" y="40" width="240" height="56" rx="6"/><text class="fd-name" x="482.0" y="65" text-anchor="middle">Tường Ngân</text><text class="fd-sub" x="482.0" y="81" text-anchor="middle">quản lý kho hàng, bán hàng, công nợ</text>
+<rect class="fd-node" x="40" y="196" width="148" height="64" rx="6"/><text class="fd-name" x="114.0" y="217" text-anchor="middle">Dữ liệu gốc</text><text class="fd-sub" x="114.0" y="233" text-anchor="middle">Sản phẩm · Đối tác</text><text class="fd-sub" x="114.0" y="247" text-anchor="middle">Danh mục · Đơn vị</text>
+<rect class="fd-node" x="224" y="196" width="148" height="64" rx="6"/><text class="fd-name" x="298.0" y="217" text-anchor="middle">Tồn kho</text><text class="fd-sub" x="298.0" y="233" text-anchor="middle">Danh sách tồn</text><text class="fd-sub" x="298.0" y="247" text-anchor="middle">Phiếu kiểm kê</text>
+<rect class="fd-focal" x="408" y="196" width="148" height="64" rx="6"/><text class="fd-name" x="482.0" y="217" text-anchor="middle">Giao dịch</text><text class="fd-sub" x="482.0" y="233" text-anchor="middle">Nhập · Bán · Trả hàng</text><text class="fd-sub" x="482.0" y="247" text-anchor="middle">Import phiếu bán</text>
+<rect class="fd-node" x="592" y="196" width="148" height="64" rx="6"/><text class="fd-name" x="666.0" y="217" text-anchor="middle">Công nợ &amp; Thu/Chi</text><text class="fd-sub" x="666.0" y="233" text-anchor="middle">Khách hàng · NCC</text><text class="fd-sub" x="666.0" y="247" text-anchor="middle">Phiếu thu · chi</text>
+<rect class="fd-node" x="776" y="196" width="148" height="64" rx="6"/><text class="fd-name" x="850.0" y="217" text-anchor="middle">Báo cáo</text><text class="fd-sub" x="850.0" y="233" text-anchor="middle">Bán hàng · Tồn kho</text><text class="fd-sub" x="850.0" y="247" text-anchor="middle">Lợi nhuận</text>
+<rect class="fd-node" x="444" y="300" width="124" height="40" rx="6"/><text class="fd-name" x="506.0" y="324.5" text-anchor="middle">Phiếu nhập</text>
+<rect class="fd-node" x="444" y="356" width="124" height="40" rx="6"/><text class="fd-name" x="506.0" y="380.5" text-anchor="middle">Phiếu bán</text>
+<rect class="fd-node" x="444" y="412" width="124" height="40" rx="6"/><text class="fd-name" x="506.0" y="436.5" text-anchor="middle">Phiếu trả hàng</text>
+<!-- legend / notes -->
+<text class="fd-note" x="40" y="330" text-anchor="start">Chỉ ADMIN thấy nhóm</text><text class="fd-note" x="40" y="346" text-anchor="start">Quản trị hệ thống.</text>
+<text class="fd-note" x="608" y="330" text-anchor="start">Trên mobile: Bottom menu gồm Trang chủ,</text><text class="fd-note" x="608" y="346" text-anchor="start">3 ô tự chọn và Thêm.</text>
+<line class="fd-rule" x1="40" y1="488" x2="960" y2="488"/>
+<text class="fd-eyebrow" x="40" y="508">CHÚ GIẢI</text>
+<rect class="fd-node" x="116" y="498" width="24" height="12" rx="2"/>
+<text class="fd-sub" x="148" y="508">Nhóm / màn hình</text>
+<rect class="fd-focal" x="264" y="498" width="24" height="12" rx="2"/>
+<text class="fd-sub" x="296" y="508">Nhóm giao dịch chính</text>
+<line class="fd-line" x1="436" y1="504" x2="460" y2="504"/>
+<text class="fd-sub" x="468" y="508">Dẫn tới</text>
+</svg>

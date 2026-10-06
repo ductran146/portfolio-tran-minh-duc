@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1020 540" role="img" aria-labelledby="tn-debt-title tn-debt-desc" style="display:block;width:100%;min-width:1020px;max-width:1020px;height:auto;margin-inline:auto">
+<title id="tn-debt-title">Luồng công nợ và thu tiền khách hàng</title>
+<desc id="tn-debt-desc">Kế toán hoặc nhân viên bán hàng mở công nợ, xem chi tiết một khách rồi thu tiền; điều chỉnh công nợ chỉ dành cho kế toán. Cả hai đều qua hộp xác nhận rồi cập nhật còn nợ.</desc>
+<style>
+.fd-bg{fill:var(--bg-soft,#f6f7f6)}
+.fd-dot{fill:var(--border,#e6e9e6)}
+.fd-node{fill:var(--surface,#fff);stroke:var(--ink,#121815);stroke-width:1}
+.fd-end{fill:var(--bg-soft,#f6f7f6);stroke:var(--ink-faint,#838d86);stroke-width:1}
+.fd-focal{fill:var(--accent-tint,#e6f3ee);stroke:var(--accent,#0b7a5b);stroke-width:1.2}
+.fd-name{font:600 13px/1 var(--sans,system-ui,sans-serif);fill:var(--ink,#121815)}
+.fd-sub{font:400 11px/1 var(--sans,system-ui,sans-serif);fill:var(--ink-secondary,#4b544e)}
+.fd-lbl{font:600 10px/1 var(--sans,system-ui,sans-serif);letter-spacing:.08em;fill:var(--ink-secondary,#4b544e)}
+.fd-lbl-a{fill:var(--accent,#0b7a5b)}
+.fd-note{font:italic 400 12px/1 var(--sans,system-ui,sans-serif);fill:var(--ink-secondary,#4b544e)}
+.fd-eyebrow{font:600 9px/1 var(--sans,system-ui,sans-serif);letter-spacing:.16em;fill:var(--ink-faint,#838d86)}
+.fd-arrow{fill:none;stroke:var(--ink-secondary,#4b544e);stroke-width:1.2}
+.fd-arrow-a{fill:none;stroke:var(--accent,#0b7a5b);stroke-width:1.5}
+.fd-dash{stroke-dasharray:3 3;stroke:var(--ink-faint,#838d86)}
+.fd-ah{fill:var(--ink-secondary,#4b544e)}
+.fd-ah-a{fill:var(--accent,#0b7a5b)}
+.fd-mask{fill:var(--bg-soft,#f6f7f6)}
+.fd-rule{stroke:var(--border,#e6e9e6);stroke-width:1}
+.fd-dashed{stroke-dasharray:4 3}
+.fd-line{fill:none;stroke:var(--ink-secondary,#4b544e);stroke-width:1.2}
+</style>
+<defs>
+<pattern id="tn-debt-dots" width="22" height="22" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="0.9" class="fd-dot"/></pattern>
+<marker id="tn-debt-ah" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon class="fd-ah" points="0 0, 8 3, 0 6"/></marker>
+<marker id="tn-debt-ah-a" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon class="fd-ah-a" points="0 0, 8 3, 0 6"/></marker>
+</defs>
+<rect class="fd-bg" width="1020" height="540"/>
+<rect width="1020" height="540" fill="url(#tn-debt-dots)" opacity="0.6"/>
+<!-- connectors (behind nodes) -->
+<path class="fd-arrow" d="M188,156 L232,156" marker-end="url(#tn-debt-ah)"/>
+<path class="fd-arrow" d="M380,156 L424,156" marker-end="url(#tn-debt-ah)"/>
+<path class="fd-arrow" d="M572,156 L616,156" marker-end="url(#tn-debt-ah)"/>
+<path class="fd-arrow" d="M736,156 L812,156" marker-end="url(#tn-debt-ah)"/>
+<path class="fd-arrow" d="M676,204 L676,264" marker-end="url(#tn-debt-ah)"/>
+<path class="fd-arrow" d="M892,188 L892,264" marker-end="url(#tn-debt-ah)"/>
+<path class="fd-arrow" d="M736,296 L812,296" marker-end="url(#tn-debt-ah)"/>
+<path class="fd-arrow" d="M892,328 L892,392" marker-end="url(#tn-debt-ah)"/>
+<!-- arrow labels -->
+<rect class="fd-mask" x="757.5" y="148" width="33" height="16" rx="2"/><text class="fd-lbl" x="774" y="159.5" text-anchor="middle">THU</text>
+<rect class="fd-mask" x="686" y="226" width="82" height="16" rx="2"/><text class="fd-lbl" x="727" y="237.5" text-anchor="middle">ĐIỀU CHỈNH</text>
+<!-- nodes -->
+<rect class="fd-end" x="40" y="128" width="148" height="56" rx="28"/><text class="fd-name" x="114.0" y="153" text-anchor="middle">Mở Công nợ</text><text class="fd-sub" x="114.0" y="169" text-anchor="middle">tab Khách hàng</text>
+<rect class="fd-node" x="232" y="124" width="148" height="64" rx="6"/><text class="fd-name" x="306.0" y="145" text-anchor="middle">Danh sách khách</text><text class="fd-sub" x="306.0" y="161" text-anchor="middle">lọc: Còn nợ · Quá hạn</text><text class="fd-sub" x="306.0" y="175" text-anchor="middle">Đã thanh toán</text>
+<rect class="fd-node" x="424" y="124" width="148" height="64" rx="6"/><text class="fd-name" x="498.0" y="145" text-anchor="middle">Chi tiết công nợ</text><text class="fd-sub" x="498.0" y="161" text-anchor="middle">Tổng bán · Đã thu</text><text class="fd-sub" x="498.0" y="175" text-anchor="middle">Còn nợ · sổ theo kỳ</text>
+<polygon class="fd-node" points="676,108 736,156 676,204 616,156"/><text class="fd-name" x="676" y="153.5" text-anchor="middle" style="font-size:12px">Thu tiền hay</text><text class="fd-name" x="676" y="168.5" text-anchor="middle" style="font-size:12px">điều chỉnh?</text>
+<rect class="fd-node" x="812" y="124" width="160" height="64" rx="6"/><text class="fd-name" x="892.0" y="145" text-anchor="middle">Thu tiền</text><text class="fd-sub" x="892.0" y="161" text-anchor="middle">số tiền · ngày · phương thức</text><text class="fd-sub" x="892.0" y="175" text-anchor="middle">nhanh: toàn bộ nợ</text>
+<rect class="fd-node" x="616" y="264" width="120" height="64" rx="6"/><text class="fd-name" x="676.0" y="285" text-anchor="middle">Điều chỉnh</text><text class="fd-sub" x="676.0" y="301" text-anchor="middle">tăng / giảm nợ</text><text class="fd-sub" x="676.0" y="315" text-anchor="middle">lý do · chỉ kế toán</text>
+<rect class="fd-node" x="812" y="264" width="160" height="64" rx="6"/><text class="fd-name" x="892.0" y="293" text-anchor="middle">Xác nhận</text><text class="fd-sub" x="892.0" y="309" text-anchor="middle">hộp xác nhận hậu quả</text>
+<rect class="fd-focal" x="812" y="392" width="160" height="56" rx="28"/><text class="fd-name" x="892.0" y="417" text-anchor="middle">Công nợ cập nhật</text><text class="fd-sub" x="892.0" y="433" text-anchor="middle">ghi lịch sử thao tác</text>
+<!-- legend / notes -->
+<text class="fd-note" x="40" y="330" text-anchor="start">Khoản thu ghi theo khách hàng, chưa phân bổ từng phiếu;</text><text class="fd-note" x="40" y="346" text-anchor="start">thu vượt nợ bị từ chối.</text>
+<text class="fd-note" x="40" y="372" text-anchor="start">Kỳ công nợ từ ngày 26 đến hết ngày 25 tháng sau;</text><text class="fd-note" x="40" y="388" text-anchor="start">Quá hạn tính theo kỳ này.</text>
+<line class="fd-rule" x1="40" y1="488" x2="980" y2="488"/>
+<text class="fd-eyebrow" x="40" y="508">CHÚ GIẢI</text>
+<rect class="fd-end" x="116" y="498" width="24" height="12" rx="6"/>
+<text class="fd-sub" x="148" y="508">Bắt đầu / kết thúc</text>
+<rect class="fd-node" x="276" y="498" width="24" height="12" rx="2"/>
+<text class="fd-sub" x="308" y="508">Bước</text>
+<rect class="fd-focal" x="358" y="498" width="24" height="12" rx="2"/>
+<text class="fd-sub" x="390" y="508">Kết quả</text>
+<polygon class="fd-node" points="460,504 472,497 484,504 472,511"/>
+<text class="fd-sub" x="492" y="508">Điều kiện</text>
+<path class="fd-arrow" d="M568,504 L592,504" marker-end="url(#tn-debt-ah)"/>
+<text class="fd-sub" x="600" y="508">Chuyển bước</text>
+</svg>

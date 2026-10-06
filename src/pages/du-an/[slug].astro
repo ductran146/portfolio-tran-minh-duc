@@ -7,6 +7,15 @@ import AppStoreBadge from "../../components/AppStoreBadge.astro";
 import CtaBand from "../../components/CtaBand.astro";
 import InfoCard from "../../components/InfoCard.astro";
 
+// Sơ đồ user flow: SVG inline (không phải <img>) để chữ/nét dùng được biến màu
+// của site → tự đổi theo theme sáng/tối. Nạp thô một lần lúc build.
+const diagramSvgs = import.meta.glob("../../assets/diagrams/*.svg", {
+	query: "?raw",
+	import: "default",
+	eager: true,
+}) as Record<string, string>;
+
+
 export async function getStaticPaths() {
 	// Lọc bỏ dự án "draft" (tạm ẩn) ngay từ nguồn - dự án đó vừa không có trang
 	// chi tiết (không nằm trong getStaticPaths) vừa không xuất hiện trong logic
@@ -36,6 +45,15 @@ const l = (p: string) => localePath(resolveLocale(Astro.currentLocale), p);
 // (dự án cần thêm một câu giải thích dưới tên bước) - chuẩn hoá về cùng một
 // dạng object ngay từ đầu để phần còn lại của trang không phải tự kiểm tra
 // kiểu dữ liệu ở nhiều chỗ.
+const userFlows = project.userFlows
+	.map((f) => ({ ...f, svg: diagramSvgs[`../../assets/diagrams/${f.slug}.svg`] }))
+	.filter((f) => !!f.svg);
+// Hiện sẵn tối đa 3 sơ đồ; phần còn lại nằm trong <details> ("Xem thêm"), mở
+// được không cần JS. Thứ tự trong JSON = thứ tự ưu tiên.
+const FLOWS_VISIBLE = 3;
+const flowsShown = userFlows.slice(0, FLOWS_VISIBLE);
+const flowsMore = userFlows.slice(FLOWS_VISIBLE);
+
 const flowItems = project.flows.map((f) => (typeof f === "string" ? { step: f, detail: undefined } : f));
 
 const metaItems = [
@@ -185,6 +203,54 @@ const metaItems = [
 			</section>
 		)}
 
+		{userFlows.length > 0 && (
+			<section class="userflow-section">
+				<div class="userflow-head">
+					<h2>Sơ đồ luồng người dùng</h2>
+				{/* Thanh anchor (2026-10-05): nhảy tới từng sơ đồ; sơ đồ trong "Xem thêm" thì script tự mở <details> trước khi cuộn. Không JS: link # vẫn chạy, trình duyệt tự mở <details> chứa đích fragment. */}
+				{userFlows.length > 1 && (
+					<nav class="userflow-nav" aria-label="Các sơ đồ luồng người dùng">
+						{userFlows.map((f) => (
+							<a href={`#flow-${f.slug}`}>{f.label ?? f.title}</a>
+						))}
+					</nav>
+				)}
+				</div>
+				<div class="userflow-list">
+					{flowsShown.map((f) => (
+						<figure class="userflow" id={`flow-${f.slug}`} data-reveal>
+							<figcaption>
+								<h3>{f.title}</h3>
+								{f.caption && <p>{f.caption}</p>}
+							</figcaption>
+							<!-- tabindex=0: vùng cuộn ngang trên màn hẹp phải focus được bằng bàn phím -->
+							<div class="userflow-canvas" tabindex="0" role="group" aria-label={f.title} set:html={f.svg} />
+						</figure>
+					))}
+				</div>
+				{flowsMore.length > 0 && (
+					<details class="userflow-more">
+						<summary>
+							<span class="more-open">Xem thêm {flowsMore.length} sơ đồ</span>
+							<span class="more-close">Thu gọn</span>
+							<span class="arrow" aria-hidden="true">↓</span>
+						</summary>
+						<div class="userflow-list">
+							{flowsMore.map((f) => (
+								<figure class="userflow" id={`flow-${f.slug}`}>
+									<figcaption>
+										<h3>{f.title}</h3>
+										{f.caption && <p>{f.caption}</p>}
+									</figcaption>
+									<div class="userflow-canvas" tabindex="0" role="group" aria-label={f.title} set:html={f.svg} />
+								</figure>
+							))}
+						</div>
+					</details>
+				)}
+			</section>
+		)}
+
 		{project.gallery.length > 0 && (
 			<section class="gallery-section">
 				<h2 data-reveal>Màn hình & ghi chú</h2>
@@ -194,15 +260,22 @@ const metaItems = [
 					{project.gallery.map((g, i) => (
 						<li class="gallery-item" data-reveal>
 							<figure>
-								<Image
-									src={g.src}
-									alt={g.caption ?? `${project.title} - màn hình ${i + 1}`}
-									widths={[720, 1200, 1600]}
-									sizes="(max-width: 1160px) 100vw, 1064px"
-									format="webp"
-									quality={82}
-									loading="lazy"
-								/>
+								{/* Khung chờ ảnh (2026-10-05): cùng tỉ lệ 16:10 với slide thật nên khi thêm ảnh bố cục không nhảy. */}
+								{g.src ? (
+									<Image
+										src={g.src}
+										alt={g.caption ?? `${project.title} - màn hình ${i + 1}`}
+										widths={[720, 1200, 1600]}
+										sizes="(max-width: 1160px) 100vw, 1064px"
+										format="webp"
+										quality={82}
+										loading="lazy"
+									/>
+								) : (
+									<div class="gallery-placeholder" role="img" aria-label={`Ảnh sẽ cập nhật: ${g.caption ?? project.title}`}>
+										<span class="plate-label">Ảnh sẽ cập nhật</span>
+									</div>
+								)}
 								{g.caption && (
 									<figcaption>
 										<span class="gallery-index tabular" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
@@ -247,6 +320,80 @@ const metaItems = [
 		     hoạ với khối cuối trang chủ, không cần truyền prop nào. -->
 		<CtaBand />
 	</main>
+
+	<script>
+		// Thanh anchor sơ đồ: bấm → mở <details> nếu đích nằm trong "Xem thêm", cuộn tới
+		// sơ đồ; scroll-spy tô mục đang xem. Chạy lại mỗi lần ClientRouter vào trang.
+		function initFlowNav() {
+			const nav = document.querySelector<HTMLElement>(".userflow-nav");
+			if (!nav || nav.dataset.bound) return;
+			nav.dataset.bound = "1";
+			const links = [...nav.querySelectorAll<HTMLAnchorElement>("a")];
+			const targets = links.map((a) => document.getElementById(a.hash.slice(1)));
+			const setCurrent = (i: number) => {
+				links.forEach((a, k) => (k === i ? a.setAttribute("aria-current", "true") : a.removeAttribute("aria-current")));
+				// Giữ mục đang xem trong tầm nhìn của thanh khi thanh phải cuộn ngang (mobile).
+				const el = links[i];
+				if (el && nav.scrollWidth > nav.clientWidth) {
+					nav.scrollTo({ left: el.offsetLeft - (nav.clientWidth - el.offsetWidth) / 2, behavior: "smooth" });
+				}
+			};
+			const reveal = (el: HTMLElement | null) => {
+				const det = el?.closest("details");
+				if (det && !det.open) det.open = true;
+			};
+			links.forEach((a, i) => {
+				a.addEventListener("click", (e) => {
+					const el = targets[i];
+					if (!el) return;
+					e.preventDefault();
+					reveal(el);
+					el.scrollIntoView({ block: "start" });
+					history.replaceState(null, "", a.hash);
+					setCurrent(i);
+				});
+			});
+			// Vào trang với #flow-… nằm trong "Xem thêm" → mở sẵn.
+			if (location.hash.startsWith("#flow-")) reveal(document.getElementById(location.hash.slice(1)));
+			if ("IntersectionObserver" in window) {
+				const seen = new Map<Element, boolean>();
+				const io = new IntersectionObserver(
+					(entries) => {
+						entries.forEach((en) => seen.set(en.target, en.isIntersecting));
+						const first = targets.findIndex((t) => t && seen.get(t));
+						if (first >= 0) setCurrent(first);
+					},
+					{ rootMargin: "-25% 0px -55% 0px" },
+				);
+				targets.forEach((t) => t && io.observe(t));
+			}
+			setCurrent(0);
+
+			// Thanh ghim: đo chiều cao để scroll-margin của sơ đồ chừa đủ chỗ, và bật viền dưới khi đang ghim.
+			const head = nav.closest<HTMLElement>(".userflow-head");
+			if (head) {
+				const section = head.parentElement as HTMLElement;
+				const measure = () => section.style.setProperty("--uf-head-h", `${head.offsetHeight}px`);
+				measure();
+				if ("ResizeObserver" in window) new ResizeObserver(measure).observe(head);
+				const headerH = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--header-h")) || 72;
+				let tick = false;
+				const onScroll = () => {
+					if (tick) return;
+					tick = true;
+					requestAnimationFrame(() => {
+						tick = false;
+						const r = head.getBoundingClientRect();
+						head.classList.toggle("is-stuck", r.top <= headerH() + 1 && section.getBoundingClientRect().bottom > r.height + headerH());
+					});
+				};
+				window.addEventListener("scroll", onScroll, { passive: true });
+				onScroll();
+			}
+		}
+		document.addEventListener("astro:page-load", initFlowNav);
+		initFlowNav();
+	</script>
 
 	<style>
 		main {
@@ -493,6 +640,7 @@ const metaItems = [
 		.context-section h2,
 		.flow-section h2,
 		.process-section h2,
+		.userflow-section h2,
 		.gallery-section h2 {
 			font-size: 1.5rem;
 			margin-bottom: 0.9rem;
@@ -686,6 +834,181 @@ const metaItems = [
 			transition-delay: calc(var(--i) * 120ms);
 		}
 
+		/* ---- Sơ đồ luồng người dùng (2026-10-05): mỗi sơ đồ là một thẻ soft cùng
+		   ngôn ngữ với InfoCard (bg-soft, radius-lg, không shadow). SVG có bề rộng
+		   tối thiểu = viewBox nên màn hẹp cuộn ngang TRONG thẻ, không kéo cả trang. ---- */
+		.userflow-section {
+			padding-block: clamp(2rem, 5vw, 3rem);
+			border-top: 1px solid var(--border);
+		}
+
+		.userflow-list {
+			display: flex;
+			flex-direction: column;
+			gap: clamp(1.75rem, 4vw, 2.5rem);
+		}
+
+		.userflow {
+			margin: 0;
+			/* Chừa chỗ header sticky khi cuộn tới anchor. */
+			scroll-margin-top: calc(var(--header-h) + var(--uf-head-h, 6.5rem) + 1rem);
+		}
+
+		/* Thanh anchor: pill cùng ngôn ngữ với bộ chuyển VI | EN của header (viền
+		   hairline, bo tròn, nền surface); mục đang xem tô accent-tint như tag.
+		   Màn hẹp: cuộn ngang trong chính thanh, ẩn thanh cuộn. */
+		/* Tiêu đề + thanh anchor ghim ngay dưới header (sticky) suốt khu vực sơ đồ; hết
+		   <section> là tự nhả (containing block = section). Nền đặc để sơ đồ cuộn dưới
+		   không lộ chữ; viền dưới chỉ hiện khi đang ghim (.is-stuck, script đặt). */
+		.userflow-head {
+			position: sticky;
+			top: var(--header-h);
+			z-index: 10;
+			padding-block: 0.75rem;
+			background: var(--bg);
+			border-bottom: 1px solid transparent;
+			transition: border-color 0.25s var(--ease-smooth);
+		}
+
+		.userflow-head.is-stuck {
+			border-bottom-color: var(--border);
+		}
+
+		.userflow-head h2 {
+			margin-bottom: 0.75rem;
+		}
+
+		.userflow-head .userflow-nav {
+			margin-bottom: 0;
+		}
+
+		.userflow-list {
+			margin-top: 1.5rem;
+		}
+
+		.userflow-nav {
+			display: flex;
+			gap: 2px;
+			width: fit-content;
+			max-width: 100%;
+			padding: 4px;
+			margin: 0 0 1.5rem;
+			overflow-x: auto;
+			scrollbar-width: none;
+			border: 1px solid var(--border);
+			border-radius: 999px;
+			background: var(--surface);
+		}
+
+		@media (max-width: 720px) {
+			.userflow-head {
+				padding-block: 0.5rem;
+			}
+			.userflow-head h2 {
+				font-size: 1.15rem;
+				margin-bottom: 0.5rem;
+			}
+		}
+
+		.userflow-nav::-webkit-scrollbar {
+			display: none;
+		}
+
+		.userflow-nav a {
+			flex: none;
+			padding: 0.45rem 1rem;
+			border-radius: 999px;
+			text-decoration: none;
+			white-space: nowrap;
+			font-size: 0.92rem;
+			font-weight: 600;
+			color: var(--ink-secondary);
+			transition: color 0.25s var(--ease-smooth), background 0.25s var(--ease-smooth);
+		}
+
+		.userflow-nav a:hover {
+			color: var(--ink);
+		}
+
+		.userflow-nav a[aria-current="true"] {
+			background: var(--accent-tint);
+			color: var(--accent-strong);
+		}
+
+		/* "Xem thêm": <details> gốc, nút là <summary> kiểu nút ghost của site. Khi mở,
+		   summary đứng CUỐI danh sách (flex column-reverse) để "Thu gọn" nằm sát
+		   sơ đồ cuối thay vì bắt người dùng cuộn ngược lên. */
+		.userflow-more {
+			display: flex;
+			flex-direction: column-reverse;
+			gap: clamp(1.75rem, 4vw, 2.5rem);
+			margin-top: clamp(1.75rem, 4vw, 2.5rem);
+		}
+
+		.userflow-more summary {
+			align-self: flex-start;
+			display: inline-flex;
+			align-items: center;
+			gap: 0.5rem;
+			padding: 0.75rem 1.4rem;
+			border-radius: var(--radius-md);
+			background: var(--bg-soft);
+			color: var(--ink);
+			font-weight: 600;
+			font-size: 1rem;
+			cursor: pointer;
+			list-style: none;
+			transition: background 0.35s ease, color 0.35s ease;
+		}
+
+		.userflow-more summary::-webkit-details-marker {
+			display: none;
+		}
+
+		.userflow-more summary:hover {
+			background: var(--accent-tint);
+			color: var(--accent-strong);
+		}
+
+		.userflow-more summary .arrow {
+			transition: transform 0.3s ease;
+		}
+
+		.userflow-more[open] summary .arrow {
+			transform: rotate(180deg);
+		}
+
+		.userflow-more .more-close,
+		.userflow-more[open] .more-open {
+			display: none;
+		}
+
+		.userflow-more[open] .more-close {
+			display: inline;
+		}
+
+		.userflow h3 {
+			font-size: 1.15rem;
+			margin-bottom: 0.35rem;
+		}
+
+		.userflow figcaption p {
+			margin: 0 0 1rem;
+			max-width: var(--measure);
+			color: var(--ink-secondary);
+		}
+
+		.userflow figcaption h3 {
+			margin-bottom: 0.4rem;
+		}
+
+		.userflow-canvas {
+			overflow-x: auto;
+			border-radius: var(--radius-lg);
+			background: var(--bg-soft);
+			margin-top: 0.9rem;
+		}
+
 		/* ---- Màn hình & ghi chú: ảnh khổ lớn xếp dọc, chú thích ngắn có số ----
 		   Ảnh là nhân vật chính (mode Experience trong case study); khoảng cách
 		   giữa các ảnh đủ rộng để mỗi slide đọc như một "cảnh". */
@@ -713,6 +1036,17 @@ const metaItems = [
 			border-radius: var(--radius-lg);
 			box-shadow: var(--shadow-md);
 			background: var(--bg-soft);
+		}
+
+		.gallery-placeholder {
+			aspect-ratio: 16 / 10;
+			display: flex;
+			align-items: flex-start;
+			justify-content: flex-end;
+			padding: 1rem;
+			border-radius: var(--radius-lg);
+			background: var(--bg-soft);
+			box-shadow: var(--shadow-md);
 		}
 
 		.gallery figcaption {

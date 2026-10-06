@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 460" role="img" aria-labelledby="bsc-withdraw-title bsc-withdraw-desc" style="display:block;width:100%;min-width:1000px;max-width:1000px;height:auto;margin-inline:auto">
+<title id="bsc-withdraw-title">Luồng rút tiền</title>
+<desc id="bsc-withdraw-desc">Người dùng điền form rút tiền, chọn nhập số tiền hoặc rút tối đa theo hạn mức, xác nhận chuyển tiền kèm xác thực; sao kê tiền mở từ biểu tượng lịch sử. Một số bước còn đang thiết kế.</desc>
+<style>
+.fd-bg{fill:var(--bg-soft,#f6f7f6)}
+.fd-dot{fill:var(--border,#e6e9e6)}
+.fd-node{fill:var(--surface,#fff);stroke:var(--ink,#121815);stroke-width:1}
+.fd-end{fill:var(--bg-soft,#f6f7f6);stroke:var(--ink-faint,#838d86);stroke-width:1}
+.fd-focal{fill:var(--accent-tint,#e6f3ee);stroke:var(--accent,#0b7a5b);stroke-width:1.2}
+.fd-name{font:600 13px/1 var(--sans,system-ui,sans-serif);fill:var(--ink,#121815)}
+.fd-sub{font:400 11px/1 var(--sans,system-ui,sans-serif);fill:var(--ink-secondary,#4b544e)}
+.fd-lbl{font:600 10px/1 var(--sans,system-ui,sans-serif);letter-spacing:.08em;fill:var(--ink-secondary,#4b544e)}
+.fd-lbl-a{fill:var(--accent,#0b7a5b)}
+.fd-note{font:italic 400 12px/1 var(--sans,system-ui,sans-serif);fill:var(--ink-secondary,#4b544e)}
+.fd-eyebrow{font:600 9px/1 var(--sans,system-ui,sans-serif);letter-spacing:.16em;fill:var(--ink-faint,#838d86)}
+.fd-arrow{fill:none;stroke:var(--ink-secondary,#4b544e);stroke-width:1.2}
+.fd-arrow-a{fill:none;stroke:var(--accent,#0b7a5b);stroke-width:1.5}
+.fd-dash{stroke-dasharray:3 3;stroke:var(--ink-faint,#838d86)}
+.fd-ah{fill:var(--ink-secondary,#4b544e)}
+.fd-ah-a{fill:var(--accent,#0b7a5b)}
+.fd-mask{fill:var(--bg-soft,#f6f7f6)}
+.fd-rule{stroke:var(--border,#e6e9e6);stroke-width:1}
+.fd-dashed{stroke-dasharray:4 3}
+.fd-line{fill:none;stroke:var(--ink-secondary,#4b544e);stroke-width:1.2}
+</style>
+<defs>
+<pattern id="bsc-withdraw-dots" width="22" height="22" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="0.9" class="fd-dot"/></pattern>
+<marker id="bsc-withdraw-ah" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon class="fd-ah" points="0 0, 8 3, 0 6"/></marker>
+<marker id="bsc-withdraw-ah-a" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon class="fd-ah-a" points="0 0, 8 3, 0 6"/></marker>
+</defs>
+<rect class="fd-bg" width="1000" height="460"/>
+<rect width="1000" height="460" fill="url(#bsc-withdraw-dots)" opacity="0.6"/>
+<!-- connectors (behind nodes) -->
+<path class="fd-arrow" d="M176,200 L232,200" marker-end="url(#bsc-withdraw-ah)"/>
+<path class="fd-arrow" d="M380,200 L436,200" marker-end="url(#bsc-withdraw-ah)"/>
+<path class="fd-arrow" d="M496,152 L496,92 Q496,84 504,84 L612,84" marker-end="url(#bsc-withdraw-ah)"/>
+<path class="fd-arrow" d="M496,248 L496,308 Q496,316 504,316 L612,316" marker-end="url(#bsc-withdraw-ah)"/>
+<path class="fd-arrow" d="M760,84 L780,84 Q788,84 788,92 L788,178 Q788,186 796,186 L816,186" marker-end="url(#bsc-withdraw-ah)"/>
+<path class="fd-arrow" d="M760,316 L780,316 Q788,316 788,308 L788,222 Q788,214 796,214 L816,214" marker-end="url(#bsc-withdraw-ah)"/>
+<path class="fd-arrow" d="M890,232 L890,284" marker-end="url(#bsc-withdraw-ah)"/>
+<path class="fd-arrow" d="M306,168 L306,116" marker-end="url(#bsc-withdraw-ah)"/>
+<!-- arrow labels -->
+<rect class="fd-mask" x="541" y="76" width="26" height="16" rx="2"/><text class="fd-lbl" x="554" y="87.5" text-anchor="middle">CÓ</text>
+<rect class="fd-mask" x="530.5" y="308" width="47" height="16" rx="2"/><text class="fd-lbl" x="554" y="319.5" text-anchor="middle">KHÔNG</text>
+<rect class="fd-mask" x="316" y="134" width="61" height="16" rx="2"/><text class="fd-lbl" x="346.5" y="145.5" text-anchor="middle">LỊCH SỬ</text>
+<!-- nodes -->
+<rect class="fd-end" x="40" y="168" width="136" height="64" rx="32"/><text class="fd-name" x="108.0" y="197" text-anchor="middle">Chọn Rút tiền</text><text class="fd-sub" x="108.0" y="213" text-anchor="middle">từ Menu bên</text>
+<rect class="fd-node" x="232" y="168" width="148" height="64" rx="6"/><text class="fd-name" x="306.0" y="189" text-anchor="middle">Form rút tiền</text><text class="fd-sub" x="306.0" y="205" text-anchor="middle">tài khoản thụ hưởng</text><text class="fd-sub" x="306.0" y="219" text-anchor="middle">số tiền · phí · nội dung</text>
+<polygon class="fd-node" points="496,152 556,200 496,248 436,200"/><text class="fd-name" x="496" y="204.5" text-anchor="middle" style="font-size:12px">Rút tối đa?</text>
+<rect class="fd-node" x="612" y="52" width="148" height="64" rx="6"/><text class="fd-name" x="686.0" y="73" text-anchor="middle">Số tiền tối đa</text><text class="fd-sub" x="686.0" y="89" text-anchor="middle">công tắc bật</text><text class="fd-sub" x="686.0" y="103" text-anchor="middle">ô nhập bị khoá</text>
+<rect class="fd-node" x="612" y="284" width="148" height="64" rx="6"/><text class="fd-name" x="686.0" y="305" text-anchor="middle">Nhập số tiền</text><text class="fd-sub" x="686.0" y="321" text-anchor="middle">bàn phím số</text><text class="fd-sub" x="686.0" y="335" text-anchor="middle">hạn mức hiển thị</text>
+<rect class="fd-focal" x="816" y="168" width="148" height="64" rx="6"/><text class="fd-name" x="890.0" y="189" text-anchor="middle">Xác nhận chuyển</text><text class="fd-sub" x="890.0" y="205" text-anchor="middle">tóm tắt, phí, thực nhận</text><text class="fd-sub" x="890.0" y="219" text-anchor="middle">kèm xác thực</text>
+<rect class="fd-end fd-dashed" x="816" y="284" width="148" height="64" rx="32"/><text class="fd-name" x="890.0" y="313" text-anchor="middle">Kết quả</text><text class="fd-sub" x="890.0" y="329" text-anchor="middle">đang thiết kế</text>
+<rect class="fd-node fd-dashed" x="232" y="52" width="148" height="64" rx="6"/><text class="fd-name" x="306.0" y="81" text-anchor="middle">Sao kê tiền</text><text class="fd-sub" x="306.0" y="97" text-anchor="middle">đang thiết kế</text>
+<!-- legend / notes -->
+<line class="fd-rule" x1="40" y1="400" x2="960" y2="400"/>
+<text class="fd-eyebrow" x="40" y="420">CHÚ GIẢI</text>
+<rect class="fd-end" x="116" y="410" width="24" height="12" rx="6"/>
+<text class="fd-sub" x="148" y="420">Bắt đầu / kết thúc</text>
+<rect class="fd-node" x="276" y="410" width="24" height="12" rx="2"/>
+<text class="fd-sub" x="308" y="420">Bước</text>
+<rect class="fd-focal" x="358" y="410" width="24" height="12" rx="2"/>
+<text class="fd-sub" x="390" y="420">Bước xác nhận</text>
+<polygon class="fd-node" points="486,416 498,409 510,416 498,423"/>
+<text class="fd-sub" x="518" y="420">Điều kiện</text>
+<rect class="fd-node fd-dashed" x="594" y="410" width="24" height="12" rx="2"/>
+<text class="fd-sub" x="626" y="420">Đang thiết kế</text>
+</svg>

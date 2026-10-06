@@ -129,6 +129,18 @@ export default config({
 						},
 					),
 				}),
+				userFlows: fields.array(
+					fields.object({
+						slug: fields.text({ label: 'Tên file SVG trong src/assets/diagrams (không gồm .svg), vd: bsc-order' }),
+						title: fields.text({ label: 'Tiêu đề sơ đồ' }),
+						label: fields.text({ label: 'Nhãn ngắn cho thanh anchor (để trống thì dùng tiêu đề)' }),
+						caption: fields.text({ label: 'Mô tả ngắn 1-2 câu (để trống nếu không cần)', multiline: true }),
+					}),
+					{
+						label: 'Sơ đồ user flow - để trống nếu dự án chưa có',
+						itemLabel: (props) => props.fields.title.value || '(chưa đặt tên sơ đồ)',
+					},
+				),
 				closing: fields.text({
 					label: 'Ghi chú cuối trang (để trống nếu không cần)',
 					multiline: true,

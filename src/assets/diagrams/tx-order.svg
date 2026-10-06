@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 540" role="img" aria-labelledby="tx-order-title tx-order-desc" style="display:block;width:100%;min-width:940px;max-width:940px;height:auto;margin-inline:auto">
+<title id="tx-order-title">Luồng đặt lệnh</title>
+<desc id="tx-order-desc">Người dùng đã đăng nhập mở form đặt lệnh, nhập lệnh, qua hộp xác nhận rồi nhận thông báo kết quả; chưa đăng nhập thì gặp hộp thoại yêu cầu đăng nhập, nhập vượt sức mua thì báo lỗi và quay lại form.</desc>
+<style>
+.fd-bg{fill:var(--bg-soft,#f6f7f6)}
+.fd-dot{fill:var(--border,#e6e9e6)}
+.fd-node{fill:var(--surface,#fff);stroke:var(--ink,#121815);stroke-width:1}
+.fd-end{fill:var(--bg-soft,#f6f7f6);stroke:var(--ink-faint,#838d86);stroke-width:1}
+.fd-focal{fill:var(--accent-tint,#e6f3ee);stroke:var(--accent,#0b7a5b);stroke-width:1.2}
+.fd-name{font:600 13px/1 var(--sans,system-ui,sans-serif);fill:var(--ink,#121815)}
+.fd-sub{font:400 11px/1 var(--sans,system-ui,sans-serif);fill:var(--ink-secondary,#4b544e)}
+.fd-lbl{font:600 10px/1 var(--sans,system-ui,sans-serif);letter-spacing:.08em;fill:var(--ink-secondary,#4b544e)}
+.fd-lbl-a{fill:var(--accent,#0b7a5b)}
+.fd-note{font:italic 400 12px/1 var(--sans,system-ui,sans-serif);fill:var(--ink-secondary,#4b544e)}
+.fd-eyebrow{font:600 9px/1 var(--sans,system-ui,sans-serif);letter-spacing:.16em;fill:var(--ink-faint,#838d86)}
+.fd-arrow{fill:none;stroke:var(--ink-secondary,#4b544e);stroke-width:1.2}
+.fd-arrow-a{fill:none;stroke:var(--accent,#0b7a5b);stroke-width:1.5}
+.fd-dash{stroke-dasharray:3 3;stroke:var(--ink-faint,#838d86)}
+.fd-ah{fill:var(--ink-secondary,#4b544e)}
+.fd-ah-a{fill:var(--accent,#0b7a5b)}
+.fd-mask{fill:var(--bg-soft,#f6f7f6)}
+.fd-rule{stroke:var(--border,#e6e9e6);stroke-width:1}
+.fd-dashed{stroke-dasharray:4 3}
+.fd-line{fill:none;stroke:var(--ink-secondary,#4b544e);stroke-width:1.2}
+</style>
+<defs>
+<pattern id="tx-order-dots" width="22" height="22" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="0.9" class="fd-dot"/></pattern>
+<marker id="tx-order-ah" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon class="fd-ah" points="0 0, 8 3, 0 6"/></marker>
+<marker id="tx-order-ah-a" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon class="fd-ah-a" points="0 0, 8 3, 0 6"/></marker>
+</defs>
+<rect class="fd-bg" width="940" height="540"/>
+<rect width="940" height="540" fill="url(#tx-order-dots)" opacity="0.6"/>
+<!-- connectors (behind nodes) -->
+<path class="fd-arrow" d="M152,156 L196,156" marker-end="url(#tx-order-ah)"/>
+<path class="fd-arrow" d="M316,156 L372,156" marker-end="url(#tx-order-ah)"/>
+<path class="fd-arrow" d="M256,204 L256,268" marker-end="url(#tx-order-ah)"/>
+<path class="fd-arrow" d="M520,156 L576,156" marker-end="url(#tx-order-ah)"/>
+<path class="fd-arrow" d="M696,156 L752,156" marker-end="url(#tx-order-ah)"/>
+<path class="fd-arrow" d="M636,108 L636,84 Q636,76 628,76 L454,76 Q446,76 446,84 L446,124" marker-end="url(#tx-order-ah)"/>
+<path class="fd-arrow" d="M826,188 L826,248" marker-end="url(#tx-order-ah)"/>
+<path class="fd-arrow" d="M766,296 L706,296" marker-end="url(#tx-order-ah)"/>
+<path class="fd-arrow" d="M826,344 L826,392" marker-end="url(#tx-order-ah)"/>
+<!-- arrow labels -->
+<rect class="fd-mask" x="331" y="148" width="26" height="16" rx="2"/><text class="fd-lbl" x="344" y="159.5" text-anchor="middle">CÓ</text>
+<rect class="fd-mask" x="266" y="228" width="40" height="16" rx="2"/><text class="fd-lbl" x="286" y="239.5" text-anchor="middle">CHƯA</text>
+<rect class="fd-mask" x="704" y="148" width="40" height="16" rx="2"/><text class="fd-lbl" x="724" y="159.5" text-anchor="middle">ĐÚNG</text>
+<rect class="fd-mask" x="493" y="68" width="96" height="16" rx="2"/><text class="fd-lbl" x="541" y="79.5" text-anchor="middle">VƯỢT SỨC MUA</text>
+<rect class="fd-mask" x="723" y="288" width="26" height="16" rx="2"/><text class="fd-lbl fd-lbl-a" x="736" y="299.5" text-anchor="middle">CÓ</text>
+<rect class="fd-mask" x="836" y="360" width="47" height="16" rx="2"/><text class="fd-lbl" x="859.5" y="371.5" text-anchor="middle">KHÔNG</text>
+<!-- nodes -->
+<rect class="fd-end" x="40" y="128" width="112" height="56" rx="28"/><text class="fd-name" x="96.0" y="160.5" text-anchor="middle">Mở tab Trade</text>
+<polygon class="fd-node" points="256,108 316,156 256,204 196,156"/><text class="fd-name" x="256" y="153.5" text-anchor="middle" style="font-size:12px">Đã</text><text class="fd-name" x="256" y="168.5" text-anchor="middle" style="font-size:12px">đăng nhập?</text>
+<rect class="fd-node" x="372" y="124" width="148" height="64" rx="6"/><text class="fd-name" x="446.0" y="145" text-anchor="middle">Form đặt lệnh</text><text class="fd-sub" x="446.0" y="161" text-anchor="middle">loại lệnh · giá · KL</text><text class="fd-sub" x="446.0" y="175" text-anchor="middle">xem độ sâu thị trường</text>
+<polygon class="fd-node" points="636,108 696,156 636,204 576,156"/><text class="fd-name" x="636" y="153.5" text-anchor="middle" style="font-size:12px">Lệnh</text><text class="fd-name" x="636" y="168.5" text-anchor="middle" style="font-size:12px">hợp lệ?</text>
+<rect class="fd-node" x="752" y="124" width="148" height="64" rx="6"/><text class="fd-name" x="826.0" y="145" text-anchor="middle">Xác nhận lệnh</text><text class="fd-sub" x="826.0" y="161" text-anchor="middle">Buy order confirm</text><text class="fd-sub" x="826.0" y="175" text-anchor="middle">Cancel · Confirm</text>
+<polygon class="fd-node" points="826,248 886,296 826,344 766,296"/><text class="fd-name" x="826" y="293.5" text-anchor="middle" style="font-size:12px">Lệnh được</text><text class="fd-name" x="826" y="308.5" text-anchor="middle" style="font-size:12px">gửi?</text>
+<rect class="fd-focal" x="546" y="264" width="160" height="64" rx="6"/><text class="fd-name" x="626.0" y="285" text-anchor="middle">Đặt lệnh thành công</text><text class="fd-sub" x="626.0" y="301" text-anchor="middle">xem Sổ lệnh</text><text class="fd-sub" x="626.0" y="315" text-anchor="middle">hoặc đặt lệnh khác</text>
+<rect class="fd-end" x="746" y="392" width="160" height="56" rx="28"/><text class="fd-name" x="826.0" y="417" text-anchor="middle">Lệnh chưa thực hiện</text><text class="fd-sub" x="826.0" y="433" text-anchor="middle">thông báo lỗi</text>
+<rect class="fd-end" x="176" y="268" width="160" height="56" rx="28"/><text class="fd-name" x="256.0" y="293" text-anchor="middle">Yêu cầu đăng nhập</text><text class="fd-sub" x="256.0" y="309" text-anchor="middle">Login · Maybe later</text>
+<!-- legend / notes -->
+<text class="fd-note" x="372" y="380" text-anchor="start">Loại lệnh chỉ dùng trong phiên (ví dụ ATO):</text><text class="fd-note" x="372" y="396" text-anchor="start">ngoài phiên, sheet chọn loại lệnh báo không khả dụng.</text>
+<line class="fd-rule" x1="40" y1="488" x2="900" y2="488"/>
+<text class="fd-eyebrow" x="40" y="508">CHÚ GIẢI</text>
+<rect class="fd-end" x="116" y="498" width="24" height="12" rx="6"/>
+<text class="fd-sub" x="148" y="508">Bắt đầu / kết thúc</text>
+<rect class="fd-node" x="276" y="498" width="24" height="12" rx="2"/>
+<text class="fd-sub" x="308" y="508">Bước</text>
+<rect class="fd-focal" x="358" y="498" width="24" height="12" rx="2"/>
+<text class="fd-sub" x="390" y="508">Kết quả thành công</text>
+<polygon class="fd-node" points="510,504 522,497 534,504 522,511"/>
+<text class="fd-sub" x="542" y="508">Điều kiện</text>
+<path class="fd-arrow" d="M618,504 L642,504" marker-end="url(#tx-order-ah)"/>
+<text class="fd-sub" x="650" y="508">Chuyển bước</text>
+</svg>

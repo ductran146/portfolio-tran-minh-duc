@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 720" role="img" aria-labelledby="nhsv-nav-title nhsv-nav-desc" style="display:block;width:100%;min-width:880px;max-width:880px;height:auto;margin-inline:auto">
+<title id="nhsv-nav-title">Điều hướng chính của ứng dụng NHSV từ Trang chủ</title>
+<desc id="nhsv-nav-desc">Từ Trang chủ, người dùng đi tới tám khu vực chính: thị trường, thông tin mã, đặt lệnh, tài sản, tài khoản và cài đặt, cộng đồng, hỗ trợ và kiến thức, vận hành hệ thống.</desc>
+<style>
+.fd-bg{fill:var(--bg-soft,#f6f7f6)}
+.fd-dot{fill:var(--border,#e6e9e6)}
+.fd-node{fill:var(--surface,#fff);stroke:var(--ink,#121815);stroke-width:1}
+.fd-end{fill:var(--bg-soft,#f6f7f6);stroke:var(--ink-faint,#838d86);stroke-width:1}
+.fd-focal{fill:var(--accent-tint,#e6f3ee);stroke:var(--accent,#0b7a5b);stroke-width:1.2}
+.fd-name{font:600 13px/1 var(--sans,system-ui,sans-serif);fill:var(--ink,#121815)}
+.fd-sub{font:400 11px/1 var(--sans,system-ui,sans-serif);fill:var(--ink-secondary,#4b544e)}
+.fd-lbl{font:600 10px/1 var(--sans,system-ui,sans-serif);letter-spacing:.08em;fill:var(--ink-secondary,#4b544e)}
+.fd-lbl-a{fill:var(--accent,#0b7a5b)}
+.fd-note{font:italic 400 12px/1 var(--sans,system-ui,sans-serif);fill:var(--ink-secondary,#4b544e)}
+.fd-eyebrow{font:600 9px/1 var(--sans,system-ui,sans-serif);letter-spacing:.16em;fill:var(--ink-faint,#838d86)}
+.fd-arrow{fill:none;stroke:var(--ink-secondary,#4b544e);stroke-width:1.2}
+.fd-arrow-a{fill:none;stroke:var(--accent,#0b7a5b);stroke-width:1.5}
+.fd-dash{stroke-dasharray:3 3;stroke:var(--ink-faint,#838d86)}
+.fd-ah{fill:var(--ink-secondary,#4b544e)}
+.fd-ah-a{fill:var(--accent,#0b7a5b)}
+.fd-mask{fill:var(--bg-soft,#f6f7f6)}
+.fd-rule{stroke:var(--border,#e6e9e6);stroke-width:1}
+.fd-dashed{stroke-dasharray:4 3}
+.fd-line{fill:none;stroke:var(--ink-secondary,#4b544e);stroke-width:1.2}
+</style>
+<defs>
+<pattern id="nhsv-nav-dots" width="22" height="22" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="0.9" class="fd-dot"/></pattern>
+<marker id="nhsv-nav-ah" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon class="fd-ah" points="0 0, 8 3, 0 6"/></marker>
+<marker id="nhsv-nav-ah-a" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon class="fd-ah-a" points="0 0, 8 3, 0 6"/></marker>
+</defs>
+<rect class="fd-bg" width="880" height="720"/>
+<rect width="880" height="720" fill="url(#nhsv-nav-dots)" opacity="0.6"/>
+<!-- connectors (behind nodes) -->
+<path class="fd-arrow" d="M160,72 L216,72" marker-end="url(#nhsv-nav-ah)"/>
+<path class="fd-arrow" d="M160,148 L216,148" marker-end="url(#nhsv-nav-ah)"/>
+<path class="fd-arrow" d="M160,224 L216,224" marker-end="url(#nhsv-nav-ah)"/>
+<path class="fd-arrow" d="M160,300 L216,300" marker-end="url(#nhsv-nav-ah)"/>
+<path class="fd-arrow" d="M160,376 L216,376" marker-end="url(#nhsv-nav-ah)"/>
+<path class="fd-arrow" d="M160,452 L216,452" marker-end="url(#nhsv-nav-ah)"/>
+<path class="fd-arrow" d="M160,528 L216,528" marker-end="url(#nhsv-nav-ah)"/>
+<path class="fd-arrow" d="M160,604 L216,604" marker-end="url(#nhsv-nav-ah)"/>
+<!-- arrow labels -->
+
+<!-- nodes -->
+<rect class="fd-node" x="40" y="40" width="120" height="596" rx="6"/><text class="fd-name" x="100.0" y="335" text-anchor="middle">Trang chủ</text><text class="fd-sub" x="100.0" y="351" text-anchor="middle">điểm bắt đầu</text>
+<rect class="fd-node" x="216" y="40" width="260" height="64" rx="6"/><text class="fd-name" x="346.0" y="61" text-anchor="middle">Thị trường</text><text class="fd-sub" x="346.0" y="77" text-anchor="middle">Watchlist · Chỉ số</text><text class="fd-sub" x="346.0" y="91" text-anchor="middle">Top mã · Tín hiệu mã</text>
+<rect class="fd-node" x="216" y="116" width="260" height="64" rx="6"/><text class="fd-name" x="346.0" y="137" text-anchor="middle">Thông tin mã CP</text><text class="fd-sub" x="346.0" y="153" text-anchor="middle">chi tiết mã</text><text class="fd-sub" x="346.0" y="167" text-anchor="middle">biểu đồ</text>
+<rect class="fd-focal" x="216" y="192" width="260" height="64" rx="6"/><text class="fd-name" x="346.0" y="213" text-anchor="middle">Đặt lệnh</text><text class="fd-sub" x="346.0" y="229" text-anchor="middle">Lệnh thường · One-Touch</text><text class="fd-sub" x="346.0" y="243" text-anchor="middle">Xác nhận · Sổ lệnh</text>
+<rect class="fd-node" x="216" y="268" width="260" height="64" rx="6"/><text class="fd-name" x="346.0" y="289" text-anchor="middle">Tài sản</text><text class="fd-sub" x="346.0" y="305" text-anchor="middle">Portfolio · Stock Trade</text><text class="fd-sub" x="346.0" y="319" text-anchor="middle">Realized P/L</text>
+<rect class="fd-node" x="216" y="344" width="260" height="64" rx="6"/><text class="fd-name" x="346.0" y="365" text-anchor="middle">Tài khoản &amp; Cài đặt</text><text class="fd-sub" x="346.0" y="381" text-anchor="middle">Hồ sơ · Bảo mật · Một thiết bị</text><text class="fd-sub" x="346.0" y="395" text-anchor="middle">Chuyển CK · Quyền mua</text>
+<rect class="fd-node" x="216" y="420" width="260" height="64" rx="6"/><text class="fd-name" x="346.0" y="441" text-anchor="middle">Cộng đồng</text><text class="fd-sub" x="346.0" y="457" text-anchor="middle">Copy Trading · LeaderBoard</text><text class="fd-sub" x="346.0" y="471" text-anchor="middle">Leader Portfolio</text>
+<rect class="fd-node" x="216" y="496" width="260" height="64" rx="6"/><text class="fd-name" x="346.0" y="517" text-anchor="middle">Hỗ trợ &amp; Kiến thức</text><text class="fd-sub" x="346.0" y="533" text-anchor="middle">Chat với Broker</text><text class="fd-sub" x="346.0" y="547" text-anchor="middle">Education: kiến thức đầu tư</text>
+<rect class="fd-node" x="216" y="572" width="260" height="64" rx="6"/><text class="fd-name" x="346.0" y="593" text-anchor="middle">Vận hành hệ thống</text><text class="fd-sub" x="346.0" y="609" text-anchor="middle">App update · Bảo trì · Mất mạng</text><text class="fd-sub" x="346.0" y="623" text-anchor="middle">Hết phiên · Giới hạn chức năng</text>
+<!-- legend / notes -->
+<text class="fd-note" x="540" y="216" text-anchor="start">Đặt lệnh là luồng cốt lõi:</text><text class="fd-note" x="540" y="232" text-anchor="start">lệnh thường, One-Touch,</text><text class="fd-note" x="540" y="248" text-anchor="start">xác nhận và sổ lệnh.</text>
+<text class="fd-note" x="540" y="596" text-anchor="start">Cập nhật, bảo trì, mất mạng,</text><text class="fd-note" x="540" y="612" text-anchor="start">hết phiên được gom thành</text><text class="fd-note" x="540" y="628" text-anchor="start">một khu vực riêng.</text>
+<line class="fd-rule" x1="40" y1="672" x2="840" y2="672"/>
+<text class="fd-eyebrow" x="40" y="692">CHÚ GIẢI</text>
+<rect class="fd-node" x="116" y="682" width="24" height="12" rx="2"/>
+<text class="fd-sub" x="148" y="692">Màn hình / khu vực</text>
+<rect class="fd-focal" x="278" y="682" width="24" height="12" rx="2"/>
+<text class="fd-sub" x="310" y="692">Luồng cốt lõi</text>
+<path class="fd-arrow" d="M406,688 L430,688" marker-end="url(#nhsv-nav-ah)"/>
+<text class="fd-sub" x="438" y="692">Chuyển màn</text>
+</svg>

@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1020 500" role="img" aria-labelledby="tn-import-title tn-import-desc" style="display:block;width:100%;min-width:1020px;max-width:1020px;height:auto;margin-inline:auto">
+<title id="tn-import-title">Luồng import phiếu bán từ Excel</title>
+<desc id="tn-import-desc">Người dùng tải file Excel lên, xem trước kết quả khớp khách và sản phẩm, sửa các dòng lỗi rồi xác nhận; hệ thống chỉ tạo phiếu bán nháp, không ghi sổ và không trừ tồn.</desc>
+<style>
+.fd-bg{fill:var(--bg-soft,#f6f7f6)}
+.fd-dot{fill:var(--border,#e6e9e6)}
+.fd-node{fill:var(--surface,#fff);stroke:var(--ink,#121815);stroke-width:1}
+.fd-end{fill:var(--bg-soft,#f6f7f6);stroke:var(--ink-faint,#838d86);stroke-width:1}
+.fd-focal{fill:var(--accent-tint,#e6f3ee);stroke:var(--accent,#0b7a5b);stroke-width:1.2}
+.fd-name{font:600 13px/1 var(--sans,system-ui,sans-serif);fill:var(--ink,#121815)}
+.fd-sub{font:400 11px/1 var(--sans,system-ui,sans-serif);fill:var(--ink-secondary,#4b544e)}
+.fd-lbl{font:600 10px/1 var(--sans,system-ui,sans-serif);letter-spacing:.08em;fill:var(--ink-secondary,#4b544e)}
+.fd-lbl-a{fill:var(--accent,#0b7a5b)}
+.fd-note{font:italic 400 12px/1 var(--sans,system-ui,sans-serif);fill:var(--ink-secondary,#4b544e)}
+.fd-eyebrow{font:600 9px/1 var(--sans,system-ui,sans-serif);letter-spacing:.16em;fill:var(--ink-faint,#838d86)}
+.fd-arrow{fill:none;stroke:var(--ink-secondary,#4b544e);stroke-width:1.2}
+.fd-arrow-a{fill:none;stroke:var(--accent,#0b7a5b);stroke-width:1.5}
+.fd-dash{stroke-dasharray:3 3;stroke:var(--ink-faint,#838d86)}
+.fd-ah{fill:var(--ink-secondary,#4b544e)}
+.fd-ah-a{fill:var(--accent,#0b7a5b)}
+.fd-mask{fill:var(--bg-soft,#f6f7f6)}
+.fd-rule{stroke:var(--border,#e6e9e6);stroke-width:1}
+.fd-dashed{stroke-dasharray:4 3}
+.fd-line{fill:none;stroke:var(--ink-secondary,#4b544e);stroke-width:1.2}
+</style>
+<defs>
+<pattern id="tn-import-dots" width="22" height="22" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="0.9" class="fd-dot"/></pattern>
+<marker id="tn-import-ah" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon class="fd-ah" points="0 0, 8 3, 0 6"/></marker>
+<marker id="tn-import-ah-a" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon class="fd-ah-a" points="0 0, 8 3, 0 6"/></marker>
+</defs>
+<rect class="fd-bg" width="1020" height="500"/>
+<rect width="1020" height="500" fill="url(#tn-import-dots)" opacity="0.6"/>
+<!-- connectors (behind nodes) -->
+<path class="fd-arrow" d="M188,160 L232,160" marker-end="url(#tn-import-ah)"/>
+<path class="fd-arrow" d="M380,156 L424,156" marker-end="url(#tn-import-ah)"/>
+<path class="fd-arrow" d="M572,156 L616,156" marker-end="url(#tn-import-ah)"/>
+<path class="fd-arrow" d="M676,204 L676,264" marker-end="url(#tn-import-ah)"/>
+<path class="fd-arrow" d="M616,296 L506,296 Q498,296 498,288 L498,188" marker-end="url(#tn-import-ah)"/>
+<path class="fd-arrow" d="M736,156 L812,156" marker-end="url(#tn-import-ah)"/>
+<path class="fd-arrow" d="M886,188 L886,264" marker-end="url(#tn-import-ah)"/>
+<path class="fd-arrow" d="M498,124 L498,84" marker-end="url(#tn-import-ah)"/>
+<!-- arrow labels -->
+<rect class="fd-mask" x="686" y="226" width="26" height="16" rx="2"/><text class="fd-lbl" x="699" y="237.5" text-anchor="middle">CÓ</text>
+<rect class="fd-mask" x="526.5" y="288" width="61" height="16" rx="2"/><text class="fd-lbl" x="557" y="299.5" text-anchor="middle">ÁP DỤNG</text>
+<rect class="fd-mask" x="750.5" y="148" width="47" height="16" rx="2"/><text class="fd-lbl" x="774" y="159.5" text-anchor="middle">KHÔNG</text>
+<rect class="fd-mask" x="508" y="96" width="75" height="16" rx="2"/><text class="fd-lbl" x="545.5" y="107.5" text-anchor="middle">HỦY PHIÊN</text>
+<!-- nodes -->
+<rect class="fd-end" x="424" y="28" width="148" height="56" rx="28"/><text class="fd-name" x="498.0" y="53" text-anchor="middle">Hủy phiên</text><text class="fd-sub" x="498.0" y="69" text-anchor="middle">xoá dữ liệu tạm</text>
+<rect class="fd-end" x="40" y="128" width="148" height="64" rx="32"/><text class="fd-name" x="114.0" y="149" text-anchor="middle">Upload file</text><text class="fd-sub" x="114.0" y="165" text-anchor="middle">nhiều file cùng lúc</text><text class="fd-sub" x="114.0" y="179" text-anchor="middle">.xlsx · .csv · .zip</text>
+<rect class="fd-node" x="232" y="124" width="148" height="64" rx="6"/><text class="fd-name" x="306.0" y="145" text-anchor="middle">Đọc &amp; kiểm tra</text><text class="fd-sub" x="306.0" y="161" text-anchor="middle">khớp khách, sản phẩm</text><text class="fd-sub" x="306.0" y="175" text-anchor="middle">gom theo mã phiếu</text>
+<rect class="fd-node" x="424" y="124" width="148" height="64" rx="6"/><text class="fd-name" x="498.0" y="145" text-anchor="middle">Xem trước</text><text class="fd-sub" x="498.0" y="161" text-anchor="middle">tổng dòng · số phiếu</text><text class="fd-sub" x="498.0" y="175" text-anchor="middle">lỗi · cảnh báo</text>
+<polygon class="fd-node" points="676,108 736,156 676,204 616,156"/><text class="fd-name" x="676" y="153.5" text-anchor="middle" style="font-size:12px">Còn nhóm</text><text class="fd-name" x="676" y="168.5" text-anchor="middle" style="font-size:12px">lỗi?</text>
+<rect class="fd-node" x="616" y="264" width="120" height="64" rx="6"/><text class="fd-name" x="676.0" y="285" text-anchor="middle">Sửa khớp tay</text><text class="fd-sub" x="676.0" y="301" text-anchor="middle">chọn đúng SP hoặc</text><text class="fd-sub" x="676.0" y="315" text-anchor="middle">khách → Áp dụng</text>
+<rect class="fd-node" x="812" y="124" width="148" height="64" rx="6"/><text class="fd-name" x="886.0" y="145" text-anchor="middle">Xác nhận tạo phiếu</text><text class="fd-sub" x="886.0" y="161" text-anchor="middle">hộp xác nhận,</text><text class="fd-sub" x="886.0" y="175" text-anchor="middle">bỏ qua nhóm lỗi</text>
+<rect class="fd-focal" x="804" y="264" width="164" height="64" rx="6"/><text class="fd-name" x="886.0" y="285" text-anchor="middle">Phiếu bán Nháp</text><text class="fd-sub" x="886.0" y="301" text-anchor="middle">chưa ghi sổ, chưa trừ tồn</text><text class="fd-sub" x="886.0" y="315" text-anchor="middle">ghi sổ ở màn Phiếu bán</text>
+<!-- legend / notes -->
+<text class="fd-note" x="40" y="372" text-anchor="start">Nhóm còn lỗi không chặn nhóm hợp lệ:</text><text class="fd-note" x="40" y="388" text-anchor="start">tự bỏ qua khi xác nhận.</text>
+<line class="fd-rule" x1="40" y1="440" x2="980" y2="440"/>
+<text class="fd-eyebrow" x="40" y="460">CHÚ GIẢI</text>
+<rect class="fd-end" x="116" y="450" width="24" height="12" rx="6"/>
+<text class="fd-sub" x="148" y="460">Bắt đầu / kết thúc</text>
+<rect class="fd-node" x="276" y="450" width="24" height="12" rx="2"/>
+<text class="fd-sub" x="308" y="460">Bước</text>
+<rect class="fd-focal" x="358" y="450" width="24" height="12" rx="2"/>
+<text class="fd-sub" x="390" y="460">Kết quả</text>
+<polygon class="fd-node" points="460,456 472,449 484,456 472,463"/>
+<text class="fd-sub" x="492" y="460">Điều kiện</text>
+<path class="fd-arrow" d="M568,456 L592,456" marker-end="url(#tn-import-ah)"/>
+<text class="fd-sub" x="600" y="460">Chuyển bước</text>
+</svg>

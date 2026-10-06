@@ -3,7 +3,7 @@
   "title": "Sàn Xịn Ha",
   "real": true,
   "featured": false,
-  "order": 4,
+  "order": 5,
   "cover": "../../assets/projects/san-xin-ha/01.jpg",
   "summary": "Thiết kế trải nghiệm ứng dụng giao dịch chứng khoán - từ tổng quan tài khoản, thị trường, đặt lệnh đến quản lý tài sản. Mục tiêu: đơn giản hoá luồng đặt lệnh, giúp nhà đầu tư nắm bắt thị trường nhanh và quản lý tài sản minh bạch, rõ ràng.",
   "tags": [

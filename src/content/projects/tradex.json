@@ -1,0 +1,114 @@
+{
+  "slug": "tradex",
+  "title": "TradeX",
+  "client": "Công ty Difisoft Việt Nam",
+  "real": true,
+  "featured": false,
+  "order": 3,
+  "summary": "Nền tảng giao dịch chứng khoán trên mobile và web, gồm mảng phái sinh và cổ phiếu: từ đăng nhập, mở tài khoản eKYC, đặt lệnh, sổ lệnh đến chuyển tiền và theo dõi thị trường.",
+  "tags": [
+    "Fintech",
+    "Mobile app",
+    "Web app"
+  ],
+  "role": "Thiết kế UX/UI mobile app và web",
+  "tools": [
+    "Figma"
+  ],
+  "flows": [
+    {
+      "step": "Đăng nhập & khôi phục mật khẩu",
+      "detail": "Đăng nhập bằng mật khẩu hoặc sinh trắc học; quên mật khẩu thì xác thực OTP và nhận mật khẩu mới qua email."
+    },
+    {
+      "step": "Mở tài khoản eKYC",
+      "detail": "Quét CCCD gắn chip bằng NFC, chụp ảnh CCCD, xác thực khuôn mặt, rồi bổ sung hồ sơ và ký số ngay trên điện thoại (phần đang hoàn thiện)."
+    },
+    {
+      "step": "Đặt lệnh",
+      "detail": "Chọn loại lệnh, nhập giá và khối lượng, xem độ sâu thị trường rồi xác nhận; báo lỗi ngay khi vượt sức mua hoặc loại lệnh chưa dùng được trong phiên."
+    },
+    {
+      "step": "Sổ lệnh, sửa & huỷ lệnh",
+      "detail": "Theo dõi trạng thái lệnh, sửa hoặc huỷ từng lệnh, huỷ nhiều lệnh cùng lúc; lệnh đã khớp thì khoá nút sửa và huỷ."
+    },
+    {
+      "step": "Chuyển tiền ra ngân hàng",
+      "detail": "Chọn tiểu khoản nguồn và ngân hàng nhận, nhập số tiền hoặc chuyển toàn bộ, kèm lưu ý giờ rút tiền và lịch sử giao dịch."
+    },
+    {
+      "step": "Watchlist & bảng giá",
+      "detail": "Tạo, đổi tên, xoá danh sách theo dõi; thêm mã qua màn tìm kiếm dùng chung; mỗi thao tác có phản hồi riêng."
+    }
+  ],
+  "flowHub": "Mọi thao tác liên quan đến lệnh và tiền đều qua hộp xác nhận trước khi gửi",
+  "context": "TradeX là sản phẩm lõi của Difisoft Việt Nam, công ty chuyên cung cấp giải pháp cho ngành chứng khoán, cùng nhóm sản phẩm với ứng dụng Paave. Sản phẩm gồm MTS trên mobile (phái sinh và cổ phiếu) và WTS trên web (phái sinh). Người dùng vừa cần vào lệnh nhanh, vừa phải luôn biết lệnh đang ở trạng thái nào, nên mỗi thao tác liên quan đến tiền hay lệnh đều có bước xác nhận rõ ràng, và mọi tình huống bất thường như mất mạng, hết phiên, bảo trì đều có màn hình riêng thay vì để người dùng tự đoán.",
+  "process": [],
+  "gallery": [
+    {
+      "caption": "Đăng nhập: form mật khẩu, tuỳ chọn sinh trắc học và các trạng thái sai thông tin."
+    },
+    {
+      "caption": "Mở tài khoản eKYC: quét CCCD, đọc chip NFC, xác thực khuôn mặt và bổ sung hồ sơ."
+    },
+    {
+      "caption": "Đặt lệnh: form lệnh, sheet chọn loại lệnh (LO, MP, ATO, ATC, MTL, MAK, MOK) và màn độ sâu thị trường."
+    },
+    {
+      "caption": "Sổ lệnh: lọc theo trạng thái, chi tiết lệnh, sửa lệnh và huỷ nhiều lệnh cùng lúc."
+    },
+    {
+      "caption": "Chuyển tiền ra ngân hàng: chọn tài khoản nguồn và nhận, chuyển toàn bộ, xác nhận và lịch sử."
+    },
+    {
+      "caption": "Bảng giá & Watchlist: quản lý danh sách theo dõi, tìm mã và các trạng thái rỗng."
+    },
+    {
+      "caption": "Bản web (WTS): bố cục header và sidebar phải, form đặt lệnh mở ngay trên màn hình đang xem."
+    }
+  ],
+  "userFlows": [
+    {
+      "slug": "tx-map",
+      "title": "Bản đồ điều hướng",
+      "label": "Điều hướng",
+      "caption": "Năm tab ở thanh dưới trên mobile; Trade được nhấn mạnh vì là luồng cốt lõi. Bản web đặt form đặt lệnh trong sidebar phải."
+    },
+    {
+      "slug": "tx-order",
+      "title": "Luồng đặt lệnh",
+      "label": "Đặt lệnh",
+      "caption": "Kiểm tra đăng nhập trước khi vào form, báo lỗi ngay tại form khi vượt sức mua, và mọi lệnh đều qua hộp xác nhận trước khi gửi."
+    },
+    {
+      "slug": "tx-orderbook",
+      "title": "Luồng sổ lệnh: sửa và huỷ lệnh",
+      "label": "Sổ lệnh",
+      "caption": "Huỷ một hoặc nhiều lệnh dùng chung một hộp xác nhận và một thông báo kết quả; lệnh đã khớp thì khoá nút sửa và huỷ."
+    },
+    {
+      "slug": "tx-login",
+      "title": "Đăng nhập và khôi phục mật khẩu",
+      "label": "Đăng nhập",
+      "caption": "Các trạng thái OTP (hết hạn, gửi lại, gửi lỗi, sai mã) được gom thành một bộ riêng, kèm note hành vi cho từng trạng thái."
+    },
+    {
+      "slug": "tx-ekyc",
+      "title": "Mở tài khoản eKYC",
+      "label": "eKYC",
+      "caption": "Quét CCCD gắn chip, chụp ảnh và xác thực khuôn mặt ngay trên điện thoại; thiết bị không hỗ trợ NFC được hướng dẫn đến công ty chứng khoán. Luồng đang hoàn thiện."
+    },
+    {
+      "slug": "tx-transfer",
+      "title": "Chuyển tiền ra ngân hàng",
+      "label": "Chuyển tiền",
+      "caption": "Tắt \"Chuyển toàn bộ\" giữ nguyên số đã điền thay vì xoá, để người dùng không mất dữ liệu đã có."
+    },
+    {
+      "slug": "tx-watchlist",
+      "title": "Quản lý watchlist",
+      "label": "Watchlist",
+      "caption": "Thêm mã dùng lại màn tìm kiếm chung; tạo, đổi tên, xoá đều có phản hồi riêng và xoá luôn có cảnh báo không thể hoàn tác."
+    }
+  ]
+}

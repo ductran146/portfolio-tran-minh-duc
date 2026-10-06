@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 480" role="img" aria-labelledby="bsc-map-title bsc-map-desc" style="display:block;width:100%;min-width:1000px;max-width:1000px;height:auto;margin-inline:auto">
+<title id="bsc-map-title">Bản đồ điều hướng ứng dụng giao dịch chứng khoán</title>
+<desc id="bsc-map-desc">Cấu trúc ứng dụng: bốn tab chính Trang chủ, Đặt lệnh, Sổ lệnh, Tài sản, menu bên cho tiền mặt và hỗ trợ, và Tài khoản mở từ avatar ở Trang chủ.</desc>
+<style>
+.fd-bg{fill:var(--bg-soft,#f6f7f6)}
+.fd-dot{fill:var(--border,#e6e9e6)}
+.fd-node{fill:var(--surface,#fff);stroke:var(--ink,#121815);stroke-width:1}
+.fd-end{fill:var(--bg-soft,#f6f7f6);stroke:var(--ink-faint,#838d86);stroke-width:1}
+.fd-focal{fill:var(--accent-tint,#e6f3ee);stroke:var(--accent,#0b7a5b);stroke-width:1.2}
+.fd-name{font:600 13px/1 var(--sans,system-ui,sans-serif);fill:var(--ink,#121815)}
+.fd-sub{font:400 11px/1 var(--sans,system-ui,sans-serif);fill:var(--ink-secondary,#4b544e)}
+.fd-lbl{font:600 10px/1 var(--sans,system-ui,sans-serif);letter-spacing:.08em;fill:var(--ink-secondary,#4b544e)}
+.fd-lbl-a{fill:var(--accent,#0b7a5b)}
+.fd-note{font:italic 400 12px/1 var(--sans,system-ui,sans-serif);fill:var(--ink-secondary,#4b544e)}
+.fd-eyebrow{font:600 9px/1 var(--sans,system-ui,sans-serif);letter-spacing:.16em;fill:var(--ink-faint,#838d86)}
+.fd-arrow{fill:none;stroke:var(--ink-secondary,#4b544e);stroke-width:1.2}
+.fd-arrow-a{fill:none;stroke:var(--accent,#0b7a5b);stroke-width:1.5}
+.fd-dash{stroke-dasharray:3 3;stroke:var(--ink-faint,#838d86)}
+.fd-ah{fill:var(--ink-secondary,#4b544e)}
+.fd-ah-a{fill:var(--accent,#0b7a5b)}
+.fd-mask{fill:var(--bg-soft,#f6f7f6)}
+.fd-rule{stroke:var(--border,#e6e9e6);stroke-width:1}
+.fd-dashed{stroke-dasharray:4 3}
+.fd-line{fill:none;stroke:var(--ink-secondary,#4b544e);stroke-width:1.2}
+</style>
+<defs>
+<pattern id="bsc-map-dots" width="22" height="22" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="0.9" class="fd-dot"/></pattern>
+<marker id="bsc-map-ah" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon class="fd-ah" points="0 0, 8 3, 0 6"/></marker>
+<marker id="bsc-map-ah-a" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon class="fd-ah-a" points="0 0, 8 3, 0 6"/></marker>
+</defs>
+<rect class="fd-bg" width="1000" height="480"/>
+<rect width="1000" height="480" fill="url(#bsc-map-dots)" opacity="0.6"/>
+<!-- connectors (behind nodes) -->
+<line class="fd-line" x1="482" y1="96" x2="482" y2="148"/>
+<line class="fd-line" x1="114" y1="148" x2="850" y2="148"/>
+<line class="fd-line" x1="114" y1="148" x2="114" y2="196"/>
+<line class="fd-line" x1="298" y1="148" x2="298" y2="196"/>
+<line class="fd-line" x1="482" y1="148" x2="482" y2="196"/>
+<line class="fd-line" x1="666" y1="148" x2="666" y2="196"/>
+<line class="fd-line" x1="850" y1="148" x2="850" y2="196"/>
+<line class="fd-line" x1="52" y1="260" x2="52" y2="324"/>
+<line class="fd-line" x1="52" y1="324" x2="76" y2="324"/>
+<!-- arrow labels -->
+
+<!-- nodes -->
+<rect class="fd-node" x="362" y="40" width="240" height="56" rx="6"/><text class="fd-name" x="482.0" y="65" text-anchor="middle">Giao dịch chứng khoán</text><text class="fd-sub" x="482.0" y="81" text-anchor="middle">nhúng trong BIDV SmartBanking</text>
+<rect class="fd-node" x="40" y="196" width="148" height="64" rx="6"/><text class="fd-name" x="114.0" y="217" text-anchor="middle">Trang chủ</text><text class="fd-sub" x="114.0" y="233" text-anchor="middle">Index · Tin tức</text><text class="fd-sub" x="114.0" y="247" text-anchor="middle">Watchlist · Khuyến nghị</text>
+<rect class="fd-focal" x="224" y="196" width="148" height="64" rx="6"/><text class="fd-name" x="298.0" y="217" text-anchor="middle">Đặt lệnh</text><text class="fd-sub" x="298.0" y="233" text-anchor="middle">form lệnh</text><text class="fd-sub" x="298.0" y="247" text-anchor="middle">xác thực · kết quả</text>
+<rect class="fd-node" x="408" y="196" width="148" height="64" rx="6"/><text class="fd-name" x="482.0" y="217" text-anchor="middle">Sổ lệnh</text><text class="fd-sub" x="482.0" y="233" text-anchor="middle">lọc · chi tiết</text><text class="fd-sub" x="482.0" y="247" text-anchor="middle">huỷ · sửa · lịch sử</text>
+<rect class="fd-node" x="592" y="196" width="148" height="64" rx="6"/><text class="fd-name" x="666.0" y="217" text-anchor="middle">Tài sản</text><text class="fd-sub" x="666.0" y="233" text-anchor="middle">danh mục · tổng quan</text><text class="fd-sub" x="666.0" y="247" text-anchor="middle">chi tiết mã</text>
+<rect class="fd-node" x="776" y="196" width="148" height="64" rx="6"/><text class="fd-name" x="850.0" y="217" text-anchor="middle">Menu bên</text><text class="fd-sub" x="850.0" y="233" text-anchor="middle">Nạp · Rút · Sao kê</text><text class="fd-sub" x="850.0" y="247" text-anchor="middle">Hỗ trợ</text>
+<rect class="fd-node" x="76" y="300" width="132" height="48" rx="6"/><text class="fd-name" x="142.0" y="321" text-anchor="middle">Tài khoản</text><text class="fd-sub" x="142.0" y="337" text-anchor="middle">mở từ avatar</text>
+<!-- legend / notes -->
+<text class="fd-note" x="272" y="316">Chưa đăng nhập: màn cần đăng nhập hiện form Đăng ký / Đăng nhập;</text><text class="fd-note" x="272" y="332">hết phiên thì hiện thông báo yêu cầu đăng nhập lại.</text>
+<line class="fd-rule" x1="40" y1="420" x2="960" y2="420"/>
+<text class="fd-eyebrow" x="40" y="440">CHÚ GIẢI</text>
+<rect class="fd-node" x="116" y="430" width="24" height="12" rx="2"/>
+<text class="fd-sub" x="148" y="440">Màn hình / nhóm</text>
+<rect class="fd-focal" x="264" y="430" width="24" height="12" rx="2"/>
+<text class="fd-sub" x="296" y="440">Luồng cốt lõi</text>
+<line class="fd-line" x1="392" y1="436" x2="416" y2="436"/>
+<text class="fd-sub" x="424" y="440">Dẫn tới</text>
+</svg>

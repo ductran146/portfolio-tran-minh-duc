@@ -56,5 +56,49 @@
       "src": "../../assets/projects/bsc-smartbanking/07.jpg",
       "caption": "Chỉ số thị trường: VN-Index theo thời gian thực, khung 1D đến 5Y, biểu đồ giá kết hợp volume theo phiên, thống kê nhanh số mã tăng, đứng giá, giảm giá."
     }
+  ],
+  "userFlows": [
+    {
+      "slug": "bsc-map",
+      "title": "Bản đồ điều hướng",
+      "label": "Điều hướng",
+      "caption": "Bốn tab chính, menu bên cho tiền mặt và hỗ trợ, Tài khoản mở từ avatar. Đặt lệnh được nhấn mạnh vì là luồng cốt lõi."
+    },
+    {
+      "slug": "bsc-order",
+      "title": "Luồng đặt lệnh mua/bán",
+      "label": "Đặt lệnh",
+      "caption": "Từ chọn mã đến kết quả, có hai nhánh quay lại: khi giá hoặc khối lượng không hợp lệ, và khi mã xác thực sai hoặc hết hạn."
+    },
+    {
+      "slug": "bsc-orderbook",
+      "title": "Luồng quản lý lệnh trong Sổ lệnh",
+      "label": "Sổ lệnh",
+      "caption": "Huỷ và sửa lệnh đi chung một cổng xác nhận; nhánh sửa có cảnh báo trước và khoá một trường theo quy định của sàn."
+    },
+    {
+      "slug": "bsc-auth",
+      "title": "Đăng nhập khi chưa đăng nhập hoặc hết phiên",
+      "label": "Đăng nhập",
+      "caption": "Mọi màn cần đăng nhập dùng cùng một cổng: chưa đăng nhập thì hiện form Đăng ký / Đăng nhập, hết phiên thì hiện thông báo với lựa chọn Đăng nhập hoặc Để sau."
+    },
+    {
+      "slug": "bsc-deposit",
+      "title": "Luồng nạp tiền",
+      "label": "Nạp tiền",
+      "caption": "Thông tin nạp nằm trong một bottom sheet có tab theo loại tài khoản; người chỉ có tài khoản thường bị khoá hai tab ký quỹ để không chọn nhầm."
+    },
+    {
+      "slug": "bsc-withdraw",
+      "title": "Luồng rút tiền",
+      "label": "Rút tiền",
+      "caption": "Người dùng nhập số tiền hoặc bật rút tối đa theo hạn mức, rồi xác nhận kèm xác thực. Các bước nét đứt đang thiết kế."
+    },
+    {
+      "slug": "bsc-market",
+      "title": "Khám phá thị trường từ Trang chủ",
+      "label": "Thị trường",
+      "caption": "Từ Trang chủ đi tới tìm kiếm, danh sách mã, chỉ số và tin tức. Watchlist trống dẫn thẳng về tìm kiếm để thêm mã thay vì dừng ở màn hình rỗng."
+    }
   ]
 }

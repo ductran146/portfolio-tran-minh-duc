@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 828 440" role="img" aria-labelledby="bsc-deposit-title bsc-deposit-desc" style="display:block;width:100%;min-width:828px;max-width:828px;height:auto;margin-inline:auto">
+<title id="bsc-deposit-title">Luồng nạp tiền</title>
+<desc id="bsc-deposit-desc">Từ nút Nạp tiền, người dùng xem thông tin nạp trong một bottom sheet có tab theo loại tài khoản, rồi sao chép số tài khoản hoặc mở mã QR để chia sẻ hoặc lưu ảnh; người chỉ có tài khoản thường bị khoá hai tab ký quỹ.</desc>
+<style>
+.fd-bg{fill:var(--bg-soft,#f6f7f6)}
+.fd-dot{fill:var(--border,#e6e9e6)}
+.fd-node{fill:var(--surface,#fff);stroke:var(--ink,#121815);stroke-width:1}
+.fd-end{fill:var(--bg-soft,#f6f7f6);stroke:var(--ink-faint,#838d86);stroke-width:1}
+.fd-focal{fill:var(--accent-tint,#e6f3ee);stroke:var(--accent,#0b7a5b);stroke-width:1.2}
+.fd-name{font:600 13px/1 var(--sans,system-ui,sans-serif);fill:var(--ink,#121815)}
+.fd-sub{font:400 11px/1 var(--sans,system-ui,sans-serif);fill:var(--ink-secondary,#4b544e)}
+.fd-lbl{font:600 10px/1 var(--sans,system-ui,sans-serif);letter-spacing:.08em;fill:var(--ink-secondary,#4b544e)}
+.fd-lbl-a{fill:var(--accent,#0b7a5b)}
+.fd-note{font:italic 400 12px/1 var(--sans,system-ui,sans-serif);fill:var(--ink-secondary,#4b544e)}
+.fd-eyebrow{font:600 9px/1 var(--sans,system-ui,sans-serif);letter-spacing:.16em;fill:var(--ink-faint,#838d86)}
+.fd-arrow{fill:none;stroke:var(--ink-secondary,#4b544e);stroke-width:1.2}
+.fd-arrow-a{fill:none;stroke:var(--accent,#0b7a5b);stroke-width:1.5}
+.fd-dash{stroke-dasharray:3 3;stroke:var(--ink-faint,#838d86)}
+.fd-ah{fill:var(--ink-secondary,#4b544e)}
+.fd-ah-a{fill:var(--accent,#0b7a5b)}
+.fd-mask{fill:var(--bg-soft,#f6f7f6)}
+.fd-rule{stroke:var(--border,#e6e9e6);stroke-width:1}
+.fd-dashed{stroke-dasharray:4 3}
+.fd-line{fill:none;stroke:var(--ink-secondary,#4b544e);stroke-width:1.2}
+</style>
+<defs>
+<pattern id="bsc-deposit-dots" width="22" height="22" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="0.9" class="fd-dot"/></pattern>
+<marker id="bsc-deposit-ah" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon class="fd-ah" points="0 0, 8 3, 0 6"/></marker>
+<marker id="bsc-deposit-ah-a" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon class="fd-ah-a" points="0 0, 8 3, 0 6"/></marker>
+</defs>
+<rect class="fd-bg" width="828" height="440"/>
+<rect width="828" height="440" fill="url(#bsc-deposit-dots)" opacity="0.6"/>
+<!-- connectors (behind nodes) -->
+<path class="fd-arrow" d="M176,200 L232,200" marker-end="url(#bsc-deposit-ah)"/>
+<path class="fd-arrow fd-dash" d="M380,184 L400,184 Q408,184 408,176 L408,92 Q408,84 416,84 L436,84" marker-end="url(#bsc-deposit-ah)"/>
+<path class="fd-arrow" d="M380,200 L436,200" marker-end="url(#bsc-deposit-ah)"/>
+<path class="fd-arrow" d="M380,216 L400,216 Q408,216 408,224 L408,308 Q408,316 416,316 L436,316" marker-end="url(#bsc-deposit-ah)"/>
+<path class="fd-arrow" d="M584,316 L640,316" marker-end="url(#bsc-deposit-ah)"/>
+<!-- arrow labels -->
+
+<!-- nodes -->
+<rect class="fd-end" x="40" y="168" width="136" height="64" rx="32"/><text class="fd-name" x="108.0" y="189" text-anchor="middle">Chọn Nạp tiền</text><text class="fd-sub" x="108.0" y="205" text-anchor="middle">Trang chủ, Tài sản</text><text class="fd-sub" x="108.0" y="219" text-anchor="middle">hoặc Menu bên</text>
+<rect class="fd-node" x="232" y="168" width="148" height="64" rx="6"/><text class="fd-name" x="306.0" y="189" text-anchor="middle">Thông tin nạp tiền</text><text class="fd-sub" x="306.0" y="205" text-anchor="middle">3 tab tài khoản</text><text class="fd-sub" x="306.0" y="219" text-anchor="middle">bottom sheet</text>
+<rect class="fd-focal" x="436" y="52" width="148" height="64" rx="6"/><text class="fd-name" x="510.0" y="73" text-anchor="middle">Khoá tab MR10, MR90</text><text class="fd-sub" x="510.0" y="89" text-anchor="middle">khi chỉ có tài khoản</text><text class="fd-sub" x="510.0" y="103" text-anchor="middle">Normal</text>
+<rect class="fd-node" x="436" y="168" width="148" height="64" rx="6"/><text class="fd-name" x="510.0" y="197" text-anchor="middle">Sao chép số TK</text><text class="fd-sub" x="510.0" y="213" text-anchor="middle">số tài khoản nạp</text>
+<rect class="fd-node" x="436" y="284" width="148" height="64" rx="6"/><text class="fd-name" x="510.0" y="313" text-anchor="middle">Hiện mã QR</text><text class="fd-sub" x="510.0" y="329" text-anchor="middle">màn hình QR</text>
+<rect class="fd-end" x="640" y="284" width="148" height="64" rx="32"/><text class="fd-name" x="714.0" y="313" text-anchor="middle">Chia sẻ / Lưu ảnh</text><text class="fd-sub" x="714.0" y="329" text-anchor="middle">mã QR</text>
+<!-- legend / notes -->
+<line class="fd-rule" x1="40" y1="380" x2="788" y2="380"/>
+<text class="fd-eyebrow" x="40" y="400">CHÚ GIẢI</text>
+<rect class="fd-end" x="116" y="390" width="24" height="12" rx="6"/>
+<text class="fd-sub" x="148" y="400">Bắt đầu / kết thúc</text>
+<rect class="fd-node" x="276" y="390" width="24" height="12" rx="2"/>
+<text class="fd-sub" x="308" y="400">Bước</text>
+<rect class="fd-focal" x="358" y="390" width="24" height="12" rx="2"/>
+<text class="fd-sub" x="390" y="400">Quy tắc theo tài khoản</text>
+<path class="fd-arrow" d="M530,396 L554,396" marker-end="url(#bsc-deposit-ah)"/>
+<text class="fd-sub" x="562" y="400">Chuyển bước</text>
+<path class="fd-arrow fd-dash" d="M654,396 L678,396" marker-end="url(#bsc-deposit-ah)"/>
+<text class="fd-sub" x="686" y="400">Có điều kiện</text>
+</svg>

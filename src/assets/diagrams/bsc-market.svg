@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 540" role="img" aria-labelledby="bsc-market-title bsc-market-desc" style="display:block;width:100%;min-width:880px;max-width:880px;height:auto;margin-inline:auto">
+<title id="bsc-market-title">Luồng khám phá thị trường từ Trang chủ</title>
+<desc id="bsc-market-desc">Từ Trang chủ, người dùng đi tới tìm kiếm mã, danh sách mã với Watchlist và khuyến nghị, chi tiết chỉ số và tin tức; Watchlist trống dẫn lại về tìm kiếm để thêm mã.</desc>
+<style>
+.fd-bg{fill:var(--bg-soft,#f6f7f6)}
+.fd-dot{fill:var(--border,#e6e9e6)}
+.fd-node{fill:var(--surface,#fff);stroke:var(--ink,#121815);stroke-width:1}
+.fd-end{fill:var(--bg-soft,#f6f7f6);stroke:var(--ink-faint,#838d86);stroke-width:1}
+.fd-focal{fill:var(--accent-tint,#e6f3ee);stroke:var(--accent,#0b7a5b);stroke-width:1.2}
+.fd-name{font:600 13px/1 var(--sans,system-ui,sans-serif);fill:var(--ink,#121815)}
+.fd-sub{font:400 11px/1 var(--sans,system-ui,sans-serif);fill:var(--ink-secondary,#4b544e)}
+.fd-lbl{font:600 10px/1 var(--sans,system-ui,sans-serif);letter-spacing:.08em;fill:var(--ink-secondary,#4b544e)}
+.fd-lbl-a{fill:var(--accent,#0b7a5b)}
+.fd-note{font:italic 400 12px/1 var(--sans,system-ui,sans-serif);fill:var(--ink-secondary,#4b544e)}
+.fd-eyebrow{font:600 9px/1 var(--sans,system-ui,sans-serif);letter-spacing:.16em;fill:var(--ink-faint,#838d86)}
+.fd-arrow{fill:none;stroke:var(--ink-secondary,#4b544e);stroke-width:1.2}
+.fd-arrow-a{fill:none;stroke:var(--accent,#0b7a5b);stroke-width:1.5}
+.fd-dash{stroke-dasharray:3 3;stroke:var(--ink-faint,#838d86)}
+.fd-ah{fill:var(--ink-secondary,#4b544e)}
+.fd-ah-a{fill:var(--accent,#0b7a5b)}
+.fd-mask{fill:var(--bg-soft,#f6f7f6)}
+.fd-rule{stroke:var(--border,#e6e9e6);stroke-width:1}
+.fd-dashed{stroke-dasharray:4 3}
+.fd-line{fill:none;stroke:var(--ink-secondary,#4b544e);stroke-width:1.2}
+</style>
+<defs>
+<pattern id="bsc-market-dots" width="22" height="22" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="0.9" class="fd-dot"/></pattern>
+<marker id="bsc-market-ah" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon class="fd-ah" points="0 0, 8 3, 0 6"/></marker>
+<marker id="bsc-market-ah-a" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon class="fd-ah-a" points="0 0, 8 3, 0 6"/></marker>
+</defs>
+<rect class="fd-bg" width="880" height="540"/>
+<rect width="880" height="540" fill="url(#bsc-market-dots)" opacity="0.6"/>
+<!-- connectors (behind nodes) -->
+<path class="fd-arrow" d="M160,96 L216,96" marker-end="url(#bsc-market-ah)"/>
+<path class="fd-arrow" d="M160,208 L216,208" marker-end="url(#bsc-market-ah)"/>
+<path class="fd-arrow" d="M160,320 L216,320" marker-end="url(#bsc-market-ah)"/>
+<path class="fd-arrow" d="M160,432 L216,432" marker-end="url(#bsc-market-ah)"/>
+<path class="fd-arrow" d="M356,96 L420,96" marker-end="url(#bsc-market-ah)"/>
+<path class="fd-arrow" d="M356,208 L420,208" marker-end="url(#bsc-market-ah)"/>
+<path class="fd-arrow" d="M356,320 L420,320" marker-end="url(#bsc-market-ah)"/>
+<path class="fd-arrow" d="M356,432 L420,432" marker-end="url(#bsc-market-ah)"/>
+<path class="fd-arrow" d="M490,176 L490,160 Q490,152 482,152 L294,152 Q286,152 286,144 L286,128" marker-end="url(#bsc-market-ah)"/>
+<!-- arrow labels -->
+<rect class="fd-mask" x="357.5" y="144" width="61" height="16" rx="2"/><text class="fd-lbl" x="388" y="155.5" text-anchor="middle">THÊM MÃ</text>
+<!-- nodes -->
+<rect class="fd-node" x="40" y="64" width="120" height="400" rx="6"/><text class="fd-name" x="100.0" y="261" text-anchor="middle">Trang chủ</text><text class="fd-sub" x="100.0" y="277" text-anchor="middle">điểm bắt đầu</text>
+<rect class="fd-node" x="216" y="64" width="140" height="64" rx="6"/><text class="fd-name" x="286.0" y="93" text-anchor="middle">Tìm kiếm</text><text class="fd-sub" x="286.0" y="109" text-anchor="middle">theo mã hoặc tên</text>
+<rect class="fd-node" x="420" y="64" width="140" height="64" rx="6"/><text class="fd-name" x="490.0" y="93" text-anchor="middle">Kết quả tìm kiếm</text><text class="fd-sub" x="490.0" y="109" text-anchor="middle">★ thêm Watchlist</text>
+<rect class="fd-node" x="216" y="176" width="140" height="64" rx="6"/><text class="fd-name" x="286.0" y="197" text-anchor="middle">Danh sách mã</text><text class="fd-sub" x="286.0" y="213" text-anchor="middle">Danh mục · Watchlist</text><text class="fd-sub" x="286.0" y="227" text-anchor="middle">Khuyến nghị BSC</text>
+<rect class="fd-focal" x="420" y="176" width="140" height="64" rx="6"/><text class="fd-name" x="490.0" y="205" text-anchor="middle">Watchlist trống</text><text class="fd-sub" x="490.0" y="221" text-anchor="middle">nút Thêm mã</text>
+<rect class="fd-node" x="216" y="288" width="140" height="64" rx="6"/><text class="fd-name" x="286.0" y="309" text-anchor="middle">Chi tiết chỉ số</text><text class="fd-sub" x="286.0" y="325" text-anchor="middle">VN-INDEX</text><text class="fd-sub" x="286.0" y="339" text-anchor="middle">số mã tăng · giảm</text>
+<rect class="fd-node fd-dashed" x="420" y="288" width="140" height="64" rx="6"/><text class="fd-name" x="490.0" y="317" text-anchor="middle">Tác động ngành</text><text class="fd-sub" x="490.0" y="333" text-anchor="middle">bottom sheet</text>
+<rect class="fd-node" x="216" y="400" width="140" height="64" rx="6"/><text class="fd-name" x="286.0" y="421" text-anchor="middle">Tin tức</text><text class="fd-sub" x="286.0" y="437" text-anchor="middle">Tất cả · Thị trường</text><text class="fd-sub" x="286.0" y="451" text-anchor="middle">Tin BSC</text>
+<rect class="fd-node" x="420" y="400" width="140" height="64" rx="6"/><text class="fd-name" x="490.0" y="421" text-anchor="middle">Chi tiết tin</text><text class="fd-sub" x="490.0" y="437" text-anchor="middle">bài viết</text><text class="fd-sub" x="490.0" y="451" text-anchor="middle">tệp đính kèm</text>
+<!-- legend / notes -->
+<text class="fd-note" x="600" y="92">Không có kết quả: hiện trạng thái rỗng</text><text class="fd-note" x="600" y="108">và gợi ý đổi từ khoá khác.</text>
+<text class="fd-note" x="600" y="316">Chi tiết chỉ số có phần mở rộng (biểu đồ,</text><text class="fd-note" x="600" y="332">phân tích kỹ thuật, tác động theo ngành)</text><text class="fd-note" x="600" y="348">đang thiết kế ở giai đoạn 2.</text>
+<line class="fd-rule" x1="40" y1="488" x2="840" y2="488"/>
+<text class="fd-eyebrow" x="40" y="508">CHÚ GIẢI</text>
+<rect class="fd-node" x="116" y="498" width="24" height="12" rx="2"/>
+<text class="fd-sub" x="148" y="508">Màn hình</text>
+<rect class="fd-focal" x="224" y="498" width="24" height="12" rx="2"/>
+<text class="fd-sub" x="256" y="508">Quyết định thiết kế chính</text>
+<rect class="fd-node fd-dashed" x="424" y="498" width="24" height="12" rx="2"/>
+<text class="fd-sub" x="456" y="508">Đang thiết kế</text>
+<path class="fd-arrow" d="M552,504 L576,504" marker-end="url(#bsc-market-ah)"/>
+<text class="fd-sub" x="584" y="508">Chuyển màn</text>
+</svg>

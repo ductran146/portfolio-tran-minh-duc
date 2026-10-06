@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" role="img" aria-labelledby="tx-map-title tx-map-desc" style="display:block;width:100%;min-width:1000px;max-width:1000px;height:auto;margin-inline:auto">
+<title id="tx-map-title">Bản đồ điều hướng TradeX</title>
+<desc id="tx-map-desc">Cấu trúc ứng dụng mobile: năm tab ở thanh dưới là Home, Market, Trade, Asset, More; Market có Watchlist, Trade có Sổ lệnh và lịch sử lệnh, Asset có Chuyển tiền.</desc>
+<style>
+.fd-bg{fill:var(--bg-soft,#f6f7f6)}
+.fd-dot{fill:var(--border,#e6e9e6)}
+.fd-node{fill:var(--surface,#fff);stroke:var(--ink,#121815);stroke-width:1}
+.fd-end{fill:var(--bg-soft,#f6f7f6);stroke:var(--ink-faint,#838d86);stroke-width:1}
+.fd-focal{fill:var(--accent-tint,#e6f3ee);stroke:var(--accent,#0b7a5b);stroke-width:1.2}
+.fd-name{font:600 13px/1 var(--sans,system-ui,sans-serif);fill:var(--ink,#121815)}
+.fd-sub{font:400 11px/1 var(--sans,system-ui,sans-serif);fill:var(--ink-secondary,#4b544e)}
+.fd-lbl{font:600 10px/1 var(--sans,system-ui,sans-serif);letter-spacing:.08em;fill:var(--ink-secondary,#4b544e)}
+.fd-lbl-a{fill:var(--accent,#0b7a5b)}
+.fd-note{font:italic 400 12px/1 var(--sans,system-ui,sans-serif);fill:var(--ink-secondary,#4b544e)}
+.fd-eyebrow{font:600 9px/1 var(--sans,system-ui,sans-serif);letter-spacing:.16em;fill:var(--ink-faint,#838d86)}
+.fd-arrow{fill:none;stroke:var(--ink-secondary,#4b544e);stroke-width:1.2}
+.fd-arrow-a{fill:none;stroke:var(--accent,#0b7a5b);stroke-width:1.5}
+.fd-dash{stroke-dasharray:3 3;stroke:var(--ink-faint,#838d86)}
+.fd-ah{fill:var(--ink-secondary,#4b544e)}
+.fd-ah-a{fill:var(--accent,#0b7a5b)}
+.fd-mask{fill:var(--bg-soft,#f6f7f6)}
+.fd-rule{stroke:var(--border,#e6e9e6);stroke-width:1}
+.fd-dashed{stroke-dasharray:4 3}
+.fd-line{fill:none;stroke:var(--ink-secondary,#4b544e);stroke-width:1.2}
+</style>
+<defs>
+<pattern id="tx-map-dots" width="22" height="22" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="0.9" class="fd-dot"/></pattern>
+<marker id="tx-map-ah" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon class="fd-ah" points="0 0, 8 3, 0 6"/></marker>
+<marker id="tx-map-ah-a" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon class="fd-ah-a" points="0 0, 8 3, 0 6"/></marker>
+</defs>
+<rect class="fd-bg" width="1000" height="560"/>
+<rect width="1000" height="560" fill="url(#tx-map-dots)" opacity="0.6"/>
+<!-- connectors (behind nodes) -->
+<line class="fd-line" x1="482" y1="96" x2="482" y2="148"/>
+<line class="fd-line" x1="114" y1="148" x2="850" y2="148"/>
+<line class="fd-line" x1="114" y1="148" x2="114" y2="196"/>
+<line class="fd-line" x1="298" y1="148" x2="298" y2="196"/>
+<line class="fd-line" x1="482" y1="148" x2="482" y2="196"/>
+<line class="fd-line" x1="666" y1="148" x2="666" y2="196"/>
+<line class="fd-line" x1="850" y1="148" x2="850" y2="196"/>
+<line class="fd-line" x1="236" y1="260" x2="236" y2="324"/>
+<line class="fd-line" x1="236" y1="324" x2="260" y2="324"/>
+<line class="fd-line" x1="420" y1="260" x2="420" y2="324"/>
+<line class="fd-line" x1="420" y1="324" x2="444" y2="324"/>
+<line class="fd-line" x1="604" y1="260" x2="604" y2="324"/>
+<line class="fd-line" x1="604" y1="324" x2="628" y2="324"/>
+<!-- arrow labels -->
+
+<!-- nodes -->
+<rect class="fd-node" x="362" y="40" width="240" height="56" rx="6"/><text class="fd-name" x="482.0" y="65" text-anchor="middle">TradeX</text><text class="fd-sub" x="482.0" y="81" text-anchor="middle">MTS mobile · WTS web</text>
+<rect class="fd-node" x="40" y="196" width="148" height="64" rx="6"/><text class="fd-name" x="114.0" y="217" text-anchor="middle">Home</text><text class="fd-sub" x="114.0" y="233" text-anchor="middle">Tổng quan thị trường</text><text class="fd-sub" x="114.0" y="247" text-anchor="middle">Tin tức · Watchlist</text>
+<rect class="fd-node" x="224" y="196" width="148" height="64" rx="6"/><text class="fd-name" x="298.0" y="217" text-anchor="middle">Market</text><text class="fd-sub" x="298.0" y="233" text-anchor="middle">Bảng giá · Chỉ số</text><text class="fd-sub" x="298.0" y="247" text-anchor="middle">Top mã · Chủ đề</text>
+<rect class="fd-focal" x="408" y="196" width="148" height="64" rx="6"/><text class="fd-name" x="482.0" y="217" text-anchor="middle">Trade</text><text class="fd-sub" x="482.0" y="233" text-anchor="middle">Lệnh thường</text><text class="fd-sub" x="482.0" y="247" text-anchor="middle">Lệnh điều kiện</text>
+<rect class="fd-node" x="592" y="196" width="148" height="64" rx="6"/><text class="fd-name" x="666.0" y="217" text-anchor="middle">Asset</text><text class="fd-sub" x="666.0" y="233" text-anchor="middle">Danh mục · Sao kê</text><text class="fd-sub" x="666.0" y="247" text-anchor="middle">Lãi lỗ</text>
+<rect class="fd-node" x="776" y="196" width="148" height="64" rx="6"/><text class="fd-name" x="850.0" y="217" text-anchor="middle">More</text><text class="fd-sub" x="850.0" y="233" text-anchor="middle">Cài đặt · Thông tin</text><text class="fd-sub" x="850.0" y="247" text-anchor="middle">Smart OTP</text>
+<rect class="fd-node" x="260" y="300" width="112" height="48" rx="6"/><text class="fd-name" x="316.0" y="321" text-anchor="middle">Watchlist</text><text class="fd-sub" x="316.0" y="337" text-anchor="middle">tạo · sửa · xoá</text>
+<rect class="fd-node" x="444" y="300" width="112" height="48" rx="6"/><text class="fd-name" x="500.0" y="321" text-anchor="middle">Sổ lệnh</text><text class="fd-sub" x="500.0" y="337" text-anchor="middle">lệnh · lịch sử</text>
+<rect class="fd-node" x="628" y="300" width="112" height="48" rx="6"/><text class="fd-name" x="684.0" y="321" text-anchor="middle">Chuyển tiền</text><text class="fd-sub" x="684.0" y="337" text-anchor="middle">ngân hàng · nội bộ</text>
+<!-- legend / notes -->
+<text class="fd-note" x="40" y="400" text-anchor="start">Chưa đăng nhập hoặc hết phiên: hiện hộp thoại</text><text class="fd-note" x="40" y="416" text-anchor="start">Login required / Session Timeout với Login hoặc Maybe later.</text>
+<text class="fd-note" x="480" y="400" text-anchor="start">Bản web (WTS): header, sidebar phải; form đặt lệnh</text><text class="fd-note" x="480" y="416" text-anchor="start">mở ngay trong sidebar thay vì sang màn mới.</text>
+<line class="fd-rule" x1="40" y1="500" x2="960" y2="500"/>
+<text class="fd-eyebrow" x="40" y="520">CHÚ GIẢI</text>
+<rect class="fd-node" x="116" y="510" width="24" height="12" rx="2"/>
+<text class="fd-sub" x="148" y="520">Tab / màn hình</text>
+<rect class="fd-focal" x="258" y="510" width="24" height="12" rx="2"/>
+<text class="fd-sub" x="290" y="520">Luồng cốt lõi</text>
+<line class="fd-line" x1="386" y1="516" x2="410" y2="516"/>
+<text class="fd-sub" x="418" y="520">Dẫn tới</text>
+</svg>

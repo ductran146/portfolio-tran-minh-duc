@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 790 560" role="img" aria-labelledby="tx-orderbook-title tx-orderbook-desc" style="display:block;width:100%;min-width:790px;max-width:790px;height:auto;margin-inline:auto">
+<title id="tx-orderbook-title">Luồng sổ lệnh: sửa và huỷ lệnh</title>
+<desc id="tx-orderbook-desc">Từ sổ lệnh, người dùng mở chi tiết rồi sửa hoặc huỷ một lệnh, hoặc chuyển sang chế độ chọn nhiều để huỷ hàng loạt; mọi thao tác đều qua hộp xác nhận.</desc>
+<style>
+.fd-bg{fill:var(--bg-soft,#f6f7f6)}
+.fd-dot{fill:var(--border,#e6e9e6)}
+.fd-node{fill:var(--surface,#fff);stroke:var(--ink,#121815);stroke-width:1}
+.fd-end{fill:var(--bg-soft,#f6f7f6);stroke:var(--ink-faint,#838d86);stroke-width:1}
+.fd-focal{fill:var(--accent-tint,#e6f3ee);stroke:var(--accent,#0b7a5b);stroke-width:1.2}
+.fd-name{font:600 13px/1 var(--sans,system-ui,sans-serif);fill:var(--ink,#121815)}
+.fd-sub{font:400 11px/1 var(--sans,system-ui,sans-serif);fill:var(--ink-secondary,#4b544e)}
+.fd-lbl{font:600 10px/1 var(--sans,system-ui,sans-serif);letter-spacing:.08em;fill:var(--ink-secondary,#4b544e)}
+.fd-lbl-a{fill:var(--accent,#0b7a5b)}
+.fd-note{font:italic 400 12px/1 var(--sans,system-ui,sans-serif);fill:var(--ink-secondary,#4b544e)}
+.fd-eyebrow{font:600 9px/1 var(--sans,system-ui,sans-serif);letter-spacing:.16em;fill:var(--ink-faint,#838d86)}
+.fd-arrow{fill:none;stroke:var(--ink-secondary,#4b544e);stroke-width:1.2}
+.fd-arrow-a{fill:none;stroke:var(--accent,#0b7a5b);stroke-width:1.5}
+.fd-dash{stroke-dasharray:3 3;stroke:var(--ink-faint,#838d86)}
+.fd-ah{fill:var(--ink-secondary,#4b544e)}
+.fd-ah-a{fill:var(--accent,#0b7a5b)}
+.fd-mask{fill:var(--bg-soft,#f6f7f6)}
+.fd-rule{stroke:var(--border,#e6e9e6);stroke-width:1}
+.fd-dashed{stroke-dasharray:4 3}
+.fd-line{fill:none;stroke:var(--ink-secondary,#4b544e);stroke-width:1.2}
+</style>
+<defs>
+<pattern id="tx-orderbook-dots" width="22" height="22" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="0.9" class="fd-dot"/></pattern>
+<marker id="tx-orderbook-ah" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon class="fd-ah" points="0 0, 8 3, 0 6"/></marker>
+<marker id="tx-orderbook-ah-a" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon class="fd-ah-a" points="0 0, 8 3, 0 6"/></marker>
+</defs>
+<rect class="fd-bg" width="790" height="560"/>
+<rect width="790" height="560" fill="url(#tx-orderbook-dots)" opacity="0.6"/>
+<!-- connectors (behind nodes) -->
+<path class="fd-arrow" d="M104,184 L104,92 Q104,84 112,84 L220,84" marker-end="url(#tx-orderbook-ah)"/>
+<path class="fd-arrow" d="M168,216 L220,216" marker-end="url(#tx-orderbook-ah)"/>
+<path class="fd-arrow" d="M348,216 L400,216" marker-end="url(#tx-orderbook-ah)"/>
+<path class="fd-arrow" d="M348,84 L456,84 Q464,84 464,92 L464,184" marker-end="url(#tx-orderbook-ah)"/>
+<path class="fd-arrow" d="M284,248 L284,316" marker-end="url(#tx-orderbook-ah)"/>
+<path class="fd-arrow" d="M348,348 L400,348" marker-end="url(#tx-orderbook-ah)"/>
+<path class="fd-arrow" d="M528,216 L620,216" marker-end="url(#tx-orderbook-ah)"/>
+<!-- arrow labels -->
+<rect class="fd-mask" x="121" y="76" width="82" height="16" rx="2"/><text class="fd-lbl" x="162" y="87.5" text-anchor="middle">CHỌN NHIỀU</text>
+<rect class="fd-mask" x="357.5" y="208" width="33" height="16" rx="2"/><text class="fd-lbl" x="374" y="219.5" text-anchor="middle">HUỶ</text>
+<rect class="fd-mask" x="294" y="274" width="33" height="16" rx="2"/><text class="fd-lbl" x="310.5" y="285.5" text-anchor="middle">SỬA</text>
+<rect class="fd-mask" x="540" y="208" width="68" height="16" rx="2"/><text class="fd-lbl" x="574" y="219.5" text-anchor="middle">XÁC NHẬN</text>
+<!-- nodes -->
+<rect class="fd-node" x="40" y="184" width="128" height="64" rx="6"/><text class="fd-name" x="104.0" y="205" text-anchor="middle">Sổ lệnh</text><text class="fd-sub" x="104.0" y="221" text-anchor="middle">lọc trạng thái</text><text class="fd-sub" x="104.0" y="235" text-anchor="middle">tổng mua · bán</text>
+<rect class="fd-node" x="220" y="184" width="128" height="64" rx="6"/><text class="fd-name" x="284.0" y="205" text-anchor="middle">Chi tiết lệnh</text><text class="fd-sub" x="284.0" y="221" text-anchor="middle">trạng thái</text><text class="fd-sub" x="284.0" y="235" text-anchor="middle">Cancel · Modify</text>
+<rect class="fd-node" x="220" y="52" width="128" height="64" rx="6"/><text class="fd-name" x="284.0" y="73" text-anchor="middle">Chọn nhiều lệnh</text><text class="fd-sub" x="284.0" y="89" text-anchor="middle">đánh dấu</text><text class="fd-sub" x="284.0" y="103" text-anchor="middle">các lệnh cần huỷ</text>
+<rect class="fd-node" x="400" y="184" width="128" height="64" rx="6"/><text class="fd-name" x="464.0" y="205" text-anchor="middle">Hộp xác nhận huỷ</text><text class="fd-sub" x="464.0" y="221" text-anchor="middle">1 lệnh hoặc</text><text class="fd-sub" x="464.0" y="235" text-anchor="middle">nhiều lệnh</text>
+<rect class="fd-node" x="220" y="316" width="128" height="64" rx="6"/><text class="fd-name" x="284.0" y="337" text-anchor="middle">Sửa lệnh</text><text class="fd-sub" x="284.0" y="353" text-anchor="middle">giá hoặc khối lượng</text><text class="fd-sub" x="284.0" y="367" text-anchor="middle">hiện lại sức mua</text>
+<rect class="fd-node" x="400" y="316" width="128" height="64" rx="6"/><text class="fd-name" x="464.0" y="337" text-anchor="middle">Xác nhận sửa</text><text class="fd-sub" x="464.0" y="353" text-anchor="middle">Modify order</text><text class="fd-sub" x="464.0" y="367" text-anchor="middle">confirm</text>
+<rect class="fd-focal" x="620" y="188" width="128" height="56" rx="28"/><text class="fd-name" x="684.0" y="213" text-anchor="middle">Đã huỷ n lệnh</text><text class="fd-sub" x="684.0" y="229" text-anchor="middle">thông báo chung</text>
+<!-- legend / notes -->
+<text class="fd-note" x="40" y="440" text-anchor="start">Lệnh đã khớp (Matched): nút Cancel Order và Modify bị khoá.</text>
+<text class="fd-note" x="40" y="460" text-anchor="start">Huỷ nhiều lệnh: hộp xác nhận ghi số lệnh và nhắc không thể hoàn tác.</text>
+<line class="fd-rule" x1="40" y1="500" x2="750" y2="500"/>
+<text class="fd-eyebrow" x="40" y="520">CHÚ GIẢI</text>
+<rect class="fd-end" x="116" y="510" width="24" height="12" rx="6"/>
+<text class="fd-sub" x="148" y="520">Kết thúc</text>
+<rect class="fd-node" x="220" y="510" width="24" height="12" rx="2"/>
+<text class="fd-sub" x="252" y="520">Bước</text>
+<rect class="fd-focal" x="302" y="510" width="24" height="12" rx="2"/>
+<text class="fd-sub" x="334" y="520">Kết quả</text>
+<path class="fd-arrow" d="M404,516 L428,516" marker-end="url(#tx-orderbook-ah)"/>
+<text class="fd-sub" x="436" y="520">Chuyển bước</text>
+</svg>

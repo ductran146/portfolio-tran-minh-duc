@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 490" role="img" aria-labelledby="tn-lifecycle-title tn-lifecycle-desc" style="display:block;width:100%;min-width:1000px;max-width:1000px;height:auto;margin-inline:auto">
+<title id="tn-lifecycle-title">Vòng đời phiếu bán</title>
+<desc id="tn-lifecycle-desc">Phiếu bán đi từ Nháp sang Đã ghi sổ; chỉ khi ghi sổ mới trừ tồn và phát sinh công nợ. Phiếu đã ghi sổ chưa thu tiền thì hủy ghi sổ được, đã thu thì phải đảo bằng phiếu trả hàng.</desc>
+<style>
+.fd-bg{fill:var(--bg-soft,#f6f7f6)}
+.fd-dot{fill:var(--border,#e6e9e6)}
+.fd-node{fill:var(--surface,#fff);stroke:var(--ink,#121815);stroke-width:1}
+.fd-end{fill:var(--bg-soft,#f6f7f6);stroke:var(--ink-faint,#838d86);stroke-width:1}
+.fd-focal{fill:var(--accent-tint,#e6f3ee);stroke:var(--accent,#0b7a5b);stroke-width:1.2}
+.fd-name{font:600 13px/1 var(--sans,system-ui,sans-serif);fill:var(--ink,#121815)}
+.fd-sub{font:400 11px/1 var(--sans,system-ui,sans-serif);fill:var(--ink-secondary,#4b544e)}
+.fd-lbl{font:600 10px/1 var(--sans,system-ui,sans-serif);letter-spacing:.08em;fill:var(--ink-secondary,#4b544e)}
+.fd-lbl-a{fill:var(--accent,#0b7a5b)}
+.fd-note{font:italic 400 12px/1 var(--sans,system-ui,sans-serif);fill:var(--ink-secondary,#4b544e)}
+.fd-eyebrow{font:600 9px/1 var(--sans,system-ui,sans-serif);letter-spacing:.16em;fill:var(--ink-faint,#838d86)}
+.fd-arrow{fill:none;stroke:var(--ink-secondary,#4b544e);stroke-width:1.2}
+.fd-arrow-a{fill:none;stroke:var(--accent,#0b7a5b);stroke-width:1.5}
+.fd-dash{stroke-dasharray:3 3;stroke:var(--ink-faint,#838d86)}
+.fd-ah{fill:var(--ink-secondary,#4b544e)}
+.fd-ah-a{fill:var(--accent,#0b7a5b)}
+.fd-mask{fill:var(--bg-soft,#f6f7f6)}
+.fd-rule{stroke:var(--border,#e6e9e6);stroke-width:1}
+.fd-dashed{stroke-dasharray:4 3}
+.fd-line{fill:none;stroke:var(--ink-secondary,#4b544e);stroke-width:1.2}
+</style>
+<defs>
+<pattern id="tn-lifecycle-dots" width="22" height="22" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="0.9" class="fd-dot"/></pattern>
+<marker id="tn-lifecycle-ah" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon class="fd-ah" points="0 0, 8 3, 0 6"/></marker>
+<marker id="tn-lifecycle-ah-a" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon class="fd-ah-a" points="0 0, 8 3, 0 6"/></marker>
+</defs>
+<rect class="fd-bg" width="1000" height="490"/>
+<rect width="1000" height="490" fill="url(#tn-lifecycle-dots)" opacity="0.6"/>
+<!-- connectors (behind nodes) -->
+<path class="fd-arrow" d="M152,156 L196,156" marker-end="url(#tn-lifecycle-ah)"/>
+<path class="fd-arrow" d="M332,156 L404,156" marker-end="url(#tn-lifecycle-ah)"/>
+<path class="fd-arrow" d="M540,156 L612,156" marker-end="url(#tn-lifecycle-ah)"/>
+<path class="fd-arrow" d="M732,156 L812,156" marker-end="url(#tn-lifecycle-ah)"/>
+<path class="fd-arrow" d="M672,204 L672,288 Q672,296 664,296 L540,296" marker-end="url(#tn-lifecycle-ah)"/>
+<path class="fd-arrow" d="M404,296 L332,296" marker-end="url(#tn-lifecycle-ah)"/>
+<path class="fd-arrow" d="M264,188 L264,268" marker-end="url(#tn-lifecycle-ah)"/>
+<!-- arrow labels -->
+<rect class="fd-mask" x="341" y="148" width="54" height="16" rx="2"/><text class="fd-lbl" x="368" y="159.5" text-anchor="middle">GHI SỔ</text>
+<rect class="fd-mask" x="545.5" y="148" width="61" height="16" rx="2"/><text class="fd-lbl" x="576" y="159.5" text-anchor="middle">SAI SÓT</text>
+<rect class="fd-mask" x="745" y="148" width="54" height="16" rx="2"/><text class="fd-lbl" x="772" y="159.5" text-anchor="middle">ĐÃ THU</text>
+<rect class="fd-mask" x="572" y="288" width="68" height="16" rx="2"/><text class="fd-lbl" x="606" y="299.5" text-anchor="middle">CHƯA THU</text>
+<rect class="fd-mask" x="274" y="220" width="68" height="16" rx="2"/><text class="fd-lbl" x="308" y="231.5" text-anchor="middle">HUỶ NHÁP</text>
+<!-- nodes -->
+<rect class="fd-end" x="40" y="128" width="112" height="56" rx="28"/><text class="fd-name" x="96.0" y="160.5" text-anchor="middle">Tạo phiếu bán</text>
+<rect class="fd-node" x="196" y="124" width="136" height="64" rx="6"/><text class="fd-name" x="264.0" y="145" text-anchor="middle">Nháp</text><text class="fd-sub" x="264.0" y="161" text-anchor="middle">sửa được</text><text class="fd-sub" x="264.0" y="175" text-anchor="middle">huỷ nháp được</text>
+<rect class="fd-focal" x="404" y="124" width="136" height="64" rx="6"/><text class="fd-name" x="472.0" y="145" text-anchor="middle">Đã ghi sổ</text><text class="fd-sub" x="472.0" y="161" text-anchor="middle">trừ tồn · phát sinh nợ</text><text class="fd-sub" x="472.0" y="175" text-anchor="middle">phiếu thu nếu trả trước</text>
+<polygon class="fd-node" points="672,108 732,156 672,204 612,156"/><text class="fd-name" x="672" y="153.5" text-anchor="middle" style="font-size:12px">Đã thu</text><text class="fd-name" x="672" y="168.5" text-anchor="middle" style="font-size:12px">tiền?</text>
+<rect class="fd-node" x="812" y="124" width="148" height="64" rx="6"/><text class="fd-name" x="886.0" y="145" text-anchor="middle">Phiếu trả hàng</text><text class="fd-sub" x="886.0" y="161" text-anchor="middle">ghi sổ: cộng lại tồn</text><text class="fd-sub" x="886.0" y="175" text-anchor="middle">giảm nợ phiếu gốc</text>
+<rect class="fd-node" x="404" y="264" width="136" height="64" rx="6"/><text class="fd-name" x="472.0" y="285" text-anchor="middle">Hủy ghi sổ</text><text class="fd-sub" x="472.0" y="301" text-anchor="middle">tồn cộng lại</text><text class="fd-sub" x="472.0" y="315" text-anchor="middle">nợ phiếu về 0</text>
+<rect class="fd-end" x="196" y="268" width="136" height="56" rx="28"/><text class="fd-name" x="264.0" y="300.5" text-anchor="middle">Đã hủy</text>
+<!-- legend / notes -->
+<text class="fd-note" x="40" y="380" text-anchor="start">Phiếu nhập không có Hủy ghi sổ:</text><text class="fd-note" x="40" y="396" text-anchor="start">muốn đảo chỉ có Phiếu trả hàng nhập.</text>
+<line class="fd-rule" x1="40" y1="440" x2="960" y2="440"/>
+<text class="fd-eyebrow" x="40" y="460">CHÚ GIẢI</text>
+<rect class="fd-end" x="116" y="450" width="24" height="12" rx="6"/>
+<text class="fd-sub" x="148" y="460">Bắt đầu / kết thúc</text>
+<rect class="fd-node" x="276" y="450" width="24" height="12" rx="2"/>
+<text class="fd-sub" x="308" y="460">Trạng thái / bước</text>
+<rect class="fd-focal" x="424" y="450" width="24" height="12" rx="2"/>
+<text class="fd-sub" x="456" y="460">Trạng thái có tác động</text>
+<polygon class="fd-node" points="596,456 608,449 620,456 608,463"/>
+<text class="fd-sub" x="628" y="460">Điều kiện</text>
+<path class="fd-arrow" d="M704,456 L728,456" marker-end="url(#tn-lifecycle-ah)"/>
+<text class="fd-sub" x="736" y="460">Chuyển trạng thái</text>
+</svg>

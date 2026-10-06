@@ -117,5 +117,49 @@
       "src": "../../assets/projects/tuong-ngan/08.jpg",
       "caption": "Nhập, xuất dữ liệu và tạo chứng từ từ Excel: import hàng loạt có kiểm lỗi, xuất theo mẫu, in chứng từ."
     }
+  ],
+  "userFlows": [
+    {
+      "slug": "tn-map",
+      "title": "Bản đồ điều hướng",
+      "label": "Điều hướng",
+      "caption": "Năm nhóm chính trong sidebar; nhóm Giao dịch là nơi diễn ra phần lớn nghiệp vụ nên được nhấn mạnh."
+    },
+    {
+      "slug": "tn-lifecycle",
+      "title": "Vòng đời phiếu bán",
+      "label": "Vòng đời phiếu bán",
+      "caption": "Chỉ khi ghi sổ phiếu mới trừ tồn và phát sinh công nợ. Chưa thu tiền thì hủy ghi sổ được; đã thu thì phải đảo bằng phiếu trả hàng, để tiền thật không bị lệch."
+    },
+    {
+      "slug": "tn-sales",
+      "title": "Luồng bán hàng",
+      "label": "Bán hàng",
+      "caption": "Tìm khách theo số điện thoại trước, thêm dòng hàng kèm tồn khả dụng và gợi ý giá đã bán. Bán vượt tồn chỉ cảnh báo, không chặn, vì tồn kho chưa được kiểm chính xác."
+    },
+    {
+      "slug": "tn-purchase",
+      "title": "Luồng nhập hàng",
+      "label": "Nhập hàng",
+      "caption": "Lập phiếu, lưu nháp rồi ghi sổ qua hộp xác nhận. Phiếu nhập không có hủy ghi sổ: muốn đảo, tạo phiếu trả hàng nhập."
+    },
+    {
+      "slug": "tn-count",
+      "title": "Luồng kiểm kê kho",
+      "label": "Kiểm kê",
+      "caption": "Đếm dần từng dòng qua nhiều phiên trên phiếu nháp, không cần đóng kho. Chênh lệch được tính theo tồn thật tại lúc ghi sổ để kết quả luôn khớp."
+    },
+    {
+      "slug": "tn-debt",
+      "title": "Công nợ và thu tiền",
+      "label": "Công nợ",
+      "caption": "Thu tiền và điều chỉnh công nợ cùng đi qua một hộp xác nhận; điều chỉnh chỉ dành cho kế toán. Công nợ nhà cung cấp có cấu trúc tương tự."
+    },
+    {
+      "slug": "tn-import",
+      "title": "Import phiếu bán từ Excel",
+      "label": "Import Excel",
+      "caption": "Tải file, xem trước, sửa khớp tay rồi mới xác nhận. Hệ thống chỉ tạo phiếu nháp, nhóm còn lỗi tự bỏ qua mà không chặn các nhóm hợp lệ."
+    }
   ]
 }

@@ -4,7 +4,7 @@
   "client": "Kiggle - Kết nối học tập thông minh",
   "real": true,
   "featured": false,
-  "order": 5,
+  "order": 6,
   "cover": "../../assets/projects/kiggle/01.jpg",
   "summary": "Thiết kế trải nghiệm và giao diện cho ứng dụng phụ huynh cùng hệ thống quản lý dành cho đối tác giáo dục. Mục tiêu là một hành trình rõ ràng và nhất quán, từ khám phá lớp học, tư vấn, đặt lịch đến theo dõi dịch vụ.",
   "tags": [

@@ -4,7 +4,7 @@
   "client": "NH Securities Vietnam",
   "real": true,
   "featured": false,
-  "order": 3,
+  "order": 4,
   "cover": "../../assets/projects/nhsv-pro/01.jpg",
   "summary": "Ứng dụng giao dịch chứng khoán trên di động. Research người dùng và đối thủ để tìm điểm nghẽn trong trải nghiệm đặt lệnh, lên tone màu tin cậy cho ngành tài chính, xây hệ giao diện đồng bộ Light/Dark mode và tối ưu luồng đặt lệnh, quản lý tài sản, tính năng cộng đồng.",
   "tags": [
@@ -50,16 +50,26 @@
       "caption": "Đăng nhập: OTP, Face ID và các trạng thái lỗi (tên đăng nhập không hợp lệ, số lần thử còn lại)."
     },
     {
-      "src": "../../assets/projects/nhsv-pro/05.jpg",
-      "caption": "User flow toàn ứng dụng: đăng ký với OTP, sinh trắc học, eKYC; onboarding; từ trang chủ tới thị trường, thông tin mã, đặt lệnh, tài sản, tài khoản, cộng đồng, hỗ trợ & kiến thức và vận hành hệ thống."
-    },
-    {
       "src": "../../assets/projects/nhsv-pro/06.jpg",
       "caption": "Các màn hình chính ở Light mode: tổng quan tài sản, dịch vụ, watchlist, chi tiết mã và biểu đồ."
     },
     {
       "src": "../../assets/projects/nhsv-pro/07.jpg",
       "caption": "Cùng các màn hình đó ở Dark mode."
+    }
+  ],
+  "userFlows": [
+    {
+      "slug": "nhsv-access",
+      "title": "Đăng ký, đăng nhập và vào ứng dụng",
+      "label": "Đăng ký & đăng nhập",
+      "caption": "Người dùng chưa đăng nhập đi vào từ Đăng ký, rồi tới xác thực OTP và sinh trắc học, mở tài khoản bằng eKYC, onboarding hoặc thẳng Trang chủ."
+    },
+    {
+      "slug": "nhsv-nav",
+      "title": "Điều hướng chính từ Trang chủ",
+      "label": "Điều hướng chính",
+      "caption": "Tám khu vực từ Trang chủ; Đặt lệnh với lệnh thường, One-Touch, xác nhận và sổ lệnh là luồng cốt lõi."
     }
   ]
 }

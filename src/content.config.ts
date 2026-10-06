@@ -32,7 +32,8 @@ const projects = defineCollection({
 			gallery: z
 				.array(
 					z.object({
-						src: image(),
+						// src bỏ trống = khung ảnh minh hoạ chờ cập nhật (chú thích vẫn hiện, ảnh bổ sung sau).
+						src: image().optional(),
 						caption: z.string().optional(),
 					}),
 				)
@@ -84,6 +85,20 @@ const projects = defineCollection({
 					),
 				})
 				.optional(),
+			// Sơ đồ user flow (2026-10-05): mỗi phần tử trỏ tới một file SVG trong
+			// src/assets/diagrams/<slug>.svg (dựng theo bộ diagram-design, dùng token
+			// màu của site nên tự đổi theo theme). Chỉ là sơ đồ - không kèm ảnh màn hình.
+			userFlows: z
+				.array(
+					z.object({
+						slug: z.string(),
+						title: z.string(),
+						// Nhãn ngắn cho thanh anchor dưới tiêu đề "Sơ đồ luồng người dùng" (mặc định dùng title).
+						label: z.string().optional(),
+						caption: z.string().optional(),
+					}),
+				)
+				.default([]),
 			closing: z.string().optional(),
 		}),
 });
