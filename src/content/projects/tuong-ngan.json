@@ -3,8 +3,8 @@
   "title": "Tường Ngân",
   "client": "Công ty TNHH XD và TM Tường Ngân",
   "real": true,
-  "featured": true,
-  "order": 1,
+  "featured": false,
+  "order": 3,
   "cover": "../../assets/projects/tuong-ngan/01.jpg",
   "summary": "Hệ thống quản lý bán hàng, tồn kho và công nợ trên một nền tảng duy nhất - từ sản phẩm, nhập hàng, bán hàng, tồn kho đến công nợ và báo cáo. Mục tiêu: chuẩn hoá quy trình vận hành, giảm thao tác thủ công, hạn chế sai sót và cung cấp dữ liệu chính xác để ra quyết định nhanh.",
   "tags": [

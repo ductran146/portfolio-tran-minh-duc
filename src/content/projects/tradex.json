@@ -3,8 +3,8 @@
   "title": "TradeX",
   "client": "Công ty Difisoft Việt Nam",
   "real": true,
-  "featured": false,
-  "order": 3,
+  "featured": true,
+  "order": 1,
   "cover": "../../assets/projects/tradex/cover.jpg",
   "summary": "Nền tảng giao dịch chứng khoán trên mobile và web, gồm mảng phái sinh và cổ phiếu: từ đăng nhập, mở tài khoản eKYC, đặt lệnh, sổ lệnh đến chuyển tiền và theo dõi thị trường.",
   "tags": [

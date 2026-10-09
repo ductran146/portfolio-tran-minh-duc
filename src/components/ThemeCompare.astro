@@ -309,11 +309,23 @@ const uid = `tc-${Math.random().toString(36).slice(2, 8)}`;
 	}
 
 	/* ---- select chọn màn hình: pill hairline cùng ngôn ngữ với bộ chuyển VI | EN ---- */
+	/* Dính dưới header khi cuộn qua khung (2026-10-09): trên MacBook 1512 khung cao gần hết
+	   màn hình, select nằm phía trên nên cuộn xuống xem ảnh là mất chỗ đổi màn hình. Dải
+	   sticky chỉ sống trong .tc-section nên tự nhả khi hết phần này. */
 	.tc-select-wrap {
+		position: sticky;
+		top: calc(var(--header-h) + 0.5rem);
+		z-index: 4;
 		display: flex;
 		align-items: center;
 		gap: 0.75rem;
+		width: fit-content;
 		margin-bottom: 1rem;
+		padding: 0.35rem 0.6rem 0.35rem 0.9rem;
+		border-radius: 999px;
+		background: color-mix(in srgb, var(--bg) 88%, transparent);
+		-webkit-backdrop-filter: blur(8px);
+		backdrop-filter: blur(8px);
 	}
 
 	.tc-select-label {
