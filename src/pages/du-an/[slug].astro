@@ -6,6 +6,7 @@ import { localePath, resolveLocale, withBase } from "../../i18n/ui";
 import AppStoreBadge from "../../components/AppStoreBadge.astro";
 import CtaBand from "../../components/CtaBand.astro";
 import InfoCard from "../../components/InfoCard.astro";
+import ThemeCompare from "../../components/ThemeCompare.astro";
 
 // Sơ đồ user flow: SVG inline (không phải <img>) để chữ/nét dùng được biến màu
 // của site → tự đổi theo theme sáng/tối. Nạp thô một lần lúc build.
@@ -250,6 +251,9 @@ const metaItems = [
 				)}
 			</section>
 		)}
+
+		{/* Light / Dark ngay dưới phần sơ đồ UX (2026-10-06). */}
+		{project.themeCompare.length > 0 && <ThemeCompare items={project.themeCompare} />}
 
 		{project.gallery.length > 0 && (
 			<section class="gallery-section">

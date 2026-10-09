@@ -141,6 +141,26 @@ export default config({
 						itemLabel: (props) => props.fields.title.value || '(chưa đặt tên sơ đồ)',
 					},
 				),
+				themeCompare: fields.array(
+					fields.object({
+						label: fields.text({ label: 'Tên màn hình (hiện trong danh sách chọn)' }),
+						kind: fields.select({
+							label: 'Loại khung',
+							options: [
+								{ label: 'Web (rộng)', value: 'web' },
+								{ label: 'Mobile (đứng)', value: 'mobile' },
+							],
+							defaultValue: 'web',
+						}),
+						light: fields.image({ label: 'Ảnh Light', directory: 'src/assets/projects', publicPath: '../../assets/projects/' }),
+						dark: fields.image({ label: 'Ảnh Dark (cùng kích thước, căn khớp ảnh Light)', directory: 'src/assets/projects', publicPath: '../../assets/projects/' }),
+						caption: fields.text({ label: 'Chú thích (để trống nếu không cần)', multiline: true }),
+					}),
+					{
+						label: 'So sánh Light / Dark - để trống nếu dự án không có hai chế độ',
+						itemLabel: (props) => props.fields.label.value || '(chưa đặt tên màn hình)',
+					},
+				),
 				closing: fields.text({
 					label: 'Ghi chú cuối trang (để trống nếu không cần)',
 					multiline: true,

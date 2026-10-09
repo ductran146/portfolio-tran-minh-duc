@@ -1,0 +1,640 @@
+---
+/**
+ * ThemeCompare — khung so sánh giao diện Light / Dark (2026-10-06).
+ *
+ * Hai ảnh cùng một màn hình chồng lên nhau; thanh chia kéo được: bên trái hiện
+ * Light, bên phải hiện Dark. Có nhiều màn hình thì hiện một <select> để chọn;
+ * vị trí thanh chia giữ nguyên khi đổi màn hình. Màn chưa có ảnh hiện khung chờ.
+ * Không có nút chuyển nhanh (người dùng bỏ — chỉ cần dạng so sánh).
+ *
+ * Kỹ thuật: ảnh Light cắt bằng clip-path theo --p (0–100). Thanh chia đặt NGOÀI
+ * vùng cuộn và tính vị trí theo bề rộng THẬT của vùng ảnh (--cw, JS đo — trừ thanh
+ * cuộn dọc), nếu không đường chia sẽ lệch khỏi mép cắt đúng bằng bề rộng thanh cuộn.
+ */
+import { Image } from "astro:assets";
+import type { ImageMetadata } from "astro";
+
+interface Item {
+	label: string;
+	kind?: "web" | "mobile";
+	light?: ImageMetadata;
+	dark?: ImageMetadata;
+	caption?: string;
+}
+
+interface Props {
+	items: Item[];
+	title?: string;
+	lede?: string;
+}
+
+const { items, title = "Light & Dark", lede = "Một hệ component dùng chung cho hai chế độ. Kéo thanh chia để so sánh từng chi tiết." } = Astro.props;
+const uid = `tc-${Math.random().toString(36).slice(2, 8)}`;
+---
+
+<section class="tc-section" data-tc data-reveal>
+	<h2>{title}</h2>
+	<p class="tc-lede">{lede}</p>
+
+	{
+		items.length > 1 && (
+			<div class="tc-select-wrap">
+				<label class="tc-select-label" for={uid}>Màn hình</label>
+				<div class="tc-select-box">
+					<select id={uid} class="tc-select">
+						{items.map((it, i) => (
+							<option value={i}>{it.label}</option>
+						))}
+					</select>
+					<svg class="tc-chev" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+						<path d="m7 10 5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+					</svg>
+				</div>
+			</div>
+		)
+	}
+
+	{
+		items.map((it, i) => (
+			<div class:list={["tc-screen", it.kind ?? "web"]} data-screen={i} hidden={i > 0}>
+				<div class="tc-frame">
+					<div class="tc-scroller">
+						<div class="tc-stack">
+							<div class="tc-layer dark">
+								{it.dark ? (
+									<Image
+										src={it.dark}
+										alt={`${it.label}, giao diện Dark`}
+										widths={[1080, 1600, 2200]}
+										sizes="(max-width: 1160px) 100vw, 1064px"
+										format="webp"
+										quality={82}
+										loading="lazy"
+									/>
+								) : (
+									<div class="tc-ph dark"><span class="tc-ph-label">Ảnh sẽ cập nhật</span></div>
+								)}
+							</div>
+							<div class="tc-layer light">
+								{it.light ? (
+									<Image
+										src={it.light}
+										alt={`${it.label}, giao diện Light`}
+										widths={[1080, 1600, 2200]}
+										sizes="(max-width: 1160px) 100vw, 1064px"
+										format="webp"
+										quality={82}
+										loading="lazy"
+									/>
+								) : (
+									<div class="tc-ph light"><span class="tc-ph-label">Ảnh sẽ cập nhật</span></div>
+								)}
+							</div>
+						</div>
+					</div>
+					<div class="tc-bar" aria-hidden="true"><div class="tc-thumb" /></div>
+					<span class="tc-tag l">Light</span>
+					<span class="tc-tag d">Dark</span>
+					<div
+						class="tc-handle"
+						role="slider"
+						tabindex="0"
+						aria-label={`So sánh Light và Dark: ${it.label}`}
+						aria-valuemin="0"
+						aria-valuemax="100"
+						aria-valuenow="50"
+						aria-valuetext="Light 50%, Dark 50%"
+					>
+						<div class="tc-grip" aria-hidden="true">
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+								<path d="m9.5 8-4 4 4 4M14.5 8l4 4-4 4" />
+							</svg>
+						</div>
+					</div>
+				</div>
+				{it.caption && <p class="tc-cap">{it.caption}</p>}
+			</div>
+		))
+	}
+
+	<p class="tc-hint">Kéo thanh chia hoặc dùng phím ← →. Cuộn trong khung để xem toàn trang.</p>
+</section>
+
+<script>
+	function initThemeCompare() {
+		document.querySelectorAll<HTMLElement>("[data-tc]").forEach((root) => {
+			if (root.dataset.bound) return;
+			root.dataset.bound = "1";
+			const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+			const screens = [...root.querySelectorAll<HTMLElement>(".tc-screen")];
+			const select = root.querySelector<HTMLSelectElement>(".tc-select");
+			let p = 50;
+			let anim = 0;
+			let active = screens[0];
+
+			const frameOf = (s: HTMLElement) => s.querySelector<HTMLElement>(".tc-frame")!;
+			const scrollerOf = (s: HTMLElement) => s.querySelector<HTMLElement>(".tc-scroller")!;
+			const handleOf = (s: HTMLElement) => s.querySelector<HTMLElement>(".tc-handle")!;
+
+			const syncW = () => {
+				screens.forEach((s) => {
+					if (s.hidden) return;
+					frameOf(s).style.setProperty("--cw", `${scrollerOf(s).clientWidth}px`);
+				});
+			};
+			const setP = (v: number) => {
+				p = Math.max(0, Math.min(100, v));
+				root.style.setProperty("--p", String(p));
+				screens.forEach((s) => {
+					const h = handleOf(s);
+					h.setAttribute("aria-valuenow", String(Math.round(p)));
+					h.setAttribute("aria-valuetext", `Light ${Math.round(p)}%, Dark ${Math.round(100 - p)}%`);
+					const f = frameOf(s);
+					f.querySelector<HTMLElement>(".tc-tag.l")!.style.opacity = p < 14 ? "0" : "1";
+					f.querySelector<HTMLElement>(".tc-tag.d")!.style.opacity = p > 86 ? "0" : "1";
+				});
+			};
+			const animateTo = (target: number, ms = 520) => {
+				cancelAnimationFrame(anim);
+				if (reduce) return setP(target);
+				const from = p;
+				const t0 = performance.now();
+				const step = (now: number) => {
+					const t = Math.min(1, (now - t0) / ms);
+					const e = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+					setP(from + (target - from) * e);
+					if (t < 1) anim = requestAnimationFrame(step);
+				};
+				anim = requestAnimationFrame(step);
+			};
+
+			screens.forEach((s) => {
+				const frame = frameOf(s);
+				const scroller = scrollerOf(s);
+				const handle = handleOf(s);
+				if ("ResizeObserver" in window) new ResizeObserver(syncW).observe(scroller);
+
+				// Thanh cuộn nổi tự vẽ: đồng bộ với scrollTop của khung, kéo được.
+				const bar = frame.querySelector<HTMLElement>(".tc-bar")!;
+				const thumb = bar.querySelector<HTMLElement>(".tc-thumb")!;
+				let hideT = 0;
+				const syncBar = () => {
+					const max = scroller.scrollHeight - scroller.clientHeight;
+					bar.classList.toggle("off", max <= 1);
+					const trackH = bar.clientHeight;
+					if (max <= 1 || !trackH) return;
+					const th = Math.max(36, (scroller.clientHeight / scroller.scrollHeight) * trackH);
+					thumb.style.height = `${th}px`;
+					thumb.style.transform = `translateY(${(scroller.scrollTop / max) * (trackH - th)}px)`;
+				};
+				scroller.addEventListener("scroll", () => {
+					syncBar();
+					frame.classList.add("scrolling");
+					clearTimeout(hideT);
+					hideT = window.setTimeout(() => frame.classList.remove("scrolling"), 700);
+				});
+				if ("ResizeObserver" in window) {
+					new ResizeObserver(syncBar).observe(scroller);
+					new ResizeObserver(syncBar).observe(scroller.firstElementChild!);
+				}
+				let dragY = 0;
+				let dragTop = 0;
+				thumb.addEventListener("pointerdown", (e) => {
+					thumb.setPointerCapture(e.pointerId);
+					thumb.classList.add("drag");
+					frame.classList.add("scrolling");
+					dragY = e.clientY;
+					dragTop = scroller.scrollTop;
+					e.preventDefault();
+				});
+				thumb.addEventListener("pointermove", (e) => {
+					if (!thumb.classList.contains("drag")) return;
+					const trackFree = bar.clientHeight - thumb.offsetHeight;
+					const max = scroller.scrollHeight - scroller.clientHeight;
+					if (trackFree > 0) scroller.scrollTop = dragTop + ((e.clientY - dragY) / trackFree) * max;
+				});
+				const endThumb = (e: PointerEvent) => {
+					thumb.classList.remove("drag");
+					frame.classList.remove("scrolling");
+					try {
+						thumb.releasePointerCapture(e.pointerId);
+					} catch {}
+				};
+				thumb.addEventListener("pointerup", endThumb);
+				thumb.addEventListener("pointercancel", endThumb);
+				syncBar();
+				const fromEvent = (e: PointerEvent) => ((e.clientX - frame.getBoundingClientRect().left) / scroller.clientWidth) * 100;
+				handle.addEventListener("pointerdown", (e) => {
+					cancelAnimationFrame(anim);
+					handle.setPointerCapture(e.pointerId);
+					handle.classList.add("drag");
+					e.preventDefault();
+				});
+				handle.addEventListener("pointermove", (e) => {
+					if (handle.classList.contains("drag")) setP(fromEvent(e));
+				});
+				const end = (e: PointerEvent) => {
+					handle.classList.remove("drag");
+					try {
+						handle.releasePointerCapture(e.pointerId);
+					} catch {}
+				};
+				handle.addEventListener("pointerup", end);
+				handle.addEventListener("pointercancel", end);
+				handle.addEventListener("keydown", (e) => {
+					const step = e.shiftKey ? 20 : 5;
+					let v: number | null = null;
+					if (e.key === "ArrowLeft") v = p - step;
+					else if (e.key === "ArrowRight") v = p + step;
+					else if (e.key === "Home") v = 0;
+					else if (e.key === "End") v = 100;
+					if (v !== null) {
+						e.preventDefault();
+						cancelAnimationFrame(anim);
+						setP(v);
+					}
+				});
+			});
+
+			select?.addEventListener("change", () => {
+				const i = Number(select.value);
+				screens.forEach((s, k) => (s.hidden = k !== i));
+				active = screens[i];
+				scrollerOf(active).scrollTop = 0;
+				syncW();
+			});
+
+			window.addEventListener("resize", syncW);
+			setP(50);
+			syncW();
+
+			// Gợi ý: lắc nhẹ một lần khi khung vào tầm nhìn lần đầu, để người xem biết kéo được.
+			if (!reduce && "IntersectionObserver" in window) {
+				const io = new IntersectionObserver(
+					(entries) => {
+						if (entries.some((en) => en.isIntersecting)) {
+							io.disconnect();
+							window.setTimeout(() => {
+								animateTo(32);
+								window.setTimeout(() => animateTo(50), 700);
+							}, 300);
+						}
+					},
+					{ threshold: 0.4 },
+				);
+				io.observe(root);
+			}
+		});
+	}
+	document.addEventListener("astro:page-load", initThemeCompare);
+	initThemeCompare();
+</script>
+
+<style>
+	.tc-section {
+		--p: 50;
+		padding-block: clamp(2rem, 5vw, 3rem);
+		border-top: 1px solid var(--border);
+	}
+
+	.tc-section h2 {
+		font-size: 1.5rem;
+		margin-bottom: 0.9rem;
+	}
+
+	.tc-lede {
+		max-width: var(--measure);
+		margin: 0 0 1.25rem;
+		color: var(--ink-secondary);
+	}
+
+	/* ---- select chọn màn hình: pill hairline cùng ngôn ngữ với bộ chuyển VI | EN ---- */
+	.tc-select-wrap {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		margin-bottom: 1rem;
+	}
+
+	.tc-select-label {
+		font-size: 0.85rem;
+		font-weight: 600;
+		color: var(--ink-faint);
+	}
+
+	.tc-select-box {
+		position: relative;
+	}
+
+	.tc-select {
+		appearance: none;
+		-webkit-appearance: none;
+		font: inherit;
+		font-size: 0.92rem;
+		font-weight: 600;
+		color: var(--ink);
+		padding: 0.5rem 2.4rem 0.5rem 1.1rem;
+		border: 1px solid var(--border);
+		border-radius: 999px;
+		background: var(--surface);
+		cursor: pointer;
+		transition: border-color 0.25s var(--ease-smooth), background 0.25s var(--ease-smooth);
+	}
+
+	.tc-select:hover {
+		border-color: var(--ink-faint);
+	}
+
+	.tc-chev {
+		position: absolute;
+		right: 0.8rem;
+		top: 50%;
+		width: 16px;
+		height: 16px;
+		margin-top: -8px;
+		color: var(--ink-secondary);
+		pointer-events: none;
+	}
+
+	/* ---- khung so sánh ---- */
+	.tc-screen[hidden] {
+		display: none;
+	}
+
+	.tc-frame {
+		position: relative;
+		border-radius: var(--radius-lg);
+		overflow: hidden;
+		background: var(--bg-soft);
+		box-shadow: var(--shadow-md);
+		isolation: isolate;
+		/* --tc-h dùng chung cho khung và khung chờ ảnh để hai lớp placeholder lấp đầy khung. */
+		--tc-h: min(78vh, 720px);
+		height: var(--tc-h);
+	}
+
+	/* Khung web theo tỉ lệ ảnh chuẩn 3024×1964 (ảnh trang chi tiết mã, 2026-10-08): ảnh đúng tỉ lệ này
+	   vừa khít, không cuộn; ảnh dài hơn (vd trang chủ) vẫn cuộn trong khung. */
+	.tc-screen.web .tc-frame {
+		height: auto;
+		aspect-ratio: 3024 / 1964;
+	}
+
+	.tc-screen.web .tc-ph {
+		height: auto;
+		aspect-ratio: 3024 / 1964;
+	}
+
+	.tc-screen.mobile .tc-frame {
+		--tc-h: min(78vh, 640px);
+		max-width: 360px;
+		margin-inline: auto;
+	}
+
+	.tc-scroller {
+		position: absolute;
+		inset: 0;
+		overflow-y: auto;
+		overflow-x: hidden;
+		scrollbar-width: none;
+		overscroll-behavior: contain;
+	}
+
+	.tc-scroller::-webkit-scrollbar {
+		display: none;
+	}
+
+	/* Thanh cuộn nổi đè lên ảnh (không chiếm chỗ), chỉ hiện khi rê chuột vào khung hoặc đang cuộn/kéo. */
+	.tc-bar {
+		position: absolute;
+		top: 6px;
+		right: 4px;
+		bottom: 6px;
+		width: 10px;
+		z-index: 3;
+		opacity: 0;
+		transition: opacity 0.2s ease;
+		pointer-events: none;
+	}
+
+	.tc-frame:hover .tc-bar,
+	.tc-frame.scrolling .tc-bar {
+		opacity: 1;
+	}
+
+	.tc-bar.off {
+		visibility: hidden;
+	}
+
+	.tc-thumb {
+		position: absolute;
+		left: 2px;
+		right: 2px;
+		top: 0;
+		height: 40px;
+		border-radius: 999px;
+		background: rgb(120 120 120 / 0.55);
+		box-shadow: 0 0 0 1px rgb(255 255 255 / 0.35);
+		pointer-events: auto;
+		cursor: grab;
+		touch-action: none;
+		transition: left 0.15s ease, right 0.15s ease, background 0.15s ease;
+	}
+
+	.tc-thumb:hover,
+	.tc-thumb.drag {
+		left: 0;
+		right: 0;
+		background: rgb(90 90 90 / 0.75);
+	}
+
+	.tc-stack {
+		position: relative;
+		width: 100%;
+	}
+
+	.tc-layer {
+		display: block;
+		width: 100%;
+	}
+
+	.tc-layer.light {
+		position: absolute;
+		inset: 0;
+		height: 100%;
+		clip-path: inset(0 calc(100% - var(--p) * 1%) 0 0);
+	}
+
+	.tc-layer :global(img) {
+		display: block;
+		width: 100%;
+		height: auto;
+		user-select: none;
+		-webkit-user-drag: none;
+	}
+
+	.tc-layer.light :global(img) {
+		height: 100%;
+		object-fit: cover;
+		object-position: top;
+	}
+
+	/* Khung chờ ảnh: cao bằng khung để thanh chia vẫn có chỗ chạy. */
+	.tc-ph {
+		width: 100%;
+		height: var(--tc-h);
+		display: flex;
+		align-items: flex-end;
+		padding: 1rem;
+	}
+
+	/* Nhãn chờ ảnh nằm góc dưới: Light bên trái, Dark bên phải - không đè nhãn Light/Dark ở góc trên. */
+	.tc-ph.light {
+		justify-content: flex-start;
+	}
+
+	.tc-ph.dark {
+		justify-content: flex-end;
+	}
+
+	.tc-layer.light .tc-ph {
+		height: 100%;
+	}
+
+	.tc-ph.light {
+		background: #f1f3f1;
+	}
+
+	.tc-ph.dark {
+		background: #161c19;
+	}
+
+	.tc-ph-label {
+		font-size: 0.8rem;
+		font-weight: 600;
+		color: var(--ink-faint);
+		background: var(--surface);
+		padding: 0.35rem 0.75rem;
+		border-radius: 999px;
+		box-shadow: var(--shadow-sm);
+	}
+
+	/* ---- thanh chia: đặt ngoài vùng cuộn; --cw = bề rộng thật của vùng ảnh (JS) ---- */
+	.tc-handle {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: calc(var(--p) * 0.01 * var(--cw, 100%));
+		width: 44px;
+		margin-left: -22px;
+		z-index: 3;
+		cursor: ew-resize;
+		touch-action: pan-y;
+		outline: none;
+	}
+
+	/* hairline 1px, mờ dần ở hai đầu để không cắt cứng khung */
+	.tc-handle::before {
+		content: "";
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 50%;
+		width: 1px;
+		margin-left: -0.5px;
+		background: rgba(255, 255, 255, 0.92);
+		box-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.14), 0 0 10px rgba(0, 0, 0, 0.18);
+		-webkit-mask-image: linear-gradient(to bottom, transparent, #000 10%, #000 90%, transparent);
+		mask-image: linear-gradient(to bottom, transparent, #000 10%, #000 90%, transparent);
+	}
+
+	.tc-grip {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		width: 34px;
+		height: 34px;
+		margin: -17px 0 0 -17px;
+		border-radius: 50%;
+		display: grid;
+		place-items: center;
+		color: #121815;
+		background: rgba(255, 255, 255, 0.78);
+		-webkit-backdrop-filter: blur(10px) saturate(1.4);
+		backdrop-filter: blur(10px) saturate(1.4);
+		border: 1px solid rgba(255, 255, 255, 0.7);
+		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18), 0 6px 16px rgba(0, 0, 0, 0.16);
+		transition: transform 0.3s var(--ease-smooth), background 0.2s;
+	}
+
+	.tc-handle:hover .tc-grip {
+		transform: scale(1.06);
+		background: rgba(255, 255, 255, 0.92);
+	}
+
+	.tc-handle:global(.drag) .tc-grip {
+		transform: scale(0.96);
+		background: rgba(255, 255, 255, 0.96);
+	}
+
+	.tc-handle:focus-visible .tc-grip {
+		outline: 2px solid var(--accent);
+		outline-offset: 3px;
+	}
+
+	.tc-grip svg {
+		width: 14px;
+		height: 14px;
+	}
+
+	.tc-tag {
+		position: absolute;
+		top: 12px;
+		z-index: 2;
+		padding: 0.25rem 0.65rem;
+		border-radius: 999px;
+		font-size: 0.68rem;
+		font-weight: 600;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		pointer-events: none;
+		-webkit-backdrop-filter: blur(8px);
+		backdrop-filter: blur(8px);
+		transition: opacity 0.3s;
+	}
+
+	.tc-tag.l {
+		left: 12px;
+		background: rgba(255, 255, 255, 0.72);
+		color: #121815;
+		box-shadow: inset 0 0 0 1px rgba(18, 24, 21, 0.08);
+	}
+
+	.tc-tag.d {
+		right: 12px;
+		background: rgba(15, 20, 18, 0.62);
+		color: #eef2ef;
+		box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+	}
+
+	.tc-cap {
+		margin: 1rem 0 0;
+		max-width: var(--measure);
+		color: var(--ink-secondary);
+		font-size: 0.95rem;
+	}
+
+	.tc-hint {
+		margin: 0.9rem 0 0;
+		font-size: 0.88rem;
+		color: var(--ink-faint);
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.tc-grip,
+		.tc-tag,
+		.tc-select {
+			transition: none;
+		}
+	}
+</style>

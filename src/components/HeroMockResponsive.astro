@@ -49,7 +49,7 @@
 
 			<div class="mk-head">
 				<span class="mk-title"></span>
-				<span class="mk-avatar"></span>
+				<span class="mk-avatar"><span class="mk-views" data-view-count></span></span>
 			</div>
 
 			<span class="mk-card mk-card-1"></span>
@@ -408,6 +408,23 @@
 		border-radius: 50%;
 		background: var(--accent-tint);
 		border: 1.2px solid var(--accent);
+		/* Số lượt xem (2026-10-09): chữ rất nhỏ nằm trong chấm tròn, cỡ chữ theo bề rộng chấm
+		   (cqw) nên co giãn cùng khung khi morph mobile ↔ desktop. Trống khi chạy local. */
+		container-type: inline-size;
+		display: grid;
+		place-items: center;
+		overflow: hidden;
+	}
+
+	.mk-views {
+		font-size: 30cqw;
+		line-height: 1;
+		font-weight: 600;
+		font-variant-numeric: tabular-nums;
+		color: var(--accent);
+		opacity: 0.55;
+		user-select: none;
+		pointer-events: none;
 	}
 
 	/* Thẻ số liệu: 2 + 1 (mobile) → 3 cột (desktop) */

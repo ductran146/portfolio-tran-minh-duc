@@ -1189,7 +1189,10 @@ const supportTools = [
 			/* Canh giữa theo chiều dọc box, sát mép phải gần nội dung bước 04 (yêu cầu
 			   2026-09-20). Nét nền 0.07 + vệt sáng ×0.7 đủ mờ để chữ bước 04 vẫn đọc
 			   được khi chồng lên. */
-			right: -5%;
+			/* Neo theo cột nội dung, không theo mép viewport (2026-10-09): ≥1512px logo giữ cố định
+			   khoảng cách tới tâm cột (như ảnh chuẩn ở 1512px); dưới 1512px giữ -5% như cũ
+			   (max() chọn giá trị lớn hơn = logo không bị đẩy ra ngoài hơn trước). */
+			right: max(-5%, calc(50% - 831.6px));
 			top: 50%;
 			transform: translateY(-50%);
 			height: 92%;

@@ -6,7 +6,7 @@
  * Là OVERLAY cố định phủ trang, chạy TỰ ĐỘNG theo thời gian rồi biến mất —
  * không còn cơ chế cuộn-để-chuyển (section ghim, khoảng cuộn dư): trang chủ sau
  * intro cuộn như mọi trang khác (yêu cầu "bỏ toàn bộ scroll dọc để đồng bộ").
- * Chạy MỘT lần mỗi phiên (sessionStorage "dt-intro"); hard refresh phát lại.
+ * Chỉ phát lần đầu vào web, khi tải lại trang, hoặc sau 12 giờ kể từ lần xem trước (localStorage "dt-intro-at").
  *   0–.9s    bản vẽ kỹ thuật: lưới dựng hình, ngòi bút vẽ lưới 6 mặt một nét,
  *            đường gấp gạch-chấm, kích thước 217/868, nhãn mặt A–F
  *   .9–1.8   camera đẩy vào (đã trôi chậm từ 0s) + bắt đầu nghiêng vào 3D
@@ -63,14 +63,23 @@ const tones: Record<string, number[]> = {
 
 <!-- Chạy TRƯỚC khi section bên dưới được parse → quyết định hiện/ẩn trước lần
      vẽ đầu, không nháy. data-astro-rerun: chạy lại mỗi lần ClientRouter quay
-     về trang chủ (sessionStorage đã "done" → ẩn). -->
+     về trang chủ (đã xem gần đây → ẩn). -->
 <script is:inline data-astro-rerun>
   (function () {
     var root = document.documentElement;
-    var done = false;
-    try {
-      done = sessionStorage.getItem("dt-intro") === "done";
-    } catch (e) {}
+    // Intro chỉ phát khi: lần đầu vào web, tải lại trang (reload), hoặc đã quá
+    // INTRO_TTL kể từ lần xem trước (localStorage "dt-intro-at" = mốc lúc intro
+    // xong; đổi 2026-10-09 từ "một lần mỗi phiên" sang theo thời gian). Cờ
+    // window.__dtIntroDone giữ cho trường hợp localStorage bị chặn: trong cùng
+    // tài liệu, ClientRouter quay về trang chủ vẫn không phát lại.
+    var INTRO_TTL = 12 * 60 * 60 * 1000;
+    var done = !!window.__dtIntroDone;
+    if (!done) {
+      try {
+        var at = Number(localStorage.getItem("dt-intro-at"));
+        done = at > 0 && Date.now() - at < INTRO_TTL;
+      } catch (e) {}
+    }
     // Hard refresh (F5/⌘R) luôn phát lại intro — tiện test (yêu cầu 2026-10-03).
     // Chỉ xét ở lần chạy ĐẦU của tài liệu (fresh): các lần rerun do ClientRouter
     // quay về trang chủ vẫn giữ navigation type "reload" cũ nên phải bỏ qua.
@@ -947,8 +956,9 @@ const tones: Record<string, number[]> = {
   }
 
   function markDone() {
+    (window as any).__dtIntroDone = true;
     try {
-      sessionStorage.setItem("dt-intro", "done");
+      localStorage.setItem("dt-intro-at", String(Date.now()));
     } catch {}
   }
 

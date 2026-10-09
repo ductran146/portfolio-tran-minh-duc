@@ -5,6 +5,7 @@
   "real": true,
   "featured": false,
   "order": 3,
+  "cover": "../../assets/projects/tradex/cover.jpg",
   "summary": "Nền tảng giao dịch chứng khoán trên mobile và web, gồm mảng phái sinh và cổ phiếu: từ đăng nhập, mở tài khoản eKYC, đặt lệnh, sổ lệnh đến chuyển tiền và theo dõi thị trường.",
   "tags": [
     "Fintech",
@@ -46,24 +47,31 @@
   "process": [],
   "gallery": [
     {
+      "src": "../../assets/projects/tradex/01-authentication-overview.jpg",
       "caption": "Đăng nhập: form mật khẩu, tuỳ chọn sinh trắc học và các trạng thái sai thông tin."
     },
     {
+      "src": "../../assets/projects/tradex/02-mobile-ekyc.jpg",
       "caption": "Mở tài khoản eKYC: quét CCCD, đọc chip NFC, xác thực khuôn mặt và bổ sung hồ sơ."
     },
     {
+      "src": "../../assets/projects/tradex/03-mobile-order.jpg",
       "caption": "Đặt lệnh: form lệnh, sheet chọn loại lệnh (LO, MP, ATO, ATC, MTL, MAK, MOK) và màn độ sâu thị trường."
     },
     {
+      "src": "../../assets/projects/tradex/04-orderbook.jpg",
       "caption": "Sổ lệnh: lọc theo trạng thái, chi tiết lệnh, sửa lệnh và huỷ nhiều lệnh cùng lúc."
     },
     {
+      "src": "../../assets/projects/tradex/05-transfer.jpg",
       "caption": "Chuyển tiền ra ngân hàng: chọn tài khoản nguồn và nhận, chuyển toàn bộ, xác nhận và lịch sử."
     },
     {
+      "src": "../../assets/projects/tradex/06-watchlist.jpg",
       "caption": "Bảng giá & Watchlist: quản lý danh sách theo dõi, tìm mã và các trạng thái rỗng."
     },
     {
+      "src": "../../assets/projects/tradex/07-web-wts.jpg",
       "caption": "Bản web (WTS): bố cục header và sidebar phải, form đặt lệnh mở ngay trên màn hình đang xem."
     }
   ],
@@ -109,6 +117,43 @@
       "title": "Quản lý watchlist",
       "label": "Watchlist",
       "caption": "Thêm mã dùng lại màn tìm kiếm chung; tạo, đổi tên, xoá đều có phản hồi riêng và xoá luôn có cảnh báo không thể hoàn tác."
+    }
+  ],
+  "themeCompare": [
+    {
+      "label": "Trang chủ (web)",
+      "kind": "web",
+      "light": "../../assets/projects/tradex/web-home-light.jpg",
+      "dark": "../../assets/projects/tradex/web-home-dark.jpg",
+      "caption": "Trang chủ bản web: chỉ số, dòng tiền, top mã, watchlist và tin tức. Cùng một bố cục và component, màu sắc và biểu đồ đổi theo chế độ."
+    },
+    {
+      "label": "Chi tiết mã (web)",
+      "kind": "web",
+      "light": "../../assets/projects/tradex/web-stock-light.jpg",
+      "dark": "../../assets/projects/tradex/web-stock-dark.jpg",
+      "caption": "Trang chi tiết mã: thông tin giao dịch, biểu đồ kỹ thuật, độ sâu giá và giao dịch khối ngoại. Giữ nguyên bố cục, màu nền, biểu đồ và màu tăng giảm đổi theo chế độ."
+    },
+    {
+      "label": "Quản lý tài sản (web)",
+      "kind": "web",
+      "light": "../../assets/projects/tradex/web-asset-light.jpg",
+      "dark": "../../assets/projects/tradex/web-asset-dark.jpg",
+      "caption": "Trang quản lý tài sản: tổng quan tài sản, cơ cấu, tiền mặt, ký quỹ và phí thuế. Cảnh báo margin call vẫn nổi bật ở cả hai chế độ, màu nền và biểu đồ đổi theo chế độ."
+    },
+    {
+      "label": "Chi tiết nhóm ngành (web)",
+      "kind": "web",
+      "light": "../../assets/projects/tradex/web-theme-light.jpg",
+      "dark": "../../assets/projects/tradex/web-theme-dark.jpg",
+      "caption": "Trang chi tiết nhóm ngành (ví dụ Bất động sản): chỉ số tổng quan, danh sách mã kèm biểu đồ nhỏ và tin mới nhất. Màu tăng, giảm và đứng giá vẫn nhận ra ngay ở cả hai chế độ."
+    },
+    {
+      "label": "Watchlist (web)",
+      "kind": "web",
+      "light": "../../assets/projects/tradex/web-watchlist-light.jpg",
+      "dark": "../../assets/projects/tradex/web-watchlist-dark.jpg",
+      "caption": "Trang watchlist: danh sách theo dõi, số mã tăng giảm và bảng giá có thể sắp xếp. Màu tăng giảm giữ nguyên ý nghĩa, nền và độ tương phản đổi theo chế độ."
     }
   ]
 }

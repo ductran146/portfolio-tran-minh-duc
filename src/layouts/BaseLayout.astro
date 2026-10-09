@@ -349,12 +349,53 @@ const showLangNotice = locale !== "vi" && !translated;
 						if (r.top < vh && r.bottom > 0) el.classList.add("is-visible");
 					});
 				});
+				// Đếm lượt xem (2026-10-09): cùng dịch vụ countapi.mileshilliard.com với portfolio
+				// cũ — miễn phí, không cần tài khoản. Mỗi phiên (tab) chỉ tính một lần: lần đầu
+				// "hit" (tăng), các lần tải lại / chuyển trang trong phiên chỉ "get" để đọc số.
+				// Không đếm khi chạy local (astro dev, localhost, IP mạng nội bộ, file://).
+				// Số hiển thị cực nhỏ trong chấm tròn avatar của hero (`[data-view-count]`).
+				const VIEW_KEY = "ductm_portfolio_astro_2026";
+				const VIEW_API = "https://countapi.mileshilliard.com/api/v1";
+				const isLocalHost = () => {
+					const h = location.hostname;
+					return (
+						import.meta.env.DEV ||
+						location.protocol === "file:" ||
+						h === "localhost" ||
+						h === "127.0.0.1" ||
+						h === "[::1]" ||
+						h === "0.0.0.0" ||
+						h.endsWith(".local") ||
+						/^(10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.)/.test(h)
+					);
+				};
+				const fmtViews = (n: number) => (n >= 1000 ? `${(n / 1000).toFixed(n >= 10000 ? 0 : 1).replace(/\.0$/, "")}k` : String(n));
+				async function updateViewCount() {
+					if (isLocalHost()) return;
+					const el = document.querySelector<HTMLElement>("[data-view-count]");
+					let counted = false;
+					try {
+						counted = sessionStorage.getItem("pv_counted") === "1";
+					} catch {}
+					if (counted && !el) return;
+					try {
+						const r = await fetch(`${VIEW_API}/${counted ? "get" : "hit"}/${VIEW_KEY}`);
+						const d = await r.json();
+						if (!counted) {
+							try {
+								sessionStorage.setItem("pv_counted", "1");
+							} catch {}
+						}
+						if (el && typeof d.value === "number") el.textContent = fmtViews(d.value);
+					} catch {}
+				}
 				document.addEventListener("astro:page-load", () => {
 					updateNavActive();
 					updateLangLinks();
 					initThemeToggle();
 					initReveals();
 					initCounts();
+					updateViewCount();
 				});
 				updateNavActive();
 				restoreTheme();
@@ -362,6 +403,7 @@ const showLangNotice = locale !== "vi" && !translated;
 				initThemeToggle();
 				initReveals();
 				initCounts();
+				updateViewCount();
 			</script>
 		</header>
 

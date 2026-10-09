@@ -99,6 +99,20 @@ const projects = defineCollection({
 					}),
 				)
 				.default([]),
+			// Khung so sánh Light / Dark (2026-10-06): mỗi phần tử là MỘT màn hình có hai ảnh
+			// cùng kích thước, căn khớp. Có từ 2 màn trở lên thì hiện <select> chọn màn;
+			// thiếu ảnh thì hiện khung chờ. Xem components/ThemeCompare.astro.
+			themeCompare: z
+				.array(
+					z.object({
+						label: z.string(),
+						kind: z.enum(["web", "mobile"]).default("web"),
+						light: image().optional(),
+						dark: image().optional(),
+						caption: z.string().optional(),
+					}),
+				)
+				.default([]),
 			closing: z.string().optional(),
 		}),
 });

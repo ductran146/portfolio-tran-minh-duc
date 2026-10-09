@@ -168,7 +168,7 @@ const clientLogos = clientGroups.flatMap((g) => g.clients).filter((c): c is { na
 				     hơn một ngành (fintech, vận hành, EdTech, giáo dục), nên câu mở đầu
 				     không nên neo riêng vào tài chính/vận hành nữa. Người dùng dự định
 				     bổ sung 2-3 dự án ở lĩnh vực khác vào đây trong tương lai. -->
-				<p class="eyebrow" data-reveal>Trần Minh Đức - thiết kế mobile app và web responsive</p>
+				<p class="eyebrow" data-reveal>UX/UI Designer</p>
 				<h1 class="hero-title" data-reveal>
 					{
 						typedLines.map((line) => (
@@ -893,7 +893,10 @@ const clientLogos = clientGroups.flatMap((g) => g.clients).filter((c): c is { na
 		.band-logo {
 			position: absolute;
 			z-index: -1;
-			right: -5%;
+			/* Neo theo cột nội dung, không theo mép viewport (2026-10-09): ≥1512px logo giữ cố định
+			   khoảng cách tới tâm cột (như ảnh chuẩn ở 1512px); dưới 1512px giữ -5% như cũ
+			   (max() chọn giá trị lớn hơn = logo không bị đẩy ra ngoài hơn trước). */
+			right: max(-5%, calc(50% - 831.6px));
 			top: 50%;
 			transform: translateY(-50%);
 			height: 92%;
